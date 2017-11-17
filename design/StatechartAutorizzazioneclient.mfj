@@ -4250,6 +4250,46 @@
 					}
 				}
 			]
+		},
+		{
+			"_type": "UMLStateMachine",
+			"_id": "AAAAAAFfyJGyfvmclz0=",
+			"_parent": {
+				"$ref": "AAAAAAFfyHgb8t+0BrU="
+			},
+			"name": "StateMachine1",
+			"visibility": "public",
+			"isReentrant": true
+		},
+		{
+			"_type": "UMLStateMachine",
+			"_id": "AAAAAAFfyK+XB/2SoVQ=",
+			"_parent": {
+				"$ref": "AAAAAAFfyHgb8t+0BrU="
+			},
+			"name": "StateMachine2",
+			"visibility": "public",
+			"isReentrant": true
+		},
+		{
+			"_type": "UMLStateMachine",
+			"_id": "AAAAAAFfyLLcqf4yhn4=",
+			"_parent": {
+				"$ref": "AAAAAAFfyHgb8t+0BrU="
+			},
+			"name": "StateMachine3",
+			"visibility": "public",
+			"isReentrant": true
+		},
+		{
+			"_type": "UMLStateMachine",
+			"_id": "AAAAAAFfyLsNuf9ogL8=",
+			"_parent": {
+				"$ref": "AAAAAAFfyHgb8t+0BrU="
+			},
+			"name": "StateMachine4",
+			"visibility": "public",
+			"isReentrant": true
 		}
 	],
 	"visibility": "public",
