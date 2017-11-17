@@ -174,7 +174,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Utente",
+											"text": "Utente",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -301,7 +301,7 @@
 							"showVisibility": true,
 							"showNamespace": false,
 							"showProperty": true,
-							"showType": true,
+							"showType": false,
 							"nameCompartment": {
 								"$ref": "AAAAAAFfyWyqIFC6CsE="
 							},
@@ -376,7 +376,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": CreatoreRichieste",
+											"text": "CreatoreRichieste",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -578,7 +578,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Richiesta",
+											"text": "Richiesta",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -780,7 +780,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": ClientJSON",
+											"text": "ClientJSON",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -1493,7 +1493,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Client0MQ",
+											"text": "Client0MQ",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -2375,7 +2375,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Risposta",
+											"text": "Risposta",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -4337,6 +4337,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWyqJFFHutQ="
 					},
+					"name": "Utente",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWyqJFFIxCM="
@@ -4349,6 +4350,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWyqJFFHutQ="
 					},
+					"name": "CreatoreRichieste",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWyqJFFJOlo="
@@ -4361,6 +4363,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWyqJFFHutQ="
 					},
+					"name": "Richiesta",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWyqJFFKSMo="
@@ -4373,6 +4376,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWyqJFFHutQ="
 					},
+					"name": "ClientJSON",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWyqJFFLqs8="
@@ -4385,6 +4389,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWyqJFFHutQ="
 					},
+					"name": "Client0MQ",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWyqJFFMNbo="
@@ -4397,6 +4402,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWyqJFFHutQ="
 					},
+					"name": "Risposta",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWyqJFFNIRo="
@@ -4418,9 +4424,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNIYjN9g="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -4438,9 +4441,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCMoXQBGc="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -4458,9 +4458,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNYZe3/Y="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -4478,9 +4475,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNoaRb7M="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -4498,9 +4492,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCN4a9Cns="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -4518,9 +4509,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNYZ+13o="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,

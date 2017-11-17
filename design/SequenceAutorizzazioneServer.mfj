@@ -174,7 +174,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": GestoreAutorizzazioni",
+											"text": "GestoreAutorizzazioni",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -376,7 +376,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": ServerJSON",
+											"text": "ServerJSON",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -578,7 +578,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Server0MQ",
+											"text": "Server0MQ",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -1290,7 +1290,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Richiesta",
+											"text": "Richiesta",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -2396,7 +2396,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Risposta",
+											"text": "Risposta",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -4012,7 +4012,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Risposta",
+											"text": "Risposta",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -4437,7 +4437,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Risposta",
+											"text": "Risposta",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -4979,7 +4979,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": ": Risposta",
+											"text": "Risposta",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -7821,6 +7821,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWvM7U+OjS8="
 					},
+					"name": "GestoreAutorizzazioni",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWvM7U+PjaU="
@@ -7833,6 +7834,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWvM7U+OjS8="
 					},
+					"name": "ServerJSON",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWvM7U+QleI="
@@ -7845,6 +7847,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWvM7U+OjS8="
 					},
+					"name": "Server0MQ",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWvM7U+RoCA="
@@ -7857,6 +7860,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWvM7U+OjS8="
 					},
+					"name": "Richiesta",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWvM7U+Steo="
@@ -7869,6 +7873,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWvM7U+OjS8="
 					},
+					"name": "Risposta",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWvM7U+TAE8="
@@ -7881,6 +7886,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWvM7U+OjS8="
 					},
+					"name": "Risposta",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWvM7U+UOag="
@@ -7893,6 +7899,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWvM7U+OjS8="
 					},
+					"name": "Risposta",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWvM7U+VcL4="
@@ -7905,6 +7912,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFfyWvM7U+OjS8="
 					},
+					"name": "Risposta",
 					"visibility": "public",
 					"represent": {
 						"$ref": "AAAAAAFfyWvM7U+WehE="
@@ -8033,9 +8041,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCMYWGdIQ="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -8053,9 +8058,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNoagnSI="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -8073,9 +8075,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCN4bXp8E="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -8093,9 +8092,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNYZe3/Y="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -8113,9 +8109,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNYZ+13o="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -8133,9 +8126,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNYZ+13o="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -8153,9 +8143,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNYZ+13o="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
@@ -8173,9 +8160,6 @@
 			"visibility": "public",
 			"isStatic": false,
 			"isLeaf": false,
-			"type": {
-				"$ref": "AAAAAAFfyePCNYZ+13o="
-			},
 			"isReadOnly": false,
 			"isOrdered": false,
 			"isUnique": false,
