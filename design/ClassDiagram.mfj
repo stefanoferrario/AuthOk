@@ -254,7 +254,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "Sistema Autorizzatore",
+									"text": "Autorizzatore",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -490,7 +490,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -1017,7 +1017,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -1544,7 +1544,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -4333,7 +4333,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -5949,7 +5949,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -6418,7 +6418,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -6975,7 +6975,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -7297,7 +7297,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -7619,7 +7619,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -7941,7 +7941,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -8206,7 +8206,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "zeroMQimpl",
+									"text": "libreria di comunicazione",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -8421,11 +8421,11 @@
 									"containerExtending": false,
 									"left": -3436.3291015625,
 									"top": 2888,
-									"width": 119.90087890625,
+									"width": 181.33984375,
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from zeroMQimpl)",
+									"text": "(from libreria di comunicazione)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -8759,11 +8759,11 @@
 									"containerExtending": false,
 									"left": -3144,
 									"top": 3000,
-									"width": 146.62451171875,
+									"width": 181.33984375,
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from zeroMQimpl)",
+									"text": "(from libreria di comunicazione)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -9430,11 +9430,11 @@
 									"containerExtending": false,
 									"left": -1408,
 									"top": -216,
-									"width": 119.90087890625,
+									"width": 181.33984375,
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from zeroMQimpl)",
+									"text": "(from libreria di comunicazione)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -9782,11 +9782,11 @@
 									"containerExtending": false,
 									"left": -568,
 									"top": 208,
-									"width": 119.90087890625,
+									"width": 181.33984375,
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from zeroMQimpl)",
+									"text": "(from libreria di comunicazione)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -13883,11 +13883,11 @@
 									"containerExtending": false,
 									"left": -120,
 									"top": 192,
-									"width": 119.90087890625,
+									"width": 181.33984375,
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from zeroMQimpl)",
+									"text": "(from libreria di comunicazione)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -15877,7 +15877,7 @@
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "(from Sistema Autorizzatore)",
+									"text": "(from Autorizzatore)",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -20060,7 +20060,7 @@
 			"_parent": {
 				"$ref": "AAAAAAFf215CjTBRpPc="
 			},
-			"name": "Sistema Autorizzatore",
+			"name": "Autorizzatore",
 			"ownedElements": [
 				{
 					"_type": "UMLClass",
@@ -23913,7 +23913,7 @@
 			"_parent": {
 				"$ref": "AAAAAAFf215CjTBRpPc="
 			},
-			"name": "zeroMQimpl",
+			"name": "libreria di comunicazione",
 			"ownedElements": [
 				{
 					"_type": "UMLInterface",
