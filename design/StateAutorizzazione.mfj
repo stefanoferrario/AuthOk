@@ -2876,13 +2876,13 @@
 							"showShadow": true,
 							"containerChangeable": false,
 							"containerExtending": false,
-							"left": 655,
-							"top": 247,
+							"left": 798,
+							"top": 255,
 							"width": 118.50439453125,
 							"height": 13,
 							"autoResize": false,
-							"alpha": -4.434325467480786,
-							"distance": 53.53503525729669,
+							"alpha": -0.5112499765841447,
+							"distance": 101.20276676059801,
 							"hostEdge": {
 								"$ref": "AAAAAAFf4HQAB7gVZ40="
 							},
@@ -3020,19 +3020,19 @@
 							"showShadow": true,
 							"containerChangeable": false,
 							"containerExtending": false,
-							"left": 1054,
-							"top": 239,
-							"width": 262.310546875,
+							"left": 1122,
+							"top": 248,
+							"width": 143.80615234375,
 							"height": 13,
 							"autoResize": false,
-							"alpha": -0.43168416185075775,
-							"distance": 170.01176429882727,
+							"alpha": -0.26214753233819055,
+							"distance": 169.95587662684687,
 							"hostEdge": {
 								"$ref": "AAAAAAFf4HWz3rhOMEM="
 							},
 							"edgePosition": 1,
 							"underline": false,
-							"text": "restituzione chiave :  [scelta non revocazione]",
+							"text": " [scelta non revocazione]",
 							"horizontalAlignment": 2,
 							"verticalAlignment": 5,
 							"wordWrap": false
@@ -3055,8 +3055,8 @@
 							"showShadow": true,
 							"containerChangeable": false,
 							"containerExtending": false,
-							"left": 1003,
-							"top": 214,
+							"left": 1013,
+							"top": 238,
 							"width": 0,
 							"height": 13,
 							"autoResize": false,
@@ -3089,8 +3089,8 @@
 							"showShadow": true,
 							"containerChangeable": false,
 							"containerExtending": false,
-							"left": 1022,
-							"top": 255,
+							"left": 1029,
+							"top": 279,
 							"width": 0,
 							"height": 13,
 							"autoResize": false,
@@ -3116,13 +3116,13 @@
 					"containerChangeable": false,
 					"containerExtending": false,
 					"head": {
-						"$ref": "AAAAAAFf4HAB4LevEVk="
+						"$ref": "AAAAAAFf3t6GZ4DC/u0="
 					},
 					"tail": {
 						"$ref": "AAAAAAFf4HO0abfuBy8="
 					},
 					"lineStyle": 1,
-					"points": "755:327;1016:248;1336:96",
+					"points": "757:332;1024:272;1519:81",
 					"stereotypeDisplay": "label",
 					"showVisibility": true,
 					"showProperty": true,
@@ -3425,12 +3425,11 @@
 					"_parent": {
 						"$ref": "AAAAAAFf3t6GZ4DYmZs="
 					},
-					"name": "restituzione chiave",
 					"source": {
 						"$ref": "AAAAAAFf4HO0aLftVho="
 					},
 					"target": {
-						"$ref": "AAAAAAFf4HAB4LeuOvQ="
+						"$ref": "AAAAAAFf3t6GZ4DNZlo="
 					},
 					"visibility": "public",
 					"kind": "external",
