@@ -1,17 +1,19 @@
 package jsonrpc;
 
+import java.util.ArrayList;
+
 public class Request extends AbstractRequest{
 
-    public Request(String method, String params[]) {
+    public Request(String method, ArrayList<String> params) {
         super(method, params);
     }
-    public Request(String method, String params[], int id) {
+    public Request(String method, ArrayList<String> params, int id) {
         super(method, params, id);
     }
 
-    /*public Request(String jsonRpcString) {
-        this.jsonRpcString = jsonRpcString;
-    }*/
+    Request(String jsonRpcString) {
+        super(jsonRpcString);
+    }
 
     @Override
     protected String toJsonRpc() {

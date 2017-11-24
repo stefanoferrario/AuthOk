@@ -1,12 +1,14 @@
 package jsonrpc;
 
-public abstract class AbstractResponse extends JsonRpcMessage {
-    protected String result;
-    protected String message;
-    protected int errorCode;
-    protected String errorData[];
+import java.util.ArrayList;
 
-    public AbstractResponse(int id, String result) {
+public abstract class AbstractResponse extends JsonRpcMessage {
+    String result;
+    String message;
+    int errorCode;
+    ArrayList<String> errorData;
+
+    AbstractResponse(int id, String result) {
         this.id = id;
         this.result = result;
         this.message = null;
@@ -15,7 +17,7 @@ public abstract class AbstractResponse extends JsonRpcMessage {
         this.jsonRpcString = toJsonRpc();
     }
 
-    public AbstractResponse(int id, String message, int errorCode) {
+    AbstractResponse(int id, String message, int errorCode) {
         this.id = id;
         this.result = null;
         this.message = message;
@@ -24,13 +26,17 @@ public abstract class AbstractResponse extends JsonRpcMessage {
         this.jsonRpcString = toJsonRpc();
     }
 
-    public AbstractResponse(int id, String message, int errorCode, String errorData[]) {
+    AbstractResponse(int id, String message, int errorCode, ArrayList<String> errorData) {
         this.id = id;
         this.result = null;
         this.message = message;
         this.errorCode = errorCode;
         this.errorData = errorData;
         this.jsonRpcString = toJsonRpc();
+    }
+
+    AbstractResponse(String jsonRpcString) {
+        this.jsonRpcString = jsonRpcString;
     }
 
     public String getResult() {
@@ -42,7 +48,7 @@ public abstract class AbstractResponse extends JsonRpcMessage {
     public int getErrorCode() {
         return errorCode;
     }
-    public String[] getErrorData() {
+    public ArrayList<String> getErrorData() {
         return errorData;
     }
 }

@@ -1,9 +1,9 @@
 package jsonrpc;
 
 abstract class JsonRpcMessage {
-    protected String jsonRpcString;
-    protected int id;
-    protected boolean valid;
+    String jsonRpcString;
+    int id;
+    boolean valid;
 
     public String getJsonString() {
         return jsonRpcString;
@@ -18,6 +18,5 @@ abstract class JsonRpcMessage {
     }
 
     abstract protected String toJsonRpc(); //crea stringa json rpc utilizzando attributi. implementata in maniera differente in richiesta e risposta
-
 
 }
