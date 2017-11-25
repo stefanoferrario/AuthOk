@@ -4,12 +4,12 @@ import org.zeromq.ZFrame;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMsg;
 
-public class Server implements IServer{
+public class ZmqServer implements IZmqServer{
     private ZMQ.Socket socket;
     private ZFrame identity;
-    private ZFrame empty; //trovare come costruirlo, non serve salvarlo
+    private ZFrame empty;
 
-    public Server(int port) {
+    public ZmqServer(int port) {
         ZMQ.Context ctx = ZMQ.context(1);
         socket = ctx.socket(ZMQ.ROUTER);
         socket.bind("tcp://*:" + String.valueOf(port));
@@ -17,10 +17,9 @@ public class Server implements IServer{
 
     @Override
     public String receive() {
-        //verificare se esiste una identity. se sì arriva da un req e bisogna rispondere, altrimenti da un dealer (notifica)
         ZMsg msg = ZMsg.recvMsg(socket);
         identity = msg.pop();
-        empty = msg.pop(); //empty
+        empty = msg.size() == 2 ? msg.pop() : null; //i messaggi inviati dal dealer non hanno frame vuoto
         return msg.pop().toString();
     }
 
@@ -29,7 +28,7 @@ public class Server implements IServer{
         if (identity == null) { throw new Exception(); /*NoIdentityException*/ }
         ZMsg msg = new ZMsg();
         msg.push(new ZFrame(string.getBytes()));
-        msg.push(empty);
+        if (empty!=null) {msg.push(empty);} //i messaggi da inviare al dealer non devono avere empty frame
         msg.push(identity);
         msg.send(socket);
         identity = null;

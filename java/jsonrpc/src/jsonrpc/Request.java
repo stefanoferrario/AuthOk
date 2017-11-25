@@ -20,4 +20,19 @@ public class Request extends AbstractRequest{
         //...
         return "...";
     }
+
+    int createErrorCode() {
+        //analizza la propria stinga jsonrpc e restituisce l'errore del caso
+        //se non ci sono errori lancia eccezione
+        return 0;
+    }
+
+    String createErrorMessage() {
+        return "...";
+    }
+
+    ArrayList<String> createErrorData() {
+        //può essere vuoto
+        return null;
+    }
 }

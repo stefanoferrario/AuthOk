@@ -3,10 +3,12 @@ package zeromq;
 import org.zeromq.ZMQ;
 //import org.zeromq.ZMsg;
 
-public class Client implements IClient {
+public class ZmqClient implements IZmqClient {
     private ZMQ.Context ctx;
     private ZMQ.Socket socket;
-    public Client() {
+
+    public ZmqClient() {
+
         ctx = ZMQ.context(1);
     }
 
@@ -15,7 +17,9 @@ public class Client implements IClient {
         socket = ctx.socket(ZMQ.REQ);
         socket.connect("tcp://localhost:"+String.valueOf(port));
         socket.send(req.getBytes());
-        return socket.recvStr();
+        String s = socket.recvStr();
+        socket.close();
+        return s;
     }
 
     @Override
@@ -23,5 +27,6 @@ public class Client implements IClient {
         socket = ctx.socket(ZMQ.DEALER);
         socket.connect("tcp://localhost:"+String.valueOf(port));
         socket.send(msg.getBytes());
+        socket.close();
     }
 }
