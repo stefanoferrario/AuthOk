@@ -1,4 +1,5 @@
 package jsonrpc;
+import org.json.JSONObject;
 import zeromq.IZmqServer;
 import zeromq.ZmqServer;
 
@@ -11,7 +12,11 @@ public class Server implements IServer {
 
     @Override
     public Request receive() {
-        return new Request(server.receive());
+        try{
+            return new Request(server.receive());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -21,7 +26,8 @@ public class Server implements IServer {
 
     @Override
     public void replyToInvalidRequest(Request invalidRequest) throws Exception{
-        Response resp = new Response(invalidRequest.getId(), invalidRequest.createErrorMessage(), invalidRequest.createErrorCode(), invalidRequest.createErrorData());
+        JSONObject error = invalidRequest.createErrorObj();
+        Response resp = new Response(invalidRequest.getIntId(), error);
         server.send(resp.getJsonString());
     }
 }

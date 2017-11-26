@@ -1,54 +1,84 @@
 package jsonrpc;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public abstract class AbstractResponse extends JsonRpcMessage {
-    String result;
-    String message;
-    int errorCode;
-    ArrayList<String> errorData;
+    public enum Members {
+        JSONRPC("jsonrpc"), RESULT("result"), ERROR("error"), ID("id");
 
-    AbstractResponse(int id, String result) {
+        private final String text;
+        Members(final String text) {
+            this.text = text;
+        }
+        @Override
+        public String toString() {return text;}
+    }
+    public enum ErrMembers {
+        CODE("code"), MESSAGE("message"), DATA("data");
+
+        private final String text;
+        ErrMembers(final String text) {
+            this.text = text;
+        }
+        @Override
+        public String toString() {return text;}
+    }
+
+    Object result; //primitive o structure
+    JSONObject errObj;
+    String errMessage;
+    Integer errCode; //da specifica deve essere intero
+    Object errData;//primitive o structure
+
+    AbstractResponse(int id, String result) throws org.json.JSONException {
         this.id = id;
         this.result = result;
-        this.message = null;
-        this.errorCode = 0;
-        this.errorData = null;
-        this.jsonRpcString = toJsonRpc();
+        this.errObj = null;
+        this.errMessage = null;
+        this.errCode = null;
+        this.errData = null;
+        this.obj = toJsonRpc();
+        this.jsonRpcString = obj.toString();
     }
-
-    AbstractResponse(int id, String message, int errorCode) {
+    AbstractResponse(int id, String errorMessage, int errorCode) throws org.json.JSONException {
         this.id = id;
         this.result = null;
-        this.message = message;
-        this.errorCode = errorCode;
-        this.errorData = null;
-        this.jsonRpcString = toJsonRpc();
+        this.errMessage = errorMessage;
+        this.errCode = errorCode;
+        this.errData = null;
+        this.errObj = toErrJsonRpc();
+        this.obj = toJsonRpc();
+        this.jsonRpcString = obj.toString();
     }
-
-    AbstractResponse(int id, String message, int errorCode, ArrayList<String> errorData) {
+    AbstractResponse(int id, String errorMessage, int errorCode, Object errorData) throws org.json.JSONException {
         this.id = id;
         this.result = null;
-        this.message = message;
-        this.errorCode = errorCode;
-        this.errorData = errorData;
-        this.jsonRpcString = toJsonRpc();
+        this.errMessage = errorMessage;
+        this.errCode = errorCode;
+        this.errData = errorData;
+        this.errObj = toErrJsonRpc();
+        this.obj = toJsonRpc();
+        this.jsonRpcString = obj.toString();
+    }
+    AbstractResponse() {
+        super();
     }
 
-    AbstractResponse(String jsonRpcString) {
-        this.jsonRpcString = jsonRpcString;
-    }
-
-    public String getResult() {
+    public Object getResult() {
         return result;
     }
     public String getMessage() {
-        return message;
+        return errMessage;
     }
     public int getErrorCode() {
-        return errorCode;
+        return errCode;
     }
-    public ArrayList<String> getErrorData() {
-        return errorData;
+    public Object getErrorData() {
+        return errData;
     }
+    //getter dei vari tipi di risultato e errData come per l'id
+
+    abstract JSONObject toErrJsonRpc() throws org.json.JSONException;
 }

@@ -1,14 +1,12 @@
 package zeromq;
 
 import org.zeromq.ZMQ;
-//import org.zeromq.ZMsg;
 
 public class ZmqClient implements IZmqClient {
     private ZMQ.Context ctx;
     private ZMQ.Socket socket;
 
     public ZmqClient() {
-
         ctx = ZMQ.context(1);
     }
 
