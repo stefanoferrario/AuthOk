@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/java/authorizer/authorizer.iml" filepath="$PROJECT_DIR$/java/authorizer/authorizer.iml" />
       <module fileurl="file://$PROJECT_DIR$/java/jsonrpc/jsonrpc.iml" filepath="$PROJECT_DIR$/java/jsonrpc/jsonrpc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/java/user/user.iml" filepath="$PROJECT_DIR$/java/user/user.iml" />
       <module fileurl="file://$PROJECT_DIR$/java/zeromq/zeromq.iml" filepath="$PROJECT_DIR$/java/zeromq/zeromq.iml" />
     </modules>
   </component>
