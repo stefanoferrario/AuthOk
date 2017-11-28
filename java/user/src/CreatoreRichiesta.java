@@ -1,17 +1,17 @@
-package client;
 import autorizzatore.Autorizzazione;
+
 import java.util.Date;
 
 public class CreatoreRichiesta implements IntUtente, IntAdmin {
 	 public int creaRisorsa() {
-		 System.out.println("la risorsa è stata creata");
+		 System.out.println("la risorsa ï¿½ stata creata");
 		 return 1;
 	 }
 	 public void modificaRisorsa() {
-		 System.out.println("la risorsa è stata modificata");
+		 System.out.println("la risorsa ï¿½ stata modificata");
 	 }
 	 public void cancellaRisorsa() {
-		 System.out.println("la risorsa è stata cancellata"); 
+		 System.out.println("la risorsa ï¿½ stata cancellata"); 
 	 }
 	 public Autorizzazione creaAutorizzazione(String _nomeUtente, int _livello, Date _scadenza) {
 		 return new Autorizzazione(_nomeUtente,_livello,_scadenza);

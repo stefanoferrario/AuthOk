@@ -1,6 +1,5 @@
-package client;
 import java.util.ArrayList;
-import autorizzatore.Token;
+import authorizer.Token;
 
 public class Utente {
 

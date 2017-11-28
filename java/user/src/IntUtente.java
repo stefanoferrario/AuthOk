@@ -1,5 +1,4 @@
-package client;
-import autorizzatore.Autorizzazione;
+import authorizer.Autorizzazione;
 import java.util.Date;
 
 public interface IntUtente {

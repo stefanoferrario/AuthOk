@@ -1,4 +1,4 @@
-package autorizzatore;
+package authorizer;
 
 public class  RisorsaFactory{
 	public static void serviceConsumer(FactoryRisorsa fact) {

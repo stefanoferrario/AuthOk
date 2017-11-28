@@ -1,4 +1,4 @@
-package autorizzatore;
+package authorizer;
 
 interface Risorsa {
 	int getLivello();

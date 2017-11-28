@@ -1,4 +1,4 @@
-package autorizzatore;
+package authorizer;
 import java.util.Date;
 
 public class Token {
