@@ -1,4 +1,6 @@
 import java.util.Date;
+
+import authorizer.Autorizzazione;
 import autorizzatore.Autorizzazione;
 
 public interface IntAdmin {
