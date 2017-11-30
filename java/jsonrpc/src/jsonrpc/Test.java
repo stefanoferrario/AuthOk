@@ -6,6 +6,37 @@ import java.util.ArrayList;
 
 public class Test {
     public static void main(String args[]) {
+        //testRequest();
+        testResponse();
+    }
+
+    private static void testResponse() {
+        ArrayList<String> testStrings = new ArrayList<>();
+        testStrings.add("{\"jsonrpc\": \"2.0\", \"result\": 19, \"id\": 1}");
+        testStrings.add("{\"jsonrpc\": \"2.0\", \"error\": {\"code\": -32601, \"message\": \"Method not found\"}, \"id\": \"1\"}");
+        testStrings.add("{\"jsonrpc\": \"2.0\", \"error\": {\"code\": -32700, \"message\": \"Parse error\"}, \"id\": null}");
+
+        for (String ts : testStrings) {
+            try {
+                AbstractResponse resp = new Response(ts);
+                System.out.println(resp.getJsonString());
+                System.out.println("ID: " + resp.getId());
+                if (resp.hasError()) {
+                    System.out.println("Error code: " + resp.getErrorCode());
+                    System.out.println("Error message: " + resp.getErrorMessage());
+                    System.out.println("Error data: ");
+                    readStructured(resp.getErrorData());
+                } else {
+                    System.out.println("Risultato: ");
+                    readStructured(resp.getResult());
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void testRequest() {
         ArrayList<String> testStrings = new ArrayList<>();
         testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": [42, 23], \"id\": 1}");
         testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"update\", \"params\": [1,2,3,4,5]}");
@@ -14,23 +45,22 @@ public class Test {
 
         for (String ts : testStrings) {
             try {
-                AbstractRequest req1 = new Request(ts);
-                System.out.println(req1.getJsonString());
-                System.out.println("Notifica: " + req1.isNotify());
-                if (!req1.isNotify()) {
-                    System.out.println("ID: " + req1.getIntId());
+                AbstractRequest req = new Request(ts);
+                System.out.println(req.getJsonString());
+                System.out.println("Notifica: " + req.isNotify());
+                if (!req.isNotify()) {
+                    System.out.println("ID: " + req.getIntId());
                 }
-                System.out.println("Method: " + req1.getMethod());
+                System.out.println("Method: " + req.getMethod());
                 System.out.println("Params: ");
-                readParams(req1.getParams());
+                readStructured(req.getParams());
                 System.out.println("--");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
     }
-
-    private static void readParams(Object tmpParams) throws org.json.JSONException {
+    private static void readStructured(Object tmpParams) throws org.json.JSONException {
         if (tmpParams instanceof JSONArray) {
             readArray((JSONArray) tmpParams);
         } else if (tmpParams instanceof  JSONObject) {
@@ -41,14 +71,14 @@ public class Test {
     }
     private static void readArray(JSONArray params) throws org.json.JSONException {
         for (int i = 0; i < params.length(); i++) {
-            readParams(params.get(i));
+            readStructured(params.get(i));
         }
     }
     private static void readObj(JSONObject params) throws org.json.JSONException {
         JSONArray names = params.names();
         for (int i = 0; i<names.length(); i++) {
             System.out.println(names.get(i)+ ": ");
-            readParams(params.get((String)names.get(i)));
+            readStructured(params.get((String)names.get(i)));
         }
     }
 }

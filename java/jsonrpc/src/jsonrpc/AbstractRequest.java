@@ -1,7 +1,5 @@
 package jsonrpc;
 
-import java.util.HashMap;
-
 //spostare tutte le implementazioni nella classe concreta?
 public abstract class AbstractRequest  extends JsonRpcMessage {
     public enum Members {

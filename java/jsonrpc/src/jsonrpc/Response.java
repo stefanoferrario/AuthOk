@@ -2,11 +2,7 @@ package jsonrpc;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 public class Response extends AbstractResponse {
     public Response(int id, String result) throws org.json.JSONException{
@@ -30,10 +26,14 @@ public class Response extends AbstractResponse {
 
         if (obj.has(Members.RESULT.toString())) {
             result = obj.get(Members.RESULT.toString());
+            errObj = null;
+            errCode = null;
+            errMessage = null;
+            errData = null;
         } else if (obj.has(Members.ERROR.toString())) {
             JSONObject error = (JSONObject) obj.get(Members.ERROR.toString());
             readErrObj(error);
-
+            result = null;
         } else {
             throw new Exception();
         }
@@ -51,12 +51,17 @@ public class Response extends AbstractResponse {
         }
 
         //verifica che non ci siano altri parametri
+        List<Members> members = Arrays.asList(Members.values());
+        ArrayList<String> memNames = new ArrayList<>();
+        for (Members mem : members) {
+            memNames.add(mem.toString());
+        }
         for (String m : JSONObject.getNames(obj)) {
-            if (!Arrays.asList(Members.values()).contains(m))
+            if (!memNames.contains(m))
                 throw new Exception();
         }
 
-        jsonRpcString = obj.toString();
+        this.jsonRpcString = obj.toString();
     }
 
     Response(int id, JSONObject error) throws Exception{
@@ -80,10 +85,15 @@ public class Response extends AbstractResponse {
         return object;
     }
 
-    private void readErrObj(JSONObject error) throws org.json.JSONException{
+    private void readErrObj(JSONObject error) throws Exception{
         this.errObj = error;
-        errCode = error.getInt(ErrMembers.CODE.toString());
-        errMessage = error.getString(ErrMembers.MESSAGE.toString());
+        if (error.has(ErrMembers.CODE.toString()) && error.has(ErrMembers.MESSAGE.toString())) {
+            errCode = error.getInt(ErrMembers.CODE.toString());
+            errMessage = error.getString(ErrMembers.MESSAGE.toString());
+        } else {
+            throw new Exception();
+        }
+
         if (error.has(ErrMembers.DATA.toString())) {
             Object tmpData = obj.get(ErrMembers.DATA.toString());
             if (tmpData instanceof JSONObject) {
@@ -95,6 +105,17 @@ public class Response extends AbstractResponse {
             }
         } else {
             errData = null;
+        }
+
+        //verifica che non ci siano altri parametri
+        List<ErrMembers> members = Arrays.asList(ErrMembers.values());
+        ArrayList<String> memNames = new ArrayList<>();
+        for (ErrMembers mem : members) {
+            memNames.add(mem.toString());
+        }
+        for (String m : JSONObject.getNames(errObj)) {
+            if (!memNames.contains(m))
+                throw new Exception();
         }
     }
 
@@ -119,11 +140,12 @@ public class Response extends AbstractResponse {
         if (value.getClass().isArray()) {
             obj.put(key, new JSONArray(value));
         } else if (value instanceof Collection) {
-            obj.put(key, new JSONArray((Collection)value)); //
+            obj.put(key, new JSONArray((Collection)value));
         } else if (value instanceof Map) {
             obj.put(key, new JSONObject((Map)value));
         } else {
             obj.put(key, value);
         }
     }
+
 }

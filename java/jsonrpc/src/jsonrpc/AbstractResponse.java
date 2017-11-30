@@ -2,8 +2,6 @@ package jsonrpc;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 public abstract class AbstractResponse extends JsonRpcMessage {
     public enum Members {
         JSONRPC("jsonrpc"), RESULT("result"), ERROR("error"), ID("id");
@@ -69,7 +67,7 @@ public abstract class AbstractResponse extends JsonRpcMessage {
     public Object getResult() {
         return result;
     }
-    public String getMessage() {
+    public String getErrorMessage() {
         return errMessage;
     }
     public int getErrorCode() {
@@ -81,4 +79,7 @@ public abstract class AbstractResponse extends JsonRpcMessage {
     //getter dei vari tipi di risultato e errData come per l'id
 
     abstract JSONObject toErrJsonRpc() throws org.json.JSONException;
+    public boolean hasError() {
+        return this.result == null;
+    }
 }
