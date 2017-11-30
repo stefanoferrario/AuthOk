@@ -1,3 +1,5 @@
+package user;
+
 import authorizer.Autorizzazione;
 import java.util.Date;
 
