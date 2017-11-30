@@ -53,17 +53,7 @@ public class Request extends AbstractRequest{
         }
 
         //verifica che non ci siano altri parametri
-        List<Members> members = Arrays.asList(Members.values());
-        ArrayList<String> memNames = new ArrayList<>();
-        for (Members mem : members) {
-            memNames.add(mem.toString());
-        }
-        for (String m : JSONObject.getNames(obj)) {
-
-            if (!memNames.contains(m)) {
-                throw new Exception();
-            }
-        }
+        if (!checkMembersSubset(Members.values(), obj)) {throw new Exception();}
 
         this.jsonRpcString = obj.toString();
     }

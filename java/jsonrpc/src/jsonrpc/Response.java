@@ -51,15 +51,7 @@ public class Response extends AbstractResponse {
         }
 
         //verifica che non ci siano altri parametri
-        List<Members> members = Arrays.asList(Members.values());
-        ArrayList<String> memNames = new ArrayList<>();
-        for (Members mem : members) {
-            memNames.add(mem.toString());
-        }
-        for (String m : JSONObject.getNames(obj)) {
-            if (!memNames.contains(m))
-                throw new Exception();
-        }
+        if (!checkMembersSubset(Members.values(), obj)) {throw new Exception();}
 
         this.jsonRpcString = obj.toString();
     }
@@ -108,15 +100,7 @@ public class Response extends AbstractResponse {
         }
 
         //verifica che non ci siano altri parametri
-        List<ErrMembers> members = Arrays.asList(ErrMembers.values());
-        ArrayList<String> memNames = new ArrayList<>();
-        for (ErrMembers mem : members) {
-            memNames.add(mem.toString());
-        }
-        for (String m : JSONObject.getNames(errObj)) {
-            if (!memNames.contains(m))
-                throw new Exception();
-        }
+        if (!checkMembersSubset(ErrMembers.values(), errObj)) {throw new Exception();}
     }
 
     @Override

@@ -4,9 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 abstract class JsonRpcMessage {
     JSONObject obj;
@@ -61,5 +59,19 @@ abstract class JsonRpcMessage {
             value = toMap((JSONObject) value);
         }
         return value;
+    }
+
+    static boolean checkMembersSubset(Enum<?> members[], JSONObject obj) {
+        //verifica che non ci siano altri parametri
+        List<String> memNames = new ArrayList<>();
+        for (Enum<?> mem : members) {
+            memNames.add(mem.toString());
+        }
+        for (String m : JSONObject.getNames(obj)) {
+            if (!memNames.contains(m)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
