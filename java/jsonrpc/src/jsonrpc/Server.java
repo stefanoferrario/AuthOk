@@ -21,13 +21,13 @@ public class Server implements IServer {
 
     @Override
     public void reply(Response response) throws Exception{
-        server.send(response.getJsonString());
+        server.reply(response.getJsonString());
     }
 
     @Override
     public void replyToInvalidRequest(Request invalidRequest) throws Exception{
         JSONObject error = invalidRequest.createErrorObj();
         Response resp = new Response(invalidRequest.getIntId(), error);
-        server.send(resp.getJsonString());
+        server.reply(resp.getJsonString());
     }
 }

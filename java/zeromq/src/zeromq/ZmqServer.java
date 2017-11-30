@@ -13,6 +13,8 @@ public class ZmqServer implements IZmqServer{
         ZMQ.Context ctx = ZMQ.context(1);
         socket = ctx.socket(ZMQ.ROUTER);
         socket.bind("tcp://*:" + String.valueOf(port));
+        identity = null;
+        empty = null;
     }
 
     @Override
@@ -24,13 +26,17 @@ public class ZmqServer implements IZmqServer{
     }
 
     @Override
-    public void send(String string) throws Exception{
+    public void reply(String string) throws Exception{
         if (identity == null) { throw new Exception(); /*NoIdentityException*/ }
         ZMsg msg = new ZMsg();
         msg.push(new ZFrame(string.getBytes()));
         if (empty!=null) {msg.push(empty);} //i messaggi da inviare al dealer non devono avere empty frame
         msg.push(identity);
         msg.send(socket);
+
+        //in teoria un router può rispondere tante volte a un solo messaggio, non sapendo di che tipo è il client (non è detto sia un req)
+        //nel caso si voglia rendere possibile non vanno settati a null identity ed empty, ma il server potrebbe rispondere più volte solo all'ultimo client
         identity = null;
+        empty = null;
     }
 }
