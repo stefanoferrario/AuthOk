@@ -11,7 +11,7 @@ import java.util.Iterator;
 abstract class JsonRpcMessage {
     JSONObject obj;
     Object id; //può essere String o Integer (o null in alcuni casi (non notifica))
-    private boolean valid;
+    //private boolean valid;
     String jsonRpcString;
 
     public String getJsonString() {
@@ -28,9 +28,9 @@ abstract class JsonRpcMessage {
         return (String)id;
     }
 
-    public boolean isValid() {
+    /*public boolean isValid() {
         return valid;
-    }
+    }*/
 
     abstract protected JSONObject toJsonRpc() throws org.json.JSONException; //crea oggetto json rpc utilizzando attributi. implementata in maniera differente in richiesta e risposta
 

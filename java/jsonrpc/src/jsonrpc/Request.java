@@ -2,8 +2,10 @@ package jsonrpc;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class Request extends AbstractRequest{
     public Request(String method, HashMap<String,Object> params)  throws org.json.JSONException {
@@ -30,9 +32,9 @@ public class Request extends AbstractRequest{
         if (obj.has(Members.PARAMS.toString())) {
             Object tmpParams = obj.get(Members.PARAMS.toString());
             if (tmpParams instanceof JSONObject) {
-                params = toMap((JSONObject)tmpParams);
+                params = new JSONObject(toMap((JSONObject)tmpParams));
             } else if (tmpParams instanceof JSONArray) {
-                params = toList((JSONArray) tmpParams);
+                params = new JSONArray(toList((JSONArray) tmpParams));
             } else {
                 throw  new Exception();
             }
@@ -40,7 +42,8 @@ public class Request extends AbstractRequest{
 
         //id = string o int o null
         //da specifica id può essere un numero, ma non dovrebbe contenere parti decimali. per questo si usa Integer e non Number
-        if (obj.has(Members.ID.toString())) {
+        notify = !obj.has(Members.ID.toString());
+        if (!notify) {
             if (obj.isNull(Members.ID.toString())) {
                 id = null;
             } else {
@@ -50,12 +53,19 @@ public class Request extends AbstractRequest{
         }
 
         //verifica che non ci siano altri parametri
+        List<Members> members = Arrays.asList(Members.values());
+        ArrayList<String> memNames = new ArrayList<>();
+        for (Members mem : members) {
+            memNames.add(mem.toString());
+        }
         for (String m : JSONObject.getNames(obj)) {
-            if (!Arrays.asList(Members.values()).contains(m))
+
+            if (!memNames.contains(m)) {
                 throw new Exception();
+            }
         }
 
-        jsonRpcString = obj.toString();
+        this.jsonRpcString = obj.toString();
     }
 
     @Override
