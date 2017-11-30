@@ -3,7 +3,6 @@ package jsonrpc;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.*;
 
 abstract class JsonRpcMessage {
@@ -16,15 +15,24 @@ abstract class JsonRpcMessage {
         return jsonRpcString;
     }
 
-    public Object getId() {
+    public Object getId() throws NullPointerException {
+        if (id==null) {throw new NullPointerException();}
         return id;
     }
-    public int getIntId() throws NullPointerException, ClassCastException {
+    public int getIdInt() throws NullPointerException, ClassCastException {
+        if (id == null) {throw new NullPointerException();}
+        if (!(id instanceof Integer)) {throw new ClassCastException();}
         return (int)id;
     }
-    public String getStringId() throws NullPointerException, ClassCastException {
+    public String getIdString() throws NullPointerException, ClassCastException {
+        if (id == null) {throw new NullPointerException();}
+        if (!(id instanceof String)) {throw new ClassCastException();}
         return (String)id;
     }
+    public boolean hasNullId() {
+        return id == null;
+    }
+
 
     /*public boolean isValid() {
         return valid;
@@ -62,7 +70,7 @@ abstract class JsonRpcMessage {
     }
 
     static boolean checkMembersSubset(Enum<?> members[], JSONObject obj) {
-        //verifica che non ci siano altri parametri
+        //verifica l'oggetto abbia solo i parametri contenuti nell'array dei membri
         List<String> memNames = new ArrayList<>();
         for (Enum<?> mem : members) {
             memNames.add(mem.toString());
@@ -73,5 +81,18 @@ abstract class JsonRpcMessage {
             }
         }
         return true;
+    }
+
+    static void putUndefinedValue(JSONObject obj, String key, Object value) throws org.json.JSONException{
+        //da specifica, possibili tipi
+        if (value.getClass().isArray()) {
+            obj.put(key, new JSONArray(value));
+        } else if (value instanceof Collection) {
+            obj.put(key, new JSONArray((Collection)value));
+        } else if (value instanceof Map) {
+            obj.put(key, new JSONObject((Map)value));
+        } else {
+            obj.put(key, value);
+        }
     }
 }

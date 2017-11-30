@@ -18,8 +18,8 @@ public class Test {
 
         for (String ts : testStrings) {
             try {
+                System.out.println(ts);
                 AbstractResponse resp = new Response(ts);
-                System.out.println(resp.getJsonString());
                 System.out.println("ID: " + resp.getId());
                 if (resp.hasError()) {
                     System.out.println("Error code: " + resp.getErrorCode());
@@ -31,32 +31,38 @@ public class Test {
                     readStructured(resp.getResult());
                 }
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println(e.getClass().toString() + " - " + e.getMessage());
             }
         }
     }
 
     private static void testRequest() {
         ArrayList<String> testStrings = new ArrayList<>();
-        testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": [42, 23], \"id\": 1}");
-        testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"update\", \"params\": [1,2,3,4,5]}");
-        testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": {\"subtrahend\": 23, \"minuend\": 42}, \"id\": 3}");
-        testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"test\", \"params\": {\"subtrahend\": 23, \"minuend\": 42, \"subobj\": {\"par1\": 34, \"par2\": \"value\", \"array\": [1,2,3]}}, \"id\": 3}");
+        //testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": [42, 23], \"id\": 1}");
+        //testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"update\", \"params\": [1,2,3,4,5]}");
+        //testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": {\"subtrahend\": 23, \"minuend\": 42}, \"id\": 3}");
+        //testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"test\", \"params\": {\"subtrahend\": 23, \"minuend\": 42, \"subobj\": {\"par1\": 34, \"par2\": \"value\", \"array\": [1,2,3]}}, \"id\": 3}");
+        testStrings.add("");
+        testStrings.add("test");
+        testStrings.add("{\"method\": \"subtract\", \"params\": [42, 23], \"id\": 1}"); //no jsonrpc 2.0
+        testStrings.add("{\"jsonrpc\": \"3.0\", \"method\": \"subtract\", \"params\": [42, 23], \"id\": 1}"); //jsonrpc <> 2.0
+        testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": 42, \"id\": 1}"); //parametri non structure
+        testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": [42, 23], \"id\": null}"); //id nullo
 
         for (String ts : testStrings) {
             try {
+                System.out.println(ts);
                 AbstractRequest req = new Request(ts);
-                System.out.println(req.getJsonString());
                 System.out.println("Notifica: " + req.isNotify());
                 if (!req.isNotify()) {
-                    System.out.println("ID: " + req.getIntId());
+                    System.out.println("ID: " + req.getIdInt());
                 }
                 System.out.println("Method: " + req.getMethod());
                 System.out.println("Params: ");
                 readStructured(req.getParams());
                 System.out.println("--");
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println(e.getClass().toString() + " - " + e.getMessage());
             }
         }
     }

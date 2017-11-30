@@ -27,7 +27,7 @@ public class Server implements IServer {
     @Override
     public void replyToInvalidRequest(Request invalidRequest) throws Exception{
         JSONObject error = invalidRequest.createErrorObj();
-        Response resp = new Response(invalidRequest.getIntId(), error);
+        Response resp = new Response(invalidRequest.getIdInt(), error);
         server.reply(resp.getJsonString());
     }
 }

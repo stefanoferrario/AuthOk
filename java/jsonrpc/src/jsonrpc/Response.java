@@ -2,19 +2,17 @@ package jsonrpc;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.util.*;
 
 public class Response extends AbstractResponse {
-    public Response(int id, String result) throws org.json.JSONException{
+    public Response(Object id, Object result) throws Exception{
         super(id, result);
     }
 
-    public Response(int id, String message, int errorCode) throws org.json.JSONException{
+    public Response(Object id, String message, int errorCode) throws Exception {
         super(id, message, errorCode);
     }
 
-
-    public Response(int id, String message, int errorCode, Object errorData) throws org.json.JSONException{
+    public Response(Object id, String message, int errorCode, Object errorData) throws Exception{
         super(id, message, errorCode, errorData);
     }
 
@@ -65,7 +63,9 @@ public class Response extends AbstractResponse {
     }
 
     @Override
-    JSONObject toErrJsonRpc() throws org.json.JSONException{
+    JSONObject toErrJsonRpc() throws Exception{
+        if (result!=null) {return null;} //o risultato o errore
+        if (errCode == null || errMessage == null) {throw new Exception();} //non possono essere null se c'è un errore
         JSONObject object = new JSONObject();
         object.put(ErrMembers.CODE.toString(), errCode);
         object.put(ErrMembers.MESSAGE.toString(), errMessage);
@@ -118,18 +118,4 @@ public class Response extends AbstractResponse {
 
         return object;
     }
-
-    private void putUndefinedValue(JSONObject obj, String key, Object value) throws org.json.JSONException{
-        //da specifica, possibili tipi
-        if (value.getClass().isArray()) {
-            obj.put(key, new JSONArray(value));
-        } else if (value instanceof Collection) {
-            obj.put(key, new JSONArray((Collection)value));
-        } else if (value instanceof Map) {
-            obj.put(key, new JSONObject((Map)value));
-        } else {
-            obj.put(key, value);
-        }
-    }
-
 }

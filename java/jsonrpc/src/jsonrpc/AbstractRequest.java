@@ -17,7 +17,15 @@ public abstract class AbstractRequest  extends JsonRpcMessage {
     String method;
     Object params; //è un oggetto strutturato che può essere array o mappa key-value
 
-    AbstractRequest(String method, Object params, Object id) throws org.json.JSONException{
+    AbstractRequest(String method, Object params, int id) throws org.json.JSONException{
+        this.notify = false;
+        this.id = id;
+        this.method = method;
+        this.params = params;
+        this.obj = toJsonRpc();
+        this.jsonRpcString = obj.toString();
+    }
+    AbstractRequest(String method, Object params, String id) throws org.json.JSONException{
         this.notify = false;
         this.id = id;
         this.method = method;
