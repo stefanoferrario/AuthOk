@@ -51,6 +51,12 @@ public abstract class AbstractResponse extends JsonRpcMessage {
     AbstractResponse(Object id, String errorMessage, int errorCode, Object errorData) throws Exception {
         setup(id, null, errorMessage, errorCode, errorData);
     }
+    AbstractResponse(Object id, Errors error) throws Exception {
+        setup(id, null, error.getMessage(), error.getCode(), null);
+    }
+    AbstractResponse(Object id, Errors error, Object errorData) throws Exception {
+        setup(id, null, error.getMessage(), error.getCode(), errorData);
+    }
     AbstractResponse() {
         super();
     }
@@ -96,4 +102,5 @@ public abstract class AbstractResponse extends JsonRpcMessage {
     public boolean hasError() {
         return this.result == null;
     }
+
 }

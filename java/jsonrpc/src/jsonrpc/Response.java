@@ -15,6 +15,12 @@ public class Response extends AbstractResponse {
     public Response(Object id, String message, int errorCode, Object errorData) throws Exception{
         super(id, message, errorCode, errorData);
     }
+    public Response(Object id, Errors error) throws Exception {
+        super(id, error);
+    }
+    public Response(Object id, Errors error, Object errorData) throws Exception{
+        super(id, error, errorData);
+    }
 
     Response(String jsonRpcString) throws Exception{
         obj = new JSONObject(jsonRpcString);
