@@ -4,14 +4,14 @@ import zeromq.ZmqClient;
 
 public class Client implements IClient {
     @Override
-    public Response sendRequest(Request request, int port) throws Exception {
+    public Response sendRequest(Request request) throws Exception {
         IZmqClient zmqClient = new ZmqClient();
-        return new Response(zmqClient.request(request.getJsonString(), port));
+        return new Response(zmqClient.request(request.getJsonString()));
     }
 
     @Override
-    public void sendNotify(Request notify, int port) {
+    public void sendNotify(Request notify) {
         IZmqClient zmqClient = new ZmqClient();
-        zmqClient.send(notify.getJsonString(), port);
+        zmqClient.send(notify.getJsonString());
     }
 }

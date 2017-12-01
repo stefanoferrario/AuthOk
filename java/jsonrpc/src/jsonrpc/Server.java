@@ -7,7 +7,7 @@ public class Server implements IServer {
     private IZmqServer server;
 
     Server(int port) {
-        this.server = new ZmqServer(port);
+        this.server = new ZmqServer();
     }
 
     @Override

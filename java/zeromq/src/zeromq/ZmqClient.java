@@ -11,9 +11,9 @@ public class ZmqClient implements IZmqClient {
     }
 
     @Override
-    public String request(String req, int port) {
+    public String request(String req) {
         socket = ctx.socket(ZMQ.REQ);
-        socket.connect("tcp://localhost:"+String.valueOf(port));
+        socket.connect("tcp://localhost:"+String.valueOf(ZmqServer.PORT));
         socket.send(req.getBytes());
         String s = socket.recvStr();
         socket.close();
@@ -21,9 +21,9 @@ public class ZmqClient implements IZmqClient {
     }
 
     @Override
-    public void send(String msg, int port) {
+    public void send(String msg) {
         socket = ctx.socket(ZMQ.DEALER);
-        socket.connect("tcp://localhost:"+String.valueOf(port));
+        socket.connect("tcp://localhost:"+String.valueOf(ZmqServer.PORT));
         socket.send(msg.getBytes());
         socket.close();
     }
