@@ -3,13 +3,17 @@ package authorizer.GestoreToken;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
+import authorizer.GestoreRisorse.GestoreRisorse;
 
 public class GestoreToken {
 
-    //Singleton design pattern
     private static GestoreToken instance = null;
+    private HashMap<String, Token> tokens = null;
+
+
+    //Singleton design pattern
     private GestoreToken() {
-        // Exists only to defeat instantiation.
+        tokens= new HashMap<String,Token>();
     }
     public static GestoreToken getInstance() {
         if(instance == null) {
@@ -18,18 +22,22 @@ public class GestoreToken {
         return instance;
     }
 
-    private HashMap<String, Token> tokens;
-
 
     public String creaToken (String chiave, int idRisorsa){
         String stringaToken=null;
         boolean chiaveValida=false;
-        boolean liveloSufficiente=false;
+        boolean livelloSufficiente=false;
+
         //verifica della Chiave
+        int livelloChiave=0;
 
         //verifica del livello della risorsa
+        int livelloRisorsa=GestoreRisorse.getIstance().getLivelloRisorsa(idRisorsa);
+        if (livelloRisorsa<=livelloChiave){
+            livelloSufficiente=true;
+        }
 
-        if (chiaveValida && liveloSufficiente){
+        if (chiaveValida && livelloSufficiente){
             stringaToken=instance.generaCodice(20,true);
             Token newToken= new Token(stringaToken,idRisorsa, (System.currentTimeMillis()));
             tokens.put(stringaToken,newToken);
