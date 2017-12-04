@@ -46,9 +46,19 @@ public class Error extends JsonRpcObj{
     public Error(String errorMessage, int errorCode) throws JSONException {
         this(errorMessage, errorCode, null);
     }
-    public Error(Errors error) throws JSONException {
-        this(error.getMessage(), error.getCode(), null);
+    public Error(Errors error) {
+        this.message = error.getMessage();
+        this.code = error.getCode();
+        this.data = null;
+        try {
+            this.obj = toJsonObj();
+            this.jsonRpcString = obj.toString();
+        } catch (JSONException e) {
+            //this.jsonRpcString = "{...}";
+            //va costruita manualmente la stringa?
+        }
     }
+
     public Error(Errors error, Member errorData) throws JSONException {
         this(error.getMessage(), error.getCode(), errorData);
     }

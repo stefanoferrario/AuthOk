@@ -76,7 +76,6 @@ public class StructuredMember {
             Object value = array.get(i);
             list.add(parse(value));
         }
-        //lanciare eccezione se vuoto
         return list;
     }
 
