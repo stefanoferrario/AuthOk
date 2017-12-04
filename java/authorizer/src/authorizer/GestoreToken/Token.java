@@ -8,10 +8,10 @@ public class Token {
 	private int idRisorsa;
 	private Date dataOraConcessione;
 	
-	Token(String _chiave, int _idRisorsa, long _dataOraConcessione){
+	Token(String _chiave, int _idRisorsa, long _millisecondiConcessione){
 		chiave = _chiave;
 		idRisorsa = _idRisorsa;
-		dataOraConcessione = new Date(_dataOraConcessione);
+		dataOraConcessione = new Date(_millisecondiConcessione);
 	}
 
 	String getChiave() {return chiave;}

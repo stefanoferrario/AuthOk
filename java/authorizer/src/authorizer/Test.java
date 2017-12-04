@@ -10,9 +10,9 @@ public class Test {
         System.out.println("Test moduli");
 
         HashMap<String, Object> params = new HashMap<String, Object>();
-        AbstractRequest r = new Request("method",params,3);
+        //AbstractRequest r = new Request("method",params,3);
 
-        System.out.println(String.valueOf(r.getId()));
+        //System.out.println(String.valueOf(r.getId()));
 
 
     }
