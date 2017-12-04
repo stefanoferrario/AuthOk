@@ -1,9 +1,7 @@
-package autorizzatore;
+package authorizer;
 
 class FactoryRisorsaPdf implements FactoryRisorsa{
-	public RisorsaPdf creaRisorsa() {
-		return new RisorsaPdf();
-	}
+	public RisorsaPdf creaRisorsa() { return new RisorsaPdf();}
 }
 
 class FactoryRisorsaExcel implements FactoryRisorsa{

@@ -1,11 +1,11 @@
-package autorizzatore;
+package authorizer;
 import java.util.*; //sistemare con il package specifico
 
 //IMPORTANTE: per adesso la factory permette solo la costruzione di risorse che non sono niente in pratica, bisogna capire come gestirle
 //1)aggiungere l' overload del metodo creaRisorsa nell' interfaccia (IFactoryMethodRisorse) e implementarlo (FactoryRisorse) 
 //2)apportare le conseguenti modifiche al metodo di creazione risorse :
-//	(notare il fatto che gestore risorse costruisce solo con la factory, ma potrebbe anche farlo direttamente, questo è un problema?)
-//		cosa è una risorsa?
+//	(notare il fatto che gestore risorse costruisce solo con la factory, ma potrebbe anche farlo direttamente, questo ï¿½ un problema?)
+//		cosa ï¿½ una risorsa?
 //		quali sono i parametri che devono essere passati per istanziare una risorsa complessa?
 //		cosa vuol dire modificare una risorsa?
 //		ma soprattutto...tutte queste cose devono essere fatte o devono solo essere presenti i metodi nell' interfaccia e poi non implementati?
@@ -34,14 +34,14 @@ public class GestoreRisorsa {
 	public void creaRisorsa(int idRisorsa, FactoryRisorsa fact) {
 		if(!dataBaseRisorse.containsKey(idRisorsa))
 			//con la factory generica viene istanziata un tipo di risorsa che viene decisa a run-time
-			dataBaseRisorse.put(idRisorsa, fact.creaRisorsa()); 
+			dataBaseRisorse.put(idRisorsa, (IRisorsa) fact.creaRisorsa());
 		else
-			System.out.println("Errore: idRisorsa già presente nel database");
+			System.out.println("Errore: idRisorsa giï¿½ presente nel database");
 	}
 	
 	public void modificaRisorsa(int idRisorsa, FactoryRisorsa fact) {
 		if(dataBaseRisorse.containsKey(idRisorsa))
-			dataBaseRisorse.put(idRisorsa, fact.creaRisorsa()); 
+			dataBaseRisorse.put(idRisorsa, (IRisorsa) fact.creaRisorsa());
 		else
 			System.out.println("Errore: idRisorsa non presente nel database");
 	}
@@ -57,5 +57,5 @@ public class GestoreRisorsa {
 	}
 }
 //fare interfaccia o metodo abstract?
-//perchè se si fa abstract il metodo verificaToken(), che è privato, non potrebbe essere ereditato.
-//soluzione: includere tutto ciò che è risorsa in un sotto_package e difinire il metodo come protected
+//perchï¿½ se si fa abstract il metodo verificaToken(), che ï¿½ privato, non potrebbe essere ereditato.
+//soluzione: includere tutto ciï¿½ che ï¿½ risorsa in un sotto_package e difinire il metodo come protected
