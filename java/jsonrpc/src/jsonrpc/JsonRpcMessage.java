@@ -1,98 +1,26 @@
 package jsonrpc;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.*;
 
-abstract class JsonRpcMessage {
-    JSONObject obj;
-    Object id; //può essere String o Integer (o null in alcuni casi (non notifica))
-    //private boolean valid;
-    String jsonRpcString;
+abstract class JsonRpcMessage extends JsonRpcObj {
+    Id id; //può essere String o Integer (o null in alcuni casi (non notifica))
+    static final String VER = "2.0";
 
-    public String getJsonString() {
-        return jsonRpcString;
-    }
-
-    public Object getId() throws NullPointerException {
-        if (id==null) {throw new NullPointerException();}
+    public Id getId() throws NullPointerException {
+        //id nullo è diverso da notifica
+        if (id == null) {
+            throw new NullPointerException("Notify: id undefined"); //è notifica
+        }
         return id;
     }
-    public int getIdInt() throws NullPointerException, ClassCastException {
-        if (id == null) {throw new NullPointerException();}
-        if (!(id instanceof Integer)) {throw new ClassCastException();}
-        return (int)id;
-    }
-    public String getIdString() throws NullPointerException, ClassCastException {
-        if (id == null) {throw new NullPointerException();}
-        if (!(id instanceof String)) {throw new ClassCastException();}
-        return (String)id;
-    }
-    public boolean hasNullId() {
-        return id == null;
-    }
 
-
-    /*public boolean isValid() {
-        return valid;
-    }*/
-
-    abstract protected JSONObject toJsonRpc() throws org.json.JSONException; //crea oggetto json rpc utilizzando attributi. implementata in maniera differente in richiesta e risposta
-
-    static HashMap<String, Object> toMap(JSONObject object) throws JSONException {
-        HashMap<String, Object> map = new HashMap<>();
-        Iterator<String> keysItr = object.keys();
-        while(keysItr.hasNext()) {
-            String key = keysItr.next();
-            Object value = object.get(key);
-            map.put(key, parse(value));
+    static JSONObject putId(JSONObject obj, String key, Id id) throws JSONException {
+        switch (id.getType()) {
+            case INT: obj.put(key, id.getInt()); break;
+            case STRING: obj.put(key, id.getString()); break;
+            case NULL: obj.put(key, JSONObject.NULL); break;
         }
-        return map;
-    }
-
-    static ArrayList<Object> toList(JSONArray array) throws JSONException {
-        ArrayList<Object> list = new ArrayList<>();
-        for(int i = 0; i < array.length(); i++) {
-            Object value = array.get(i);
-            list.add(parse(value));
-        }
-        return list;
-    }
-
-    private static Object parse(Object value) throws JSONException {
-        if(value instanceof JSONArray) {
-            value = toList((JSONArray) value);
-        } else if(value instanceof JSONObject) {
-            value = toMap((JSONObject) value);
-        }
-        return value;
-    }
-
-    static boolean checkMembersSubset(Enum<?> members[], JSONObject obj) {
-        //verifica l'oggetto abbia solo i parametri contenuti nell'array dei membri
-        List<String> memNames = new ArrayList<>();
-        for (Enum<?> mem : members) {
-            memNames.add(mem.toString());
-        }
-        for (String m : JSONObject.getNames(obj)) {
-            if (!memNames.contains(m)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static void putUndefinedValue(JSONObject obj, String key, Object value) throws org.json.JSONException{
-        //da specifica, possibili tipi
-        if (value.getClass().isArray()) {
-            obj.put(key, new JSONArray(value));
-        } else if (value instanceof Collection) {
-            obj.put(key, new JSONArray((Collection)value));
-        } else if (value instanceof Map) {
-            obj.put(key, new JSONObject((Map)value));
-        } else {
-            obj.put(key, value);
-        }
+        return obj;
     }
 }
