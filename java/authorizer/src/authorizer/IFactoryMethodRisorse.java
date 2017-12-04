@@ -1,14 +1,10 @@
-package autorizzatore;
+package authorizer;
 
 interface IRisorsa {
 	int getLivello();
 	String getId();
 	void setLivello(int _livello);
-	//private Date verificaToken(); non fa parte dell' interfaccia in quanto privato, ma è presente nella classe RisorseConcrete
-}
-
-interface FactoryRisorsa {
-	IRisorsa creaRisorsa();
+	//private Date verificaToken(); non fa parte dell' interfaccia in quanto privato, ma ï¿½ presente nella classe RisorseConcrete
 }
 
 public class IFactoryMethodRisorse {
