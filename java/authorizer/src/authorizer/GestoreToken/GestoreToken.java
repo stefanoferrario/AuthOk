@@ -25,7 +25,8 @@ public class GestoreToken {
         String stringaToken=null;
         boolean chiaveValida=false;
         boolean liveloSufficiente=false;
-        /// /verifica della Chiave
+        //verifica della Chiave
+
         //verifica del livello della risorsa
 
         if (chiaveValida && liveloSufficiente){
@@ -46,11 +47,12 @@ public class GestoreToken {
     }
 
     public void cancellaTokenscaduti(){
-
+        for (int i=0; i==tokens.size();i++){
+            if((System.currentTimeMillis()-tokens.get(i).getData().getTime())>86400000){
+                tokens.remove(i);
+            }
+        }
     }
-
-
-
 
 
 
@@ -124,6 +126,7 @@ public class GestoreToken {
 
         GestoreToken gestoreToken=instance.getInstance();
         System.out.println(instance.creaToken("apple.StefanoTestClea",23492));
+
 
     }
 
