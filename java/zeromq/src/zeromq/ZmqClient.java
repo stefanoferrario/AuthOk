@@ -13,7 +13,7 @@ public class ZmqClient implements IZmqClient {
     @Override
     public String request(String req) {
         socket = ctx.socket(ZMQ.REQ);
-        socket.connect("tcp://localhost:"+String.valueOf(ZmqServer.PORT));
+        socket.connect("tcp://localhost:" + String.valueOf(ZmqServer.PORT));
         socket.send(req.getBytes());
         String s = socket.recvStr();
         socket.close();

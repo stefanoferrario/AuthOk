@@ -2,5 +2,5 @@ package zeromq;
 
 public interface IZmqServer {
     String receive();
-    void reply(String string) throws Exception;
+    void reply(String string) throws UnsupportedOperationException;
 }

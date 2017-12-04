@@ -29,8 +29,8 @@ public class ZmqServer implements IZmqServer{
     }
 
     @Override
-    public void reply(String string) throws Exception{
-        if (identity == null) { throw new Exception(); /*NoIdentityException*/ }
+    public void reply(String string) throws UnsupportedOperationException{
+        if (identity == null) { throw new UnsupportedOperationException("Receiver undefined"); } //cambiare tipo eccezione
         ZMsg msg = new ZMsg();
         msg.push(new ZFrame(string.getBytes()));
         if (empty!=null) {msg.push(empty);} //i messaggi da inviare al dealer non devono avere empty frame
