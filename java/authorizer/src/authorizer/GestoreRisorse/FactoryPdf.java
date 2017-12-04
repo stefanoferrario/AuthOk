@@ -1,4 +1,4 @@
-package gestorerisorse;
+package authorizer.GestoreRisorse;
 
 class FactoryPdf implements FactoryRisorsa {
 	@Override

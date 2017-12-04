@@ -1,4 +1,4 @@
-package gestorerisorse;
+package authorizer.GestoreRisorse;
 
 public interface IRisorsa {
 	int getLivello();	

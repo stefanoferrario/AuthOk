@@ -1,4 +1,4 @@
-package gestorerisorse;
+package authorizer.GestoreRisorse;
 import java.util.Date;
 
 class RisorsaPdf implements IRisorsa {
