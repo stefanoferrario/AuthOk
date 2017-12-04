@@ -8,17 +8,35 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class StructuredMember {
-    private Object value;
+    private HashMap<String, Member> map;
+    private ArrayList<Member> list;
     private boolean isArray;
 
-    public StructuredMember(JSONObject obj) {
-        value = obj;
+    public StructuredMember(JSONObject obj) throws JSONException{
+        map = toMap(obj);
+        list = null;
         isArray = false;
     }
-    public StructuredMember(JSONArray array) {
-        value = array;
+    public StructuredMember(JSONArray array) throws JSONException{
+        list = toList(array);
+        map = null;
         isArray = true;
     }
+
+    public StructuredMember(HashMap<String, Member> members) throws JSONException {
+        if (members.size() == 0) {throw new JSONException("Members map is empty");}
+        map = members;
+        list = null;
+        isArray = false;
+    }
+
+    public StructuredMember(ArrayList<Member> members) throws JSONException{
+        if (members.size() == 0) {throw new JSONException("Members list is empty");}
+        list = members;
+        map = null;
+        isArray = true;
+    }
+
 
     public boolean isArray() {
         return isArray;
@@ -27,17 +45,19 @@ public class StructuredMember {
         return !isArray;
     }
 
-    public HashMap<String,Member> toMap() throws ClassCastException, JSONException {
+    public HashMap<String,Member> getMap() throws ClassCastException {
         if (isArray) {throw new ClassCastException("Not a json object");}
-        return toMap((JSONObject)value);
+        return map;
     }
 
-    public ArrayList<Member> toList() throws ClassCastException, JSONException {
+    public ArrayList<Member> getList() throws ClassCastException {
         if (!isArray) {throw new ClassCastException("Not a json array");}
-        return toList((JSONArray)value);
+        return list;
     }
 
     private static HashMap<String, Member> toMap(JSONObject object) throws JSONException{
+        if (object == null) {throw new JSONException("Json object is null");}
+        if (object.length()==0) {throw new JSONException("Json object is empty");}
         HashMap<String, Member> map = new HashMap<>();
         Iterator<?> keysItr = object.keys();
         while(keysItr.hasNext()) {
@@ -49,11 +69,14 @@ public class StructuredMember {
     }
 
     private static ArrayList<Member> toList(JSONArray array) throws JSONException {
-        ArrayList<Member> list = new ArrayList<>();
+        if (array == null) {throw new JSONException("Json array is null");}
+        if (array.length()==0) {throw new JSONException("Json array is empty");}
+        ArrayList<Member > list = new ArrayList<>();
         for(int i = 0; i < array.length(); i++) {
             Object value = array.get(i);
             list.add(parse(value));
         }
+        //lanciare eccezione se vuoto
         return list;
     }
 
@@ -75,7 +98,9 @@ public class StructuredMember {
         }
     }
 
-    public static StructuredMember toStructureMember(Object obj) throws JSONException{
+    public static StructuredMember toStructuredMember(Object obj) throws JSONException{
+        if (obj == null) {throw new NullPointerException("Null structured member");}
+
         if (obj instanceof JSONArray) {
             return new StructuredMember((JSONArray)obj);
         } else if (obj instanceof  JSONObject) {

@@ -15,12 +15,18 @@ public class Id {
         type = Types.INT;
     }
     public Id(String id) {
-        value = id;
-        type = Types.STRING;
+        if (id == null || id.isEmpty()) {
+            value = null;
+            type = Types.NULL;
+        }
+        else {
+            value = id;
+            type = Types.STRING;
+        }
     }
     public Id() {
         value = null;//JSONObject.NULL;
-        type = Types.STRING;
+        type = Types.NULL;
     }
 
     public int getInt() throws ClassCastException {
@@ -41,6 +47,8 @@ public class Id {
     }
 
     public static Id toId(Object id) throws JSONException{
+        if (id == null) {throw new NullPointerException("Null id");}
+
         if (id.equals(JSONObject.NULL)) {
             return new Id();
         } else if (id instanceof Integer) {

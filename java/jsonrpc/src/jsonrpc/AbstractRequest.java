@@ -3,7 +3,7 @@ package jsonrpc;
 import org.json.JSONException;
 
 public abstract class AbstractRequest  extends JsonRpcMessage {
-    public enum Members {
+    enum Members {
         JSONRPC("jsonrpc"), METHOD("method"), ID("id"), PARAMS("params");
 
         private final String text;
@@ -27,18 +27,18 @@ public abstract class AbstractRequest  extends JsonRpcMessage {
         this.jsonRpcString = obj.toString();
     }
 
-    AbstractRequest(String method, StructuredMember params)  throws JSONException{
+    /*AbstractRequest(String method, StructuredMember params)  throws JSONException{
         this(method, params, null);
-        /*
+
         this.notify = true;
         this.id = null;
         this.method = method;
         this.params = params;
         this.obj = toJsonObj();
         this.jsonRpcString = obj.toString();
-        */
+
         //chiamare this(method, params, null) per non ripetere il codice non funzionerebbe perché il toJsonRpc leggere il parametro notify false
-    }
+    }*/
     AbstractRequest() {
         super();
     }

@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class Request extends AbstractRequest{
     public Request(String method, StructuredMember params)  throws JSONException {
-        super(method, params);
+        super(method, params, null);
     }
     public Request(String method, StructuredMember params, Id id) throws JSONException {
         super(method, params, id);
@@ -23,7 +23,7 @@ public class Request extends AbstractRequest{
 
         //i parametri possono essere omessi, ma se presenti devono essere o un json array o un json object (non può essere una primitiva (es. "params" : "foo"))
         if (obj.has(Members.PARAMS.toString())) {
-            params = StructuredMember.toStructureMember(obj.get(Members.PARAMS.toString()));
+            params = StructuredMember.toStructuredMember(obj.get(Members.PARAMS.toString()));
         } else {
             params = null;
         }
@@ -41,7 +41,7 @@ public class Request extends AbstractRequest{
     protected JSONObject toJsonObj() throws JSONException {
         JSONObject object = new JSONObject();
         object.put(Members.JSONRPC.toString(), VER);
-        if (method == null) {throw new JSONException("Method member not defined");}
+        if (method == null || method.isEmpty()) {throw new JSONException("Method member not defined");}
         object.put(Members.METHOD.toString(), method);
         if (params != null) { putStructuredMember(object, Members.PARAMS.toString(), params);} //opzionale
         if (!notify) {

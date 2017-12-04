@@ -19,11 +19,15 @@ public class Member {
         value = JSONObject.NULL;
         type = Types.NULL;
     }
-    public Member(String string) {
+    public Member(String string) throws JSONException {
+        if (string == null) {throw new JSONException("Member value is null");}
+        if (string.isEmpty()) {throw new JSONException("Member value is empty");}
         value = string;
         type = Types.STRING;
+
     }
-    public Member(Number num) {
+    public Member(Number num) throws JSONException {
+        if (num == null) {throw new JSONException("Member value is null");}
         value = num;
         type = Types.NUMBER;
     }
@@ -31,47 +35,60 @@ public class Member {
         value = bool;
         type = Types.BOOL;
     }
-    public Member(JSONObject obj) {
-        value = obj;
+    public Member(JSONObject obj) throws JSONException {
+        if (obj == null) {throw new JSONException("Member value is null");}
+        value = toMap(obj);
         type = Types.OBJ;
     }
-    public Member(JSONArray array) {
-        value = array;
+    public Member(JSONArray array) throws JSONException {
+        if (array == null) {throw new JSONException("Member value is null");}
+        value = toList(array);
         type = Types.ARRAY;
+    }
+    public Member(StructuredMember m) throws JSONException {
+        if (m == null) {throw new JSONException("Member value is null");}
+        if (m.isArray()) {
+            value = m.getList();
+            type = Types.ARRAY;
+        }
+        else {
+            value = m.getMap();
+            type = Types.OBJ;
+        }
     }
 
     public Types getType() {
         return type;
     }
-    public boolean isStructured() {
+    /*public boolean isStructured() {
         return (type == Types.OBJ || type == Types.ARRAY);
-    }
-    public boolean isNull() {
-        return value.equals(JSONObject.NULL);
-    }
-    public boolean toBool() throws ClassCastException{
+    }*/
+    /*public boolean isNull() {
+        return type == Types.NULL;
+    }*/
+    public boolean getBool() throws ClassCastException{
         if (type != Types.BOOL) {throw new ClassCastException("Not a boolean");}
         return (boolean)value;
     }
-    public Number toNumber() throws ClassCastException {
+    public Number getNumber() throws ClassCastException {
         if (type != Types.NUMBER) {throw new ClassCastException("Not a number");}
         return (Number)value;
     }
-    public int toInt() throws ClassCastException {
+    public int getInt() throws ClassCastException {
         if (!(value instanceof Integer)) {throw new ClassCastException("Not an integer");}
         return (int)value;
     }
-    public String toString() throws ClassCastException {
+    public String getString() throws ClassCastException {
         if (type != Types.STRING) {throw new ClassCastException("Not a string");}
         return (String)value;
     }
-    public HashMap<String,Member> toMap() throws ClassCastException, JSONException {
+    public HashMap<String,Member> getMap() throws ClassCastException, JSONException {
         if (type != Types.OBJ) {throw new ClassCastException("Not a json object");}
-        return toMap((JSONObject)value);
+        return (HashMap<String, Member>)value;
     }
-    public ArrayList<Member> toList() throws ClassCastException, JSONException {
+    public ArrayList<Member> getList() throws ClassCastException, JSONException {
         if (type != Types.ARRAY) {throw new ClassCastException("Not a json array");}
-        return toList((JSONArray)value);
+        return (ArrayList<Member>)value;
     }
 
     private static HashMap<String, Member> toMap(JSONObject object) throws JSONException{

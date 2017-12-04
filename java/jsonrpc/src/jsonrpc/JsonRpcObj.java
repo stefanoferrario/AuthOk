@@ -36,15 +36,15 @@ public abstract class JsonRpcObj {
     static JSONObject putMember(JSONObject obj, String key, Member value) throws JSONException {
         switch (value.getType()) {
             case ARRAY:
-                return obj.put(key, value.toList());
+                return obj.put(key, value.getList());
             case OBJ:
-                return obj.put(key, value.toMap());
+                return obj.put(key, value.getMap());
             case BOOL:
-                return obj.put(key, value.toBool());
+                return obj.put(key, value.getBool());
             case NUMBER:
-                return obj.put(key, value.toNumber());
+                return obj.put(key, value.getNumber());
             case STRING:
-                return obj.put(key, value.toString());
+                return obj.put(key, value.getString());
             case NULL:
                 return obj.put(key, JSONObject.NULL);
             default: throw new JSONException("Invalid member type");
@@ -53,9 +53,9 @@ public abstract class JsonRpcObj {
 
     static JSONObject putStructuredMember(JSONObject obj, String key, StructuredMember member) throws JSONException {
         if (member.isArray()) {
-            return obj.put(key, member.toList());
+            return obj.put(key, member.getList());
         } else {
-            return obj.put(key, member.toMap());
+            return obj.put(key, member.getMap());
         }
     }
 }

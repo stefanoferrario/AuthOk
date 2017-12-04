@@ -3,7 +3,7 @@ package jsonrpc;
 import org.json.JSONException;
 
 abstract class AbstractResponse extends JsonRpcMessage {
-    public enum Members {
+    enum Members {
         JSONRPC("jsonrpc"), RESULT("result"), ERROR("error"), ID("id");
 
         private final String text;

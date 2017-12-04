@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Error extends JsonRpcObj{
-    public enum ErrMembers {
+    enum ErrMembers {
         CODE("code"), MESSAGE("message"), DATA("data");
 
         private final String text;
@@ -36,6 +36,7 @@ public class Error extends JsonRpcObj{
     private Member data;//primitive o structure
 
     public Error(String errorMessage, int errorCode, Member errorData) throws JSONException {
+        if (errorMessage == null || errorMessage.isEmpty()) {throw new JSONException("Error message not defined");}
         this.message = errorMessage;
         this.code = errorCode;
         this.data = errorData;
@@ -45,7 +46,7 @@ public class Error extends JsonRpcObj{
     public Error(String errorMessage, int errorCode) throws JSONException {
         this(errorMessage, errorCode, null);
     }
-    public Error(Errors error) throws Exception {
+    public Error(Errors error) throws JSONException {
         this(error.getMessage(), error.getCode(), null);
     }
     public Error(Errors error, Member errorData) throws JSONException {
