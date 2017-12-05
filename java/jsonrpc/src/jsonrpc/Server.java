@@ -49,12 +49,12 @@ public class Server implements IServer {
         return new ArrayList<>(); //se ci sono errori la lista di richieste da eseguire è vuota
     }
 
-    @Override
     public void reply(Response response) throws JSONRPCException {
         if (currBatch != null) { throw new JSONRPCException("Batch responses needed");}
         server.reply(response.getJsonString());
     }
 
+    @Override
     public void reply(ArrayList<Response> responses) throws JSONRPCException {
         if (currBatch == null && responses.size() > 1) {
             throw new JSONRPCException("Single response needed");
@@ -62,8 +62,9 @@ public class Server implements IServer {
         if (responses.size() == 0) {
             //nessuna risposta a batch di sole notifiche
             currBatch = null;
-        } else if (responses.size() == 1) {
+        } else if (responses.size() == 1 && currBatch == null) {
             //risposta singola a richiesta singola
+            //currBatch == null evita di rispondere con una risposta singola a un batch di richieste di dimensione 1. in questo caso si risponde con un batch di risposte di dimensione 1
             this.reply(responses.get(0));
         } else {
             currBatch.put(responses);

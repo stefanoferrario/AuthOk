@@ -2,6 +2,8 @@ package jsonrpc;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -24,30 +26,25 @@ class Batch {
         batch.put(keyReq,valueResp);
     }
     void put(ArrayList<Response> responses) {
+        //gestire eccezioni
         ArrayList<Request> requests = new ArrayList<>(batch.keySet());
         int notifyCount = 0;
         for (int i = 0; i < requests.size(); i++) {
             Request req = requests.get(i);
             if (!req.isNotify()) {
-                this.put(req, responses.get(i-notifyCount));
+                this.put(req, responses.get(i - notifyCount));
                 //la risposta ad una richiesta non notifica deve esserci, altrimenti indexoutofbounds
             } else {
                 notifyCount++;
             }
         }
     }
-    void put(JSONArray responses) {
-        ArrayList<Request> requests = new ArrayList<>(batch.keySet());
-        for (int i = 0; i < responses.length(); i++) {
-            Request req = requests.get(i);
-            if (!req.isNotify()) {
-                try {
-                    this.put(req, new Response(responses.getString(i)));
-                } catch (JSONRPCException | JSONException e) {
-
-                }
-            }
+    void put(JSONArray responses) throws JSONException, JSONRPCException{
+        ArrayList<Response> reqs = new ArrayList<>();
+        for (int i = 0; i<responses.length(); i++) {
+            reqs.add(new Response(((JSONObject)responses.get(i)).toString()));
         }
+        this.put(reqs);
     }
 
     ArrayList<Request> getRequests() {

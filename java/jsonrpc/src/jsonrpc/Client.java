@@ -39,7 +39,7 @@ public class Client implements IClient {
             JSONArray arr = new JSONArray(returnedString);
             batch.put(arr);
             return batch.getResponses();
-        } catch (JSONException e) {
+        } catch (JSONException | JSONRPCException e) {
             Id id = new Id(); //da un batch di richieste non è possibile recuperare UN id
             HashMap<String, Member> errorData = new HashMap<>();
             try {
