@@ -39,7 +39,7 @@ public class GestoreToken {
 
         if (chiaveValida && livelloSufficiente){
             stringaToken=instance.generaCodice(20,true);
-            Token newToken= new Token(stringaToken,idRisorsa, (System.currentTimeMillis()));
+            Token newToken= new Token(chiave,idRisorsa, (System.currentTimeMillis()));
             tokens.put(stringaToken,newToken);
         }
 
@@ -48,9 +48,16 @@ public class GestoreToken {
 
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
 
-    public Date verificaToken(String aString, int idRisorsa){
-        Date tempoRestante=null;
-
+    public Long verificaToken(String aString, int idRisorsa){
+        long tempoRestante=0;
+        for (int i=0; i<tokens.size(); i++){
+            if (tokens.containsKey(aString)) {
+                tempoRestante = System.currentTimeMillis() - tokens.get(i).getData().getTime();
+                if ((tempoRestante) > 86400000) { //token non scaduto
+                    return tempoRestante;
+                }
+            }
+        }
         return tempoRestante;
     }
 
@@ -61,8 +68,6 @@ public class GestoreToken {
             }
         }
     }
-
-
 
 
     //Generazione codice del token

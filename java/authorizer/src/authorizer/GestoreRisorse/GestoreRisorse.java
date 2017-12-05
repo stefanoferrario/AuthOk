@@ -8,8 +8,7 @@ public class GestoreRisorse {
 	private HashMap<Integer, IRisorsa> dataBaseRisorse = null; 
 	
 	//singleton:
-	private GestoreRisorse() {	
-		gestoreRisorse = new GestoreRisorse();
+	private GestoreRisorse() {
 		dataBaseRisorse = new HashMap<>();
 	}
 	
