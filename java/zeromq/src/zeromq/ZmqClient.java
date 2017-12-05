@@ -5,15 +5,17 @@ import org.zeromq.ZMQ;
 public class ZmqClient implements IZmqClient {
     private ZMQ.Context ctx;
     private ZMQ.Socket socket;
+    private int port;
 
-    public ZmqClient() {
+    public ZmqClient(int port) {
         ctx = ZMQ.context(1);
+        this.port = port;
     }
 
     @Override
     public String request(String req) {
         socket = ctx.socket(ZMQ.REQ);
-        socket.connect("tcp://localhost:" + String.valueOf(ZmqServer.PORT));
+        socket.connect("tcp://localhost:" + String.valueOf(port));
         socket.send(req.getBytes());
         String s = socket.recvStr();
         socket.close();
@@ -23,7 +25,7 @@ public class ZmqClient implements IZmqClient {
     @Override
     public void send(String msg) {
         socket = ctx.socket(ZMQ.DEALER);
-        socket.connect("tcp://localhost:"+String.valueOf(ZmqServer.PORT));
+        socket.connect("tcp://localhost:"+String.valueOf(port));
         socket.send(msg.getBytes());
         socket.close();
     }

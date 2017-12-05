@@ -1,7 +1,5 @@
 package jsonrpc;
 
-import org.json.JSONException;
-
 public abstract class AbstractRequest  extends JsonRpcMessage {
     enum Members {
         JSONRPC("jsonrpc"), METHOD("method"), ID("id"), PARAMS("params");
@@ -18,7 +16,7 @@ public abstract class AbstractRequest  extends JsonRpcMessage {
     String method;
     StructuredMember params; //è un oggetto strutturato che può essere array o mappa key-value
 
-    AbstractRequest(String method, StructuredMember params, Id id) throws JSONException {
+    AbstractRequest(String method, StructuredMember params, Id id) throws JSONRPCException {
         this.notify = id == null;
         this.id = id;
         this.method = method;
@@ -27,7 +25,7 @@ public abstract class AbstractRequest  extends JsonRpcMessage {
         this.jsonRpcString = obj.toString();
     }
 
-    /*AbstractRequest(String method, StructuredMember params)  throws JSONException{
+    /*AbstractRequest(String method, StructuredMember params)  throws JSONRPCException{
         this(method, params, null);
 
         this.notify = true;

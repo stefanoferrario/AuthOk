@@ -1,6 +1,7 @@
 package jsonrpc;
 
 import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -64,7 +65,7 @@ public class Test {
 
 
 
-        } catch (JSONException e) {
+        } catch (JSONRPCException e) {
             System.out.println(e.getClass().toString() + " - " + e.getMessage());
         }
 
@@ -82,7 +83,7 @@ public class Test {
                     readReq(req);
                     System.out.println(System.lineSeparator());
                     readReq(notify);
-                } catch (JSONException e) {
+                } catch (JSONRPCException e) {
                     System.out.println(e.getClass().toString() + " - " + e.getMessage());
                 } finally {
                     System.out.println(System.lineSeparator());
@@ -109,7 +110,7 @@ public class Test {
                 try {
                     AbstractResponse resp = new Response(i, res);
                     readResp(resp);
-                } catch (JSONException e) {
+                } catch (JSONRPCException e) {
                     System.out.println(e.getClass().toString() + " - " + e.getMessage());
                 }
             }
@@ -130,7 +131,7 @@ public class Test {
                 readResp(resp);
             }
 
-        } catch (JSONException e) {
+        } catch (JSONRPCException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -150,7 +151,7 @@ public class Test {
             try {
                 System.out.println(ts);
                 readResp(new Response(ts));
-            } catch (JSONException e) {
+            } catch (JSONException | JSONRPCException e) {
                 System.out.println("COSTRUTTORE: " + e.getClass().toString() + " - " + e.getMessage());
             } finally {
                 System.out.println(System.lineSeparator());
@@ -226,7 +227,7 @@ public class Test {
             try {
                 System.out.println(ts);
                 readReq(new Request(ts));
-            } catch (JSONException e) {
+            } catch (JSONException | JSONRPCException e) {
                 System.out.println("COSTRUTTORE: " + e.getClass().toString() + " - " + e.getMessage());
             } finally {
                 System.out.println(System.lineSeparator());
@@ -238,7 +239,7 @@ public class Test {
     }
 
 
-    private static String readStructured(StructuredMember params) throws JSONException {
+    private static String readStructured(StructuredMember params) throws JSONRPCException {
         if (params == null) {return "";}
         if (params.isArray()) {
             return readArray(params.getList());
@@ -247,7 +248,7 @@ public class Test {
         }
 
     }
-    private static String readArray(ArrayList<Member> params) throws JSONException {
+    private static String readArray(ArrayList<Member> params) throws JSONRPCException {
         StringBuilder val= new StringBuilder();
         for (Member m : params) {
             val.append(readMember(m));
@@ -255,7 +256,7 @@ public class Test {
         }
         return val.toString();
     }
-    private static String readObj(HashMap<String, Member> params) throws JSONException {
+    private static String readObj(HashMap<String, Member> params) throws JSONRPCException {
         StringBuilder val= new StringBuilder();
         for (HashMap.Entry<String, Member> par : params.entrySet()) {
             val.append(par.getKey());
@@ -266,7 +267,7 @@ public class Test {
         return val.toString();
     }
 
-    private static String readMember(Member m) throws JSONException{
+    private static String readMember(Member m) throws JSONRPCException{
         switch (m.getType()) {
             case NULL: return "NULL";
             case STRING: return m.getString();
@@ -274,7 +275,7 @@ public class Test {
             case BOOL: return String.valueOf(m.getBool());
             case OBJ: return readObj(m.getMap());
             case ARRAY: return readArray(m.getList());
-            default: throw new JSONException("Unexpected member type");
+            default: throw new JSONRPCException("Unexpected member type");
         }
     }
 

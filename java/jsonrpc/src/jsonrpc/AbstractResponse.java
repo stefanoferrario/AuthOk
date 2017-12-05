@@ -1,7 +1,5 @@
 package jsonrpc;
 
-import org.json.JSONException;
-
 abstract class AbstractResponse extends JsonRpcMessage {
     enum Members {
         JSONRPC("jsonrpc"), RESULT("result"), ERROR("error"), ID("id");
@@ -18,10 +16,10 @@ abstract class AbstractResponse extends JsonRpcMessage {
     Error error;
 
     //setup
-    private AbstractResponse(Id id, Member result, Error error) throws JSONException{
+    private AbstractResponse(Id id, Member result, Error error) throws JSONRPCException{
         if (id == null) {id = new Id();}
         if (result != null && (error != null) || (result == null && error == null)) {
-            throw new JSONException("Response has to have either a result or an error");
+            throw new JSONRPCException("Response has to have either a result or an error");
         }
         this.id = id;
         this.result = result;
@@ -29,10 +27,10 @@ abstract class AbstractResponse extends JsonRpcMessage {
         this.obj = toJsonObj();
         this.jsonRpcString = obj.toString();
     }
-    AbstractResponse(Id id, Member result) throws JSONException {
+    AbstractResponse(Id id, Member result) throws JSONRPCException {
         this(id, result, null);
     }
-    AbstractResponse(Id id, Error error) throws JSONException {
+    AbstractResponse(Id id, Error error) throws JSONRPCException {
         this(id, null, error);
     }
     AbstractResponse() {

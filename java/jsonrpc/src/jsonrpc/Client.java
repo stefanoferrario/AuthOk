@@ -5,28 +5,27 @@ import zeromq.ZmqClient;
 import java.util.HashMap;
 
 public class Client implements IClient {
+    private IZmqClient zmqClient;
+    public Client(int port) {
+        zmqClient = new ZmqClient(port);
+    }
+
     @Override
-    public Response sendRequest(Request request){
-        IZmqClient zmqClient = new ZmqClient();
+    public Response sendRequest(Request request) throws JSONRPCException {
         String returnedString = zmqClient.request(request.getJsonString());
 
         try {
             return new Response(returnedString);
-        } catch (JSONException e) {
-            try {
-                HashMap<String, Member> errorData = new HashMap<>();
-                errorData.put("Invalid response received", new Member(e.getMessage()));
-                Error err = new Error(Error.Errors.PARSE, new Member(new StructuredMember(errorData)));
-                return new Response(request.getId(), err);
-            } catch (JSONException j) {
-                return Response.getInternalErrorResponse(request.getId());
-            }
+        } catch (JSONException | JSONRPCException e) {
+            HashMap<String, Member> errorData = new HashMap<>();
+            errorData.put("Invalid response received", new Member(e.getMessage()));
+            Error err = new Error(Error.Errors.PARSE, new Member(new StructuredMember(errorData)));
+            return new Response(request.getId(), err);
         }
     }
 
     @Override
     public void sendNotify(Request notify) {
-        IZmqClient zmqClient = new ZmqClient();
         zmqClient.send(notify.getJsonString());
     }
 }

@@ -1,80 +1,66 @@
 package jsonrpc;
 
-import org.json.JSONObject;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Response extends AbstractResponse {
-    Response(Id id, Member result) throws JSONException {
+    public Response(Id id, Member result) throws JSONRPCException {
         super(id, result);
     }
-    Response(Id id, Error error) throws JSONException {
+
+    public Response(Id id, Error error) throws JSONRPCException {
         super(id, error);
     }
 
-    Response(String jsonRpcString) throws JSONException{
+    Response(String jsonRpcString) throws JSONException, JSONRPCException {
         obj = new JSONObject(jsonRpcString);
 
-        if (!obj.getString(Members.JSONRPC.toString()).equals(VER)) {throw new JSONException("Not jsonrpc 2.0");}
+        if (!obj.getString(Members.JSONRPC.toString()).equals(VER)) {
+            throw new JSONRPCException("Not jsonrpc 2.0");
+        }
 
         if (obj.has(Members.RESULT.toString())) {
             result = Member.toMember(obj.get(Members.RESULT.toString()));
             error = null;
         } else if (obj.has(Members.ERROR.toString())) {
-            error = new Error((JSONObject)obj.get(Members.ERROR.toString()));
+            error = new Error((JSONObject) obj.get(Members.ERROR.toString()));
             result = null;
         } else {
-            throw new JSONException("Method member not defined");
+            throw new JSONRPCException("Method member not defined");
         }
 
         //obbligatorio nelle risposte
         if (obj.has(Members.ID.toString())) {
             id = Id.toId(obj.get(Members.ID.toString()));
         } else {
-            throw new JSONException("ID member not defined");
+            throw new JSONRPCException("ID member not defined");
         }
 
         //verifica che non ci siano altri parametri
-        if (!checkMembersSubset(Members.values(), obj)) {throw new JSONException("Unexpected member");}
+        if (!checkMembersSubset(Members.values(), obj)) {
+            throw new JSONRPCException("Unexpected member");
+        }
 
         this.jsonRpcString = obj.toString();
     }
 
 
     @Override
-    protected JSONObject toJsonObj() throws JSONException{
+    protected JSONObject toJsonObj() throws JSONRPCException {
         JSONObject object = new JSONObject();
-        object.put(Members.JSONRPC.toString(), VER);
 
-        if (error == null) {
-            putMember(object, Members.RESULT.toString(), result);
-        } else {
-            object.put(Members.ERROR.toString(), error.getJsonString());
+        try {
+            object.put(Members.JSONRPC.toString(), VER);
+            if (error == null) {
+                putMember(object, Members.RESULT.toString(), result);
+            } else {
+                object.put(Members.ERROR.toString(), error.getJsonString());
+            }
+        } catch (JSONException e) {
+            System.out.println(e.getMessage());
         }
-
         putId(object, Members.ID.toString(), id);
 
         return object;
-    }
-
-    static Response getInternalErrorResponse(Id id) {
-        return new Response(id);
-    }
-
-    private Response(Id id) {
-        //va costruita manualmente la stringa?
-        this.id = null;
-        this.result = null;
-        this.error = new Error(Error.Errors.INTERNAL_ERROR);
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{\"jsonrpc\": \"2.0\", \"error\": {\"code\": ");
-        stringBuilder.append(error.getErrorCode());
-        stringBuilder.append("\"message\": \"");
-        switch(id.getType()) {
-            case NULL: stringBuilder.append(JSONObject.NULL.toString()); break;
-            case STRING: stringBuilder.append(id.getString()); break;
-            case INT: stringBuilder.append(String.valueOf(id.getInt())); break;
-        }
-        stringBuilder.append("\"}, \"id\": \"1\"}");
-        this.jsonRpcString = stringBuilder.toString();
     }
 }

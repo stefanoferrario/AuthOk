@@ -8,32 +8,28 @@ import java.util.HashMap;
 public class Server implements IServer {
     private IZmqServer server;
 
-    Server() {
-        this.server = new ZmqServer();
+    public Server(int port) {
+        this.server = new ZmqServer(port);
     }
 
     @Override
-    public Request receive() {
+    public Request receive() throws JSONRPCException {
         String receivedString = server.receive();
         try{
             return new Request(receivedString);
-        } catch (JSONException e) {
+        } catch (JSONException | JSONRPCException e) {
             Id id = getIdFromRequest(receivedString);
-            try {
-                HashMap<String, Member> errorData = new HashMap<>();
-                errorData.put("Invalid request received", new Member(e.getMessage()));
-                Error err = new Error(Error.Errors.PARSE, new Member(new StructuredMember(errorData)));
-                Response errorResp = new Response(id, err);
-                server.reply(errorResp.getJsonString());
-            } catch (JSONException j) {
-                server.reply(Response.getInternalErrorResponse(id).getJsonString());
-            }
+            HashMap<String, Member> errorData = new HashMap<>();
+            errorData.put("Invalid request received", new Member(e.getMessage()));
+            Error err = new Error(Error.Errors.PARSE, new Member(new StructuredMember(errorData)));
+            Response errorResp = new Response(id, err);
+            server.reply(errorResp.getJsonString());
             return null;
         }
     }
 
     @Override
-    public void reply(Response response) throws Exception{
+    public void reply(Response response) {
         server.reply(response.getJsonString());
     }
 
@@ -41,16 +37,9 @@ public class Server implements IServer {
         try {
             JSONObject obj = new JSONObject(request);
             return Id.toId(obj.get(AbstractRequest.Members.ID.toString()));
-        } catch (JSONException e) {
+        } catch (JSONException | JSONRPCException e) {
             return new Id(); //se non è possibile recuperarlo della richiesta si crea un id nullo
         }
     }
 
-
-    /*@Override
-    public void replyToInvalidRequest(Request invalidRequest) throws Exception{
-        Error error = invalidRequest.createErrorObj();
-        Response resp = new Response(invalidRequest.getId(), error);
-        server.reply(resp.getJsonString());
-    }*/
 }
