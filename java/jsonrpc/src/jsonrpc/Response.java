@@ -4,10 +4,10 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 public class Response extends AbstractResponse {
-    Response(Id id, Member result) throws JSONException {
+    public Response(Id id, Member result) throws JSONException {
         super(id, result);
     }
-    Response(Id id, Error error) throws JSONException {
+    public Response(Id id, Error error) throws JSONException {
         super(id, error);
     }
 
@@ -56,7 +56,7 @@ public class Response extends AbstractResponse {
         return object;
     }
 
-    static Response getInternalErrorResponse(Id id) {
+    public static Response getInternalErrorResponse(Id id) {
         return new Response(id);
     }
 

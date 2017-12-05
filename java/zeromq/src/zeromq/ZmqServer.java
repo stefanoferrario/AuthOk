@@ -10,12 +10,10 @@ public class ZmqServer implements IZmqServer{
     private ZFrame empty;
 
     //chiedere se è una buona soluzione. utilizzare questa libreria obbliga ad avere un solo server
-    static final int PORT = 5001;
-
-    public ZmqServer() {
+    public ZmqServer(int port) {
         ZMQ.Context ctx = ZMQ.context(1);
         socket = ctx.socket(ZMQ.ROUTER);
-        socket.bind("tcp://*:" + String.valueOf(PORT));
+        socket.bind("tcp://*:" + String.valueOf(port));
         identity = null;
         empty = null;
     }

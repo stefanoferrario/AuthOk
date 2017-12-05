@@ -1,7 +1,8 @@
 package jsonrpc;
 
+import org.json.JSONException;
+
 public interface IServer {
-    Request receive();
-    void reply(Response response) throws Exception;
-    //void replyToInvalidRequest(Request invalidRequest) throws Exception;
+    Request receive() throws JSONException ;
+    void reply(Response response);
 }
