@@ -1,8 +1,7 @@
 package authorizer.GestoreToken;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
+
 import authorizer.GestoreRisorse.GestoreRisorse;
 
 public class GestoreToken {
@@ -32,7 +31,7 @@ public class GestoreToken {
         int livelloChiave=0;
 
         //verifica del livello della risorsa
-        int livelloRisorsa=GestoreRisorse.getIstance().getLivelloRisorsa(idRisorsa);
+        int livelloRisorsa=GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
         if (livelloRisorsa<=livelloChiave){
             livelloSufficiente=true;
         }
@@ -40,6 +39,7 @@ public class GestoreToken {
         if (chiaveValida && livelloSufficiente){
             stringaToken=instance.generaCodice(20,true);
             Token newToken= new Token(chiave,idRisorsa, (System.currentTimeMillis()));
+            System.out.println("Token generato: " + stringaToken);
             tokens.put(stringaToken,newToken);
         }
 
@@ -62,9 +62,11 @@ public class GestoreToken {
     }
 
     public void cancellaTokenscaduti(){
-        for (int i=0; i==tokens.size();i++){
-            if((System.currentTimeMillis()-tokens.get(i).getData().getTime())>86400000){
-                tokens.remove(i);
+        Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
+        while (iterator.hasNext()) {
+            HashMap.Entry<String, Token> entry = iterator.next();
+            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>86400000) {
+                iterator.remove();
             }
         }
     }
@@ -127,7 +129,7 @@ public class GestoreToken {
         // recupero il timestamp
         long time = System.currentTimeMillis(); //millisecondi atuali
         rand.setSeed(time);
-        long timeStamp = rand.nextInt(20);
+        long timeStamp = rand.nextInt(100);
         stringaRandom += timeStamp;
 
         // restituisco la stringa generata
