@@ -1,10 +1,10 @@
 package user;
 
-import authorizer.Autorizzazione;
+//import authorizer.GestoreAutorizzazioni;
 import java.util.Date;
 
 public interface IntUtente {
-	Autorizzazione creaAutorizzazione(String _nomeUtente, int _livello, Date _scadenza);
+	//Autorizzazione creaAutorizzazione(String _nomeUtente, int _livello, Date _scadenza);
 	boolean revocaAutorizzazione(String chiave);
 	String verificaEsistenzaAutorizzazione();
 	String creaToken(String chiave, String idRisorsa);

@@ -2,7 +2,7 @@ package authorizer.GestoreAutorizzazioni;
 
 import java.util.Date;
 
-public class Autorizzazione {
+class Autorizzazione {
     private String nomeUtente;
     private int livello;
     private Date data;

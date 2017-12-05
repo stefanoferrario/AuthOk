@@ -1,6 +1,6 @@
 package user;
 
-import authorizer.Autorizzazione;
+//import authorizer.Autorizzazione;
 
 import java.util.Date;
 
@@ -17,9 +17,9 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 		 System.out.println("la risorsa è stata cancellata");
 	 }
 
-	 public Autorizzazione creaAutorizzazione(String _nomeUtente, int _livello, Date _scadenza) {
+	 /*public Autorizzazione creaAutorizzazione(String _nomeUtente, int _livello, Date _scadenza) {
 		 return new Autorizzazione(_nomeUtente,_livello,_scadenza);
-	 }
+	 }*/
 
 	 public boolean revocaAutorizzazione(String chiave) {
 		 System.out.println("Autorizzazione revocata");
