@@ -5,15 +5,15 @@ import java.util.Date;
 class Autorizzazione {
     private String nomeUtente;
     private int livello;
-    private Date data;
+    private Date scadenza;
 
     //Costruttore visibilità
-    Autorizzazione(String nome,int liv,Date scad){
-        nomeUtente = nome;
-        livello = liv;
-        data = scad;
+    Autorizzazione(String nome,int livello,Date scadenza){
+        this.nomeUtente = nome;
+        this.livello = livello;
+        this.scadenza = scadenza;
     }
     String getUtente(){return nomeUtente;}
     int getLivello(){return livello;}
-    Date getScadenza(){return data;}
+    Date getScadenza(){return scadenza;}
 }
