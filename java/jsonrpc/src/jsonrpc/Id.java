@@ -1,6 +1,5 @@
 package jsonrpc;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Id {
@@ -46,7 +45,7 @@ public class Id {
         return type;
     }
 
-    public static Id toId(Object id) throws JSONException{
+    public static Id toId(Object id) throws JSONRPCException{
         if (id == null) {throw new NullPointerException("Null id");}
 
         if (id.equals(JSONObject.NULL)) {
@@ -56,7 +55,7 @@ public class Id {
         } else if (id instanceof String) {
             return new Id((String) id);
         } else {
-            throw new JSONException("Invalid id");
+            throw new JSONRPCException("Invalid id");
         }
     }
 }

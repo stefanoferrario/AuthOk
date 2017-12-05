@@ -35,15 +35,15 @@ public class Error extends JsonRpcObj{
     private Integer code; //da specifica deve essere intero
     private Member data;//primitive o structure
 
-    public Error(String errorMessage, int errorCode, Member errorData) throws JSONException {
-        if (errorMessage == null || errorMessage.isEmpty()) {throw new JSONException("Error message not defined");}
+    public Error(String errorMessage, int errorCode, Member errorData) throws JSONRPCException {
+        if (errorMessage == null || errorMessage.isEmpty()) {throw new JSONRPCException("Error message not defined");}
         this.message = errorMessage;
         this.code = errorCode;
         this.data = errorData;
         this.obj = toJsonObj();
         this.jsonRpcString = obj.toString();
     }
-    public Error(String errorMessage, int errorCode) throws JSONException {
+    public Error(String errorMessage, int errorCode) throws JSONRPCException {
         this(errorMessage, errorCode, null);
     }
     public Error(Errors error) {
@@ -53,13 +53,13 @@ public class Error extends JsonRpcObj{
         try {
             this.obj = toJsonObj();
             this.jsonRpcString = obj.toString();
-        } catch (JSONException e) {
+        } catch (JSONRPCException e) {
             //this.jsonRpcString = "{...}";
             //va costruita manualmente la stringa?
         }
     }
 
-    public Error(Errors error, Member errorData) throws JSONException {
+    public Error(Errors error, Member errorData) throws JSONRPCException {
         this(error.getMessage(), error.getCode(), errorData);
     }
 
@@ -69,21 +69,25 @@ public class Error extends JsonRpcObj{
     public int getErrorCode() {
         return code;
     }
-    public Member getErrorData() throws JSONException {
-        if (data == null) {throw new JSONException("No error data defined");}
+    public Member getErrorData() throws JSONRPCException {
+        if (data == null) {throw new JSONRPCException("No error data defined");}
         return data;
     }
     public boolean hasErrorData() {
         return data!=null;
     }
 
-    protected JSONObject toJsonObj() throws JSONException{
-        if (code == null) {throw new JSONException("Error code not defined");} //obbligatori
-        if (message == null) { throw new JSONException("Error message not defined");}
+    protected JSONObject toJsonObj() throws JSONRPCException{
+        if (code == null) {throw new JSONRPCException("Error code not defined");} //obbligatori
+        if (message == null) { throw new JSONRPCException("Error message not defined");}
         JSONObject object = new JSONObject();
-        object.put(ErrMembers.CODE.toString(), code);
-        object.put(ErrMembers.MESSAGE.toString(), message);
-
+        try {
+            object.put(ErrMembers.CODE.toString(), code);
+            object.put(ErrMembers.MESSAGE.toString(), message);
+        } catch (JSONException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
         if (data != null) { //opzionale
             putMember(object, ErrMembers.DATA.toString(), data);
         }
@@ -91,27 +95,32 @@ public class Error extends JsonRpcObj{
         return object;
     }
 
-    Error(JSONObject error) throws JSONException{
+    Error(JSONObject error) throws JSONRPCException{
         this.obj = error;
-        if (obj.has(ErrMembers.CODE.toString())) {
-            code = error.getInt(ErrMembers.CODE.toString());
-        } else {
-            throw new JSONException("Error code not found");
-        }
-        if (obj.has(ErrMembers.MESSAGE.toString())) {
-            message = error.getString(ErrMembers.MESSAGE.toString());
-        } else {
-            throw new JSONException("Error message not found");
-        }
 
-        if (obj.has(ErrMembers.DATA.toString())) {
-            data = Member.toMember(obj.get(ErrMembers.DATA.toString()));
-        } else {
-            data = null;
+        try {
+            if (obj.has(ErrMembers.CODE.toString())) {
+                code = error.getInt(ErrMembers.CODE.toString());
+            } else {
+                throw new JSONRPCException("Error code not found");
+            }
+            if (obj.has(ErrMembers.MESSAGE.toString())) {
+                message = error.getString(ErrMembers.MESSAGE.toString());
+            } else {
+                throw new JSONRPCException("Error message not found");
+            }
+
+            if (obj.has(ErrMembers.DATA.toString())) {
+                data = Member.toMember(obj.get(ErrMembers.DATA.toString()));
+            } else {
+                data = null;
+            }
+        } catch (JSONException e) {
+            System.out.println(e.getMessage());
         }
 
         //verifica che non ci siano altri parametri
-        if (!checkMembersSubset(ErrMembers.values(), obj)) {throw new JSONException("Unexpected paramater");}
+        if (!checkMembersSubset(ErrMembers.values(), obj)) {throw new JSONRPCException("Unexpected paramater");}
 
         this.jsonRpcString = obj.toString();
     }

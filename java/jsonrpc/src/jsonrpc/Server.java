@@ -13,11 +13,11 @@ public class Server implements IServer {
     }
 
     @Override
-    public Request receive() throws JSONException {
+    public Request receive() throws JSONRPCException {
         String receivedString = server.receive();
         try{
             return new Request(receivedString);
-        } catch (JSONException e) {
+        } catch (JSONException | JSONRPCException e) {
             Id id = getIdFromRequest(receivedString);
             HashMap<String, Member> errorData = new HashMap<>();
             errorData.put("Invalid request received", new Member(e.getMessage()));
@@ -37,7 +37,7 @@ public class Server implements IServer {
         try {
             JSONObject obj = new JSONObject(request);
             return Id.toId(obj.get(AbstractRequest.Members.ID.toString()));
-        } catch (JSONException e) {
+        } catch (JSONException | JSONRPCException e) {
             return new Id(); //se non è possibile recuperarlo della richiesta si crea un id nullo
         }
     }

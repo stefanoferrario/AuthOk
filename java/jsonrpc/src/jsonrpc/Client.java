@@ -11,12 +11,12 @@ public class Client implements IClient {
     }
 
     @Override
-    public Response sendRequest(Request request) throws JSONException {
+    public Response sendRequest(Request request) throws JSONRPCException {
         String returnedString = zmqClient.request(request.getJsonString());
 
         try {
             return new Response(returnedString);
-        } catch (JSONException e) {
+        } catch (JSONException | JSONRPCException e) {
             HashMap<String, Member> errorData = new HashMap<>();
             errorData.put("Invalid response received", new Member(e.getMessage()));
             Error err = new Error(Error.Errors.PARSE, new Member(new StructuredMember(errorData)));
