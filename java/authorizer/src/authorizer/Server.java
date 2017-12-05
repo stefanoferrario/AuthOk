@@ -32,41 +32,48 @@ public class Server {
     }
 
     private void receive() {
-        Request req;
+        ArrayList<Request> reqs;
         try {
-            req = serverJsonRpc.receive();
-        } catch (JSONException e) {
+            reqs = serverJsonRpc.receive();
+        } catch (JSONRPCException e) {
             System.out.println(e.getMessage());
             return;
         }
 
-        if (req.isNotify()) {
-            try {
-                selectMethod(req.getMethod(), req.getParams());
-            } catch (Exception e) {
-                //le notifiche non restituiscono errori
-            }
-        } else {
-            Response resp;
-            try {
+        ArrayList<Response> resps = new ArrayList<>();
+        for (Request req : reqs) {
+            if (req.isNotify()) {
                 try {
-                    Member result = selectMethod(req.getMethod(), req.getParams());
-                    resp = new Response(req.getId(), result);
-                    serverJsonRpc.reply(resp);
-                } catch (NoSuchMethodException e) {
-                    Error error = new Error(Error.Errors.METHOD_NOT_FOUND);
-                    resp = new Response(req.getId(), error);
-                    serverJsonRpc.reply(resp);
-                } catch (InvalidParameterException e) {
-                    Error error = new Error(Error.Errors.INVALID_PARAMS);
-                    resp = new Response(req.getId(), error);
-                    serverJsonRpc.reply(resp);
+                    selectMethod(req.getMethod(), req.getParams());
+                } catch (Exception e) {
+                    //le notifiche non restituiscono errori
                 }
-            } catch (JSONException e) {
-                System.out.println(e.getMessage());
+            } else {
+                try {
+                    try {
+                        Member result = selectMethod(req.getMethod(), req.getParams());
+                        resps.add(new Response(req.getId(), result));
+                    } catch (NoSuchMethodException e) {
+                        Error error = new Error(Error.Errors.METHOD_NOT_FOUND);
+                        resps.add(new Response(req.getId(), error));
+                    } catch (InvalidParameterException e) {
+                        Error error = new Error(Error.Errors.INVALID_PARAMS);
+                        resps.add(new Response(req.getId(), error));
+                    } catch (UnsupportedOperationException e) {
+                        //errore
+                    }
+                } catch (JSONRPCException e) {
+                    System.out.println(e.getMessage());
+                    resps.add(null);
+                }
             }
         }
-
+        try {
+            //una richiesta singola può essere inviata come un arraylist di dimensione 1
+            serverJsonRpc.reply(resps);
+        } catch (JSONRPCException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 
@@ -92,7 +99,7 @@ public class Server {
                 try {
                     //verificare non ci siano troppi parametri
                     return Member.toMember(tokenManager.creaToken(p.get(0).getString(), p.get(1).getInt()));
-                } catch (JSONException e) {
+                } catch (JSONRPCException e) {
                     throw new InvalidParameterException();
                 }
                 /*altre eccezioni interne al server non gestite dalla select method ma dal receive che crea risposta con errore corrispondente*/
@@ -100,11 +107,12 @@ public class Server {
             case VERIFICA_TOKEN:
                 try {
                     return Member.toMember(tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt()));
-                } catch (JSONException e) {
+                } catch (JSONRPCException e) {
                     throw new InvalidParameterException();
                 }
 
             case CREA_AUTORIZAZIONE:
+
                 break;
             case VERIFICA_ESISTENZA_AUTORIZZAZIONE:
                 break;
