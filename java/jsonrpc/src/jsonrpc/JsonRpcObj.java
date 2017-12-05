@@ -68,4 +68,8 @@ public abstract class JsonRpcObj {
             return obj;
         }
     }
+
+    JSONObject getObj() {
+        return this.obj;
+    }
 }

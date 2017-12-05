@@ -1,6 +1,8 @@
 package jsonrpc;
 
+import java.util.ArrayList;
+
 public interface IServer {
-    Request receive() throws JSONRPCException;
-    void reply(Response response);
+    ArrayList<Request> receive() throws JSONRPCException;
+    void reply(Response response) throws JSONRPCException;
 }

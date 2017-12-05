@@ -1,18 +1,51 @@
 package jsonrpc;
 
 import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Test {
     public static void main(String args[]) {
-        testRequestFromString();
+        testBatch();
+        /*testRequestFromString();
         testResponseFromString();
         testRequestFromParams();
-        testResponseFromParams();
+        testResponseFromParams();*/
     }
 
+    private static void testBatch() {
+        ArrayList<String> testReq = new ArrayList<>();
+        testReq.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": [42, 23], \"id\": 1}");
+        testReq.add("{\"jsonrpc\": \"2.0\", \"method\": \"update\", \"params\": [1,2,3,4,5]}");
+        testReq.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": {\"subtrahend\": 23, \"minuend\": 42}, \"id\": 3}");
+        testReq.add("{\"jsonrpc\": \"2.0\", \"method\": \"test\", \"params\": {\"subtrahend\": 23, \"minuend\": 42, \"subobj\": {\"par1\": 34, \"par2\": \"value\", \"array\": [1,2,3]}}, \"id\": 3}");
+
+        ArrayList<String> testResp = new ArrayList<>();
+        testResp.add("{\"jsonrpc\": \"2.0\", \"result\": 19, \"id\": 1}");
+        testResp.add("{\"jsonrpc\": \"2.0\", \"error\": {\"code\": -32601, \"message\": \"Method not found\"}, \"id\": \"1\"}");
+        testResp.add("{\"jsonrpc\": \"2.0\", \"error\": {\"code\": -32700, \"message\": \"Parse error\"}, \"id\": null}");
+
+        ArrayList<Request> requests = new ArrayList<>();
+        for (String s : testReq) {
+            try {
+                requests.add(new Request(s));
+            } catch (JSONRPCException | JSONException e) {/**/}
+        }
+
+        Batch b = new Batch(requests);
+        System.out.println(b.getRequestJSON());
+
+        ArrayList<Response> responses = new ArrayList<>();
+        for (String s : testResp) {
+            try {
+                responses.add(new Response(s));
+            } catch (JSONRPCException | JSONException e) {/**/}
+        }
+
+        b.put(responses);
+        System.out.println(b.getResponseJSON());
+
+    }
     private static void testRequestFromParams() {
         ArrayList<StructuredMember> params = new ArrayList<>();
         params.add(null); //modo corretto per omettere i parametri opzionali
