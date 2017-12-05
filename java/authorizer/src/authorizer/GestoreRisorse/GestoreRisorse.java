@@ -12,7 +12,7 @@ public class GestoreRisorse {
 		dataBaseRisorse = new HashMap<>();
 	}
 	
-	public static GestoreRisorse getIstance() {
+	public static GestoreRisorse getInstance() {
         if (gestoreRisorse == null) {
         	gestoreRisorse = new GestoreRisorse();
         }
