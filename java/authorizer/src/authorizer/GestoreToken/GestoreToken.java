@@ -56,11 +56,11 @@ public class GestoreToken {
             HashMap.Entry<String, Token> entry = iterator.next();
             if (aString==entry.getKey()){
                 if (idRisorsa==entry.getValue().getIdRisorsa()) {
-                    if(System.currentTimeMillis()-entry.getValue().getData().getTime()>86400000){
+                    if(System.currentTimeMillis()-entry.getValue().getData().getTime()>82800000){
                         System.out.println("Il token "+ entry.getKey() + " relativo alla risorsa " + entry.getValue().getIdRisorsa() +" è scaduto");
                     }
                     else{
-                        tempoRestante=86400000-(System.currentTimeMillis()-entry.getValue().getData().getTime());
+                        tempoRestante=82800000-(System.currentTimeMillis()-entry.getValue().getData().getTime());
                         Date _tempoRestante= new Date(tempoRestante);
                         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
                         String risultato = sdf.format(_tempoRestante);
@@ -78,7 +78,7 @@ public class GestoreToken {
         Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
-            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>86400000) {
+            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>82800000) {
                 iterator.remove();
             }
         }
