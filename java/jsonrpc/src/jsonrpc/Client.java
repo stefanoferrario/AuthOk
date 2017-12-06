@@ -14,6 +14,8 @@ public class Client implements IClient {
 
     @Override
     public Response sendRequest(Request request) throws JSONRPCException {
+        if (request.isNotify()) {throw new JSONRPCException("Not a request");}
+
         String returnedString = zmqClient.request(request.getJsonString());
 
         try {
@@ -27,7 +29,9 @@ public class Client implements IClient {
     }
 
     @Override
-    public void sendNotify(Request notify) {
+    public void sendNotify(Request notify) throws JSONRPCException {
+        if (!notify.isNotify()) {throw new JSONRPCException("Not a notify");} //funzionerebbe ma la specifica jsonrpc prevede che se è una richiesta deve essere restituita una risposta
+
         zmqClient.send(notify.getJsonString());
     }
 
