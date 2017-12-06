@@ -124,4 +124,8 @@ public class Error extends JsonRpcObj{
 
         this.jsonRpcString = obj.toString();
     }
+
+    JSONObject getJsonObj() {
+        return this.obj;
+    }
 }

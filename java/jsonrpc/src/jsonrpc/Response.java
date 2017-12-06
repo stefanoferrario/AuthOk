@@ -54,7 +54,7 @@ public class Response extends AbstractResponse {
             if (error == null) {
                 putMember(object, Members.RESULT.toString(), result);
             } else {
-                object.put(Members.ERROR.toString(), error.getJsonString());
+                object.put(Members.ERROR.toString(), error.getJsonObj());
             }
         } catch (JSONException e) {
             System.out.println(e.getMessage());
