@@ -1,11 +1,12 @@
 package authorizer.GestoreAutorizzazioni;
 
-import authorizer.GestoreAutorizzazioni.Autorizzazione;
+import authorizer.GestoreToken.GestoreToken;
+
 import java.util.Date;
 import java.util.HashMap;
 //import java.util.UUID;
 
-class GestoreAutorizzazioni {
+public class GestoreAutorizzazioni {
     private static GestoreAutorizzazioni instance = null;
 
     private HashMap<String,Autorizzazione> autorizzazioni = null;
@@ -15,7 +16,7 @@ class GestoreAutorizzazioni {
         this.autorizzazioni = new HashMap<String, Autorizzazione>();
     }
 
-    static GestoreAutorizzazioni getInstance(){
+    public static GestoreAutorizzazioni getInstance(){
        return (instance==null) ? new GestoreAutorizzazioni() : instance;
     }
 
@@ -25,7 +26,6 @@ class GestoreAutorizzazioni {
             return "";
        }
 
-
        Autorizzazione auth = new Autorizzazione(nomeUtente,livello,scadenza);
        //String uniqueID = UUID.randomUUID().toString();
        autorizzazioni.put(nomeUtente,auth);
@@ -33,14 +33,22 @@ class GestoreAutorizzazioni {
        return (nomeUtente+"-"+livello+"-"+scadenza);
     }
 
-    void revocaAutorizzazione(String nomeUtente){
+    public void revocaAutorizzazione(String nomeUtente){
+        //Quando viene revocata un'autorizzazione devono essere cancellati anche i token ad essa collegati
+        GestoreToken.getInstance().cancellaTokenChiave(nomeUtente);
+
         autorizzazioni.remove(nomeUtente);
     }
 
-    boolean verificaEsistenzaAutorizzazione(String nomeUtente){
+    public boolean verificaEsistenzaAutorizzazione(String nomeUtente){
 
         return autorizzazioni.containsKey(nomeUtente);
 
+    }
+
+    //Necessario al gestore token per poter verificare il livello a cui è possibile accedere.
+    public Integer getLivelloAutorizzazione(String nomeUtente){
+        return autorizzazioni.get(nomeUtente).getLivello();
     }
 
 }

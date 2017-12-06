@@ -3,6 +3,7 @@ package authorizer.GestoreToken;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
 
 public class GestoreToken {
@@ -29,7 +30,8 @@ public class GestoreToken {
         boolean livelloSufficiente=false;
 
         //verifica della Chiave
-        int livelloChiave=0;
+        chiaveValida=GestoreAutorizzazioni.getInstance().verificaEsistenzaAutorizzazione(chiave);
+        int livelloChiave=GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
 
         //verifica del livello della risorsa
         int livelloRisorsa=GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
@@ -69,16 +71,24 @@ public class GestoreToken {
 
                 }
             }
-
         }
         return tempoRestante;
     }
 
-    public void cancellaTokenscaduti(){
+    public void cancellaTokenScaduti(){
         Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
             if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>82800000) {
+                iterator.remove();
+            }
+        }
+    }
+    public void cancellaTokenChiave(String chiave){
+        Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
+        while (iterator.hasNext()) {
+            HashMap.Entry<String, Token> entry = iterator.next();
+            if (chiave==entry.getValue().getChiave()) {
                 iterator.remove();
             }
         }

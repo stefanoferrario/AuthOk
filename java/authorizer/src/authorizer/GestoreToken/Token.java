@@ -2,7 +2,7 @@ package authorizer.GestoreToken;
 
 import java.util.Date;
 
-public class Token {
+class Token {
 
 	private String chiave;
 	private int idRisorsa;
