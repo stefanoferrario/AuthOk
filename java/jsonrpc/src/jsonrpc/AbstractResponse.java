@@ -37,15 +37,15 @@ abstract class AbstractResponse extends JsonRpcMessage {
         super();
     }
 
-    Member getResult() {
+    public Member getResult() {
         if (result == null) {throw new NullPointerException("No result");}
         return result;
     }
-    Error getError() {
+    public Error getError() {
         if (error == null) {throw new NullPointerException("No error");}
         return error;
     }
-    boolean hasError() {
+    public boolean hasError() {
         return this.result == null;
     }
 }

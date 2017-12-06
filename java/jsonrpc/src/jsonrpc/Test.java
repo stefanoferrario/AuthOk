@@ -1,8 +1,12 @@
 package jsonrpc;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Test {
     public static void main(String args[]) {
@@ -272,42 +276,55 @@ public class Test {
     }
 
 
-    private static String readStructured(StructuredMember params) throws JSONRPCException {
+    private static String readStructured(StructuredMember params) throws JSONException, JSONRPCException {
         if (params == null) {return "";}
         if (params.isArray()) {
-            return readArray(params.getList());
+            return readArray(params.getJSONArray());
         } else {
-            return readObj(params.getMap());
+            return readObj(params.getJSONObject());
         }
 
     }
-    private static String readArray(ArrayList<Member> params) throws JSONRPCException {
+    private static String readArray(JSONArray params) throws JSONRPCException {
         StringBuilder val= new StringBuilder();
-        for (Member m : params) {
-            val.append(readMember(m));
+        for (int i = 0; i < params.length(); i++) {
+            try {
+                val.append(readMember(Member.toMember(params.get(i))));
+            } catch (JSONException e) {
+                val.append(e.getMessage());
+            }
             val.append(System.lineSeparator());
         }
         return val.toString();
     }
-    private static String readObj(HashMap<String, Member> params) throws JSONRPCException {
+    private static String readObj(JSONObject params) throws JSONRPCException {
         StringBuilder val= new StringBuilder();
-        for (HashMap.Entry<String, Member> par : params.entrySet()) {
-            val.append(par.getKey());
+
+        Iterator<?> keys = params.keys();
+
+        while( keys.hasNext() ) {
+            String key = (String)keys.next();
+            val.append(key);
             val.append(": ");
-            val.append(readMember(par.getValue()));
+            try {
+                val.append(readMember(Member.toMember(params.get(key))));
+            } catch (JSONException e) {
+                val.append(e.getMessage());
+            }
             val.append(System.lineSeparator());
         }
+
         return val.toString();
     }
 
-    private static String readMember(Member m) throws JSONRPCException{
+    private static String readMember(Member m) throws JSONRPCException {
         switch (m.getType()) {
             case NULL: return "NULL";
             case STRING: return m.getString();
             case NUMBER: return String.valueOf(m.getNumber());
             case BOOL: return String.valueOf(m.getBool());
-            case OBJ: return readObj(m.getMap());
-            case ARRAY: return readArray(m.getList());
+            case OBJ: return readObj(m.getJSONObj());
+            case ARRAY: return readArray(m.getJSONArray());
             default: throw new JSONRPCException("Unexpected member type");
         }
     }

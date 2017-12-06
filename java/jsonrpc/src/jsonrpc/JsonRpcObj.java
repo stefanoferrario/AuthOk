@@ -37,9 +37,9 @@ public abstract class JsonRpcObj {
         try {
             switch (value.getType()) {
                 case ARRAY:
-                    return obj.put(key, value.getList());
+                    return obj.put(key, value.getJSONArray());
                 case OBJ:
-                    return obj.put(key, value.getMap());
+                    return obj.put(key, value.getJSONObj());
                 case BOOL:
                     return obj.put(key, value.getBool());
                 case NUMBER:
@@ -59,9 +59,9 @@ public abstract class JsonRpcObj {
     static JSONObject putStructuredMember(JSONObject obj, String key, StructuredMember member) throws JSONRPCException {
         try {
             if (member.isArray()) {
-                return obj.put(key, member.getList());
+                return obj.put(key, member.getJSONArray());
             } else {
-                return obj.put(key, member.getMap());
+                return obj.put(key, member.getJSONObject());
             }
         } catch (JSONException e) {
             System.out.println(e.getMessage());

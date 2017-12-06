@@ -3,7 +3,6 @@ package jsonrpc;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,7 +41,7 @@ class Batch {
     void put(JSONArray responses) throws JSONException, JSONRPCException{
         ArrayList<Response> reqs = new ArrayList<>();
         for (int i = 0; i<responses.length(); i++) {
-            reqs.add(new Response(((JSONObject)responses.get(i)).toString()));
+            reqs.add(new Response(responses.get(i).toString()));
         }
         this.put(reqs);
     }

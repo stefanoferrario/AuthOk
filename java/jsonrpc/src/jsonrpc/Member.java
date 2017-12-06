@@ -1,11 +1,9 @@
 package jsonrpc;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class Member {
     public enum Types {NULL, STRING, NUMBER, BOOL, OBJ, ARRAY}
@@ -24,7 +22,6 @@ public class Member {
         if (string.isEmpty()) {throw new JSONRPCException("Member value is empty");}
         value = string;
         type = Types.STRING;
-
     }
     public Member(Number num) throws JSONRPCException {
         if (num == null) {throw new JSONRPCException("Member value is null");}
@@ -37,24 +34,18 @@ public class Member {
     }
     public Member(JSONObject obj) throws JSONRPCException {
         if (obj == null) {throw new JSONRPCException("Member value is null");}
-        value = toMap(obj);
+        value = new StructuredMember(obj);
         type = Types.OBJ;
     }
     public Member(JSONArray array) throws JSONRPCException {
         if (array == null) {throw new JSONRPCException("Member value is null");}
-        value = toList(array);
+        value = new StructuredMember(array);
         type = Types.ARRAY;
     }
     public Member(StructuredMember m) throws JSONRPCException {
         if (m == null) {throw new JSONRPCException("Member value is null");}
-        if (m.isArray()) {
-            value = m.getList();
-            type = Types.ARRAY;
-        }
-        else {
-            value = m.getMap();
-            type = Types.OBJ;
-        }
+        value = m;
+        type = m.isArray() ? Types.ARRAY : Types.OBJ;
     }
 
     public Types getType() {
@@ -82,41 +73,27 @@ public class Member {
         if (type != Types.STRING) {throw new ClassCastException("Not a string");}
         return (String)value;
     }
-    public HashMap<String,Member> getMap() throws ClassCastException {
-        if (type != Types.OBJ) {throw new ClassCastException("Not a json object");}
-        return (HashMap<String, Member>)value;
+
+    public StructuredMember getStructuredMember() throws ClassCastException {
+        if (type != Types.OBJ && type != Types.ARRAY) {throw new ClassCastException("Not a structured member");}
+        return (StructuredMember)value;
     }
     public ArrayList<Member> getList() throws ClassCastException {
         if (type != Types.ARRAY) {throw new ClassCastException("Not a json array");}
-        return (ArrayList<Member>)value;
+        return ((StructuredMember)value).getList();
+    }
+    public HashMap<String, Member> getMap() throws ClassCastException {
+        if (type != Types.OBJ) {throw new ClassCastException("Not a json object");}
+        return ((StructuredMember)value).getMap();
     }
 
-    private static HashMap<String, Member> toMap(JSONObject object) throws JSONRPCException{
-        HashMap<String, Member> map = new HashMap<>();
-        Iterator<?> keysItr = object.keys();
-        while(keysItr.hasNext()) {
-            String key = (String)keysItr.next();
-            try {
-                Object value = object.get(key);
-                map.put(key, parse(value));
-            } catch (JSONException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-        return map;
+    JSONObject getJSONObj() throws ClassCastException {
+        if (type != Types.OBJ) {throw new ClassCastException("Not a json object");}
+        return ((StructuredMember)value).getJSONObject();
     }
-
-    private static ArrayList<Member> toList(JSONArray array) throws JSONRPCException {
-        ArrayList<Member> list = new ArrayList<>();
-        for(int i = 0; i < array.length(); i++) {
-            try {
-                Object value = array.get(i);
-                list.add(parse(value));
-            } catch (JSONException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-        return list;
+    JSONArray getJSONArray() throws ClassCastException {
+        if (type != Types.ARRAY) {throw new ClassCastException("Not a json array");}
+        return ((StructuredMember)value).getJSONArray();
     }
 
     private static Member parse(Object value) throws JSONRPCException {
