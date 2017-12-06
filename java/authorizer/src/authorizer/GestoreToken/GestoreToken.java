@@ -1,7 +1,9 @@
 package authorizer.GestoreToken;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
 
 public class GestoreToken {
@@ -21,14 +23,15 @@ public class GestoreToken {
         return instance;
     }
 
-
+    //Metodo per la creazione di un nuovo token
     public String creaToken (String chiave, int idRisorsa){
         String stringaToken=null;
         boolean chiaveValida=false;
         boolean livelloSufficiente=false;
 
         //verifica della Chiave
-        int livelloChiave=0;
+        chiaveValida=GestoreAutorizzazioni.getInstance().verificaEsistenzaAutorizzazione(chiave);
+        int livelloChiave=GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
 
         //verifica del livello della risorsa
         int livelloRisorsa=GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
@@ -48,24 +51,44 @@ public class GestoreToken {
 
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
 
-    public Long verificaToken(String aString, int idRisorsa){
+    public long verificaToken(String aString, int idRisorsa){
         long tempoRestante=0;
-        for (int i=0; i<tokens.size(); i++){
-            if (tokens.containsKey(aString)) {
-                tempoRestante = System.currentTimeMillis() - tokens.get(i).getData().getTime();
-                if ((tempoRestante) > 86400000) { //token non scaduto
-                    return tempoRestante;
+        Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
+        while (iterator.hasNext()) {
+            HashMap.Entry<String, Token> entry = iterator.next();
+            if (aString==entry.getKey()){
+                if (idRisorsa==entry.getValue().getIdRisorsa()) {
+                    if(System.currentTimeMillis()-entry.getValue().getData().getTime()>82800000){
+                        System.out.println("Il token "+ entry.getKey() + " relativo alla risorsa " + entry.getValue().getIdRisorsa() +" è scaduto");
+                    }
+                    else{
+                        tempoRestante=82800000-(System.currentTimeMillis()-entry.getValue().getData().getTime());
+                        Date _tempoRestante= new Date(tempoRestante);
+                        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+                        String risultato = sdf.format(_tempoRestante);
+                        System.out.println("Tempo di validità restante del token "+ entry.getKey() + " relativo alla risorsa " + entry.getValue().getIdRisorsa() + ": "+risultato);
+                    }
+
                 }
             }
         }
         return tempoRestante;
     }
 
-    public void cancellaTokenscaduti(){
+    public void cancellaTokenScaduti(){
         Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
-            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>86400000) {
+            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>82800000) {
+                iterator.remove();
+            }
+        }
+    }
+    public void cancellaTokenChiave(String chiave){
+        Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
+        while (iterator.hasNext()) {
+            HashMap.Entry<String, Token> entry = iterator.next();
+            if (chiave==entry.getValue().getChiave()) {
                 iterator.remove();
             }
         }
