@@ -29,20 +29,26 @@ public class GestoreToken {
         boolean chiaveValida=false;
         boolean livelloSufficiente=false;
 
+        int livelloChiave=0;
         //verifica della Chiave
         try{ //L'eccezione viene catturata quando la chiave non è valida e quindi non è presente l'autorizzazione
             chiaveValida=GestoreAutorizzazioni.getInstance().verificaValiditaAutorizzazione(chiave,idRisorsa);
+            livelloChiave=GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
         }catch(Exception e){
             System.out.println("Autorizzazione non trovata...");
         }
 
-        int livelloChiave=GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
-
         //verifica del livello della risorsa
-        int livelloRisorsa=GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
-        /*if (livelloRisorsa<=livelloChiave){
-            livelloSufficiente=true;
-        }*/
+
+        try{ //L'eccezione viene catturata quando la chiave non è valida e quindi non è presente l'autorizzazione
+            int livelloRisorsa=GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
+            if (livelloRisorsa<=livelloChiave){
+                livelloSufficiente=true;
+            }
+        }catch(Exception e){
+            System.out.println("Impossibile verificare la risorsa inserita");
+        }
+
 
         if (chiaveValida && livelloSufficiente){
             stringaToken=instance.generaCodice(20,true);
