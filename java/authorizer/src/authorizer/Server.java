@@ -5,6 +5,7 @@ import authorizer.GestoreToken.GestoreToken;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import jsonrpc.*;
 import jsonrpc.Error;
+import org.json.JSONException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
@@ -86,9 +87,8 @@ public class Server {
 
 
     private Member selectMethod(String method, StructuredMember params)  throws InvalidParameterException, NoSuchMethodException {
-        ArrayList<Member> p = new ArrayList<>();
+        ArrayList<Member> p;
         try {
-            if (params!=null) //i parametri sono opzionali
             p = params.getList();
         } catch (ClassCastException c) {
             throw new InvalidParameterException();
