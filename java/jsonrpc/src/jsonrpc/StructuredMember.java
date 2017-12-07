@@ -13,13 +13,13 @@ public class StructuredMember {
 
     private boolean isArray;
 
-    public StructuredMember(JSONObject obj) throws JSONRPCException{
+    StructuredMember(JSONObject obj) throws JSONRPCException {
         if (obj.length() == 0) {throw new JSONRPCException("Json object is empty");}
         map = obj;
         list = null;
         isArray = false;
     }
-    public StructuredMember(JSONArray array) throws JSONRPCException{
+    StructuredMember(JSONArray array) throws JSONRPCException{
         if (array.length() == 0) {throw new JSONRPCException("Json array is empty");}
         list = array;
         map = null;
@@ -44,10 +44,6 @@ public class StructuredMember {
     public boolean isArray() {
         return isArray;
     }
-    public boolean isMap() {
-        return !isArray;
-    }
-
 
     public HashMap<String, Member> getMap() throws ClassCastException {
         if (isArray) {throw new ClassCastException("Not a json object");}
@@ -81,12 +77,12 @@ public class StructuredMember {
         return arraylist;
     }
 
-    public JSONObject getJSONObject() throws ClassCastException {
+    JSONObject getJSONObject() throws ClassCastException {
         if (isArray) {throw new ClassCastException("Not a json object");}
         return map;
     }
 
-    public JSONArray getJSONArray() throws ClassCastException {
+    JSONArray getJSONArray() throws ClassCastException {
         if (!isArray) {throw new ClassCastException("Not a json array");}
         return list;
     }
@@ -129,7 +125,7 @@ public class StructuredMember {
         return a;
     }
 
-    public static StructuredMember toStructuredMember(Object obj) throws JSONRPCException{
+    static StructuredMember toStructuredMember(Object obj) throws JSONRPCException{
         if (obj == null) {throw new NullPointerException("Null structured member");}
 
         if (obj instanceof JSONArray) {

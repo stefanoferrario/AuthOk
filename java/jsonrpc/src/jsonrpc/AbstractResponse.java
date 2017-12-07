@@ -1,6 +1,6 @@
 package jsonrpc;
 
-abstract class AbstractResponse extends JsonRpcMessage {
+public abstract class AbstractResponse extends JsonRpcMessage {
     enum Members {
         JSONRPC("jsonrpc"), RESULT("result"), ERROR("error"), ID("id");
 
@@ -16,7 +16,7 @@ abstract class AbstractResponse extends JsonRpcMessage {
     Error error;
 
     //setup
-    private AbstractResponse(Id id, Member result, Error error) throws JSONRPCException{
+    private AbstractResponse(Id id, Member result, Error error) throws JSONRPCException {
         if (id == null) {id = new Id();}
         if (result != null && (error != null) || (result == null && error == null)) {
             throw new JSONRPCException("Response has to have either a result or an error");

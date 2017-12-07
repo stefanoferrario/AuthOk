@@ -38,7 +38,7 @@ public class Request extends AbstractRequest{
     }
 
     @Override
-    protected JSONObject toJsonObj() throws JSONRPCException {
+    JSONObject toJsonObj() throws JSONRPCException {
         JSONObject object = new JSONObject();
 
         try {

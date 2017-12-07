@@ -3,7 +3,7 @@ package jsonrpc;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Error extends JsonRpcObj{
+public class Error extends JsonRpcObj {
     enum ErrMembers {
         CODE("code"), MESSAGE("message"), DATA("data");
 
@@ -77,7 +77,7 @@ public class Error extends JsonRpcObj{
         return data!=null;
     }
 
-    protected JSONObject toJsonObj() throws JSONRPCException{
+    JSONObject toJsonObj() throws JSONRPCException{
         if (code == null) {throw new JSONRPCException("Error code not defined");} //obbligatori
         if (message == null) { throw new JSONRPCException("Error message not defined");}
         JSONObject object = new JSONObject();
@@ -95,7 +95,7 @@ public class Error extends JsonRpcObj{
         return object;
     }
 
-    Error(JSONObject error) throws JSONRPCException{
+    Error(JSONObject error) throws JSONRPCException {
         this.obj = error;
 
         try {

@@ -73,7 +73,7 @@ public class Server implements IServer {
     }
 
 
-    public static Id getIdFromRequest(String request) {
+    static Id getIdFromRequest(String request) {
         try {
             JSONObject obj = new JSONObject(request);
             return Id.toId(obj.get(AbstractRequest.Members.ID.toString()));

@@ -45,7 +45,7 @@ public class Id {
         return type;
     }
 
-    public static Id toId(Object id) throws JSONRPCException{
+    static Id toId(Object id) throws JSONRPCException {
         if (id == null) {throw new NullPointerException("Null id");}
 
         if (id.equals(JSONObject.NULL)) {

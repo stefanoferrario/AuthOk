@@ -6,19 +6,19 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import static jsonrpc.Server.getIdFromRequest;
 
-public class Batch {
+class Batch {
     private ArrayList<Request> reqs;
     private ArrayList<Response> resps;
 
 
-    public Batch(ArrayList<Request> requests) {
+    Batch(ArrayList<Request> requests) {
         reqs = requests;
         resps = new ArrayList<>();
         for (Request r : reqs) {
             resps.add(null);
         }
     }
-    public Batch(JSONArray requestArray) throws JSONException, JSONRPCException {
+    Batch(JSONArray requestArray) throws JSONException, JSONRPCException {
         reqs = new ArrayList<>();
         resps = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class Batch {
         int i = reqs.indexOf(req);
         resps.set(i, resp);
     }
-    public void put(ArrayList<Response> responses) {
+    void put(ArrayList<Response> responses) {
         //gestire eccezioni
 
         int count = 0; //conta le richieste a cui non va inserita la risposta corrispondente perché non valide o notifiche
@@ -60,7 +60,7 @@ public class Batch {
             }
         }
     }
-    public void put(JSONArray responses) throws JSONException, JSONRPCException{
+    void put(JSONArray responses) throws JSONException, JSONRPCException{
         ArrayList<Response> resps = new ArrayList<>();
         for (int i = 0; i<responses.length(); i++) {
             resps.add(new Response(responses.get(i).toString()));
@@ -68,11 +68,11 @@ public class Batch {
         this.put(resps);
     }
 
-    public ArrayList<Request> getAllRequests() {
+    ArrayList<Request> getAllRequests() {
         return reqs;
     }
 
-    public ArrayList<Request> getValidRequests() {
+    ArrayList<Request> getValidRequests() {
         ArrayList<Request> rq = new ArrayList<>();
         for (Request r : reqs) {
             if (r!=null) {
@@ -82,11 +82,11 @@ public class Batch {
         return rq;
     }
 
-    public ArrayList<Response> getAllResponses() {
+    ArrayList<Response> getAllResponses() {
         return resps;
     }
 
-    public ArrayList<Response> getValidResponses() {
+    ArrayList<Response> getValidResponses() {
         ArrayList<Response> rp = new ArrayList<>();
         for (Response r : resps) {
             if (r!=null) {
@@ -96,7 +96,7 @@ public class Batch {
         return rp;
     }
 
-    public String getResponseJSON() {
+    String getResponseJSON() {
         JSONArray arr = new JSONArray();
         for (Response r : resps) {
             if (r != null) { //le risposte alle notifiche non vengono inviate
@@ -106,7 +106,7 @@ public class Batch {
         return arr.toString();
     }
 
-    public String getRequestJSON() {
+    String getRequestJSON() {
         JSONArray arr = new JSONArray();
         for (Request r : reqs) {
             arr.put(r.getObj());

@@ -114,7 +114,7 @@ public class Member {
         }
     }
 
-    public static Member toMember(Object obj) throws JSONRPCException{
+    static Member toMember(Object obj) throws JSONRPCException {
         return parse(obj);
     }
 }

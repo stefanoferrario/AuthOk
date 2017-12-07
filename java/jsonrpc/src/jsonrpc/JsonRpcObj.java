@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
-public abstract class JsonRpcObj {
+abstract class JsonRpcObj {
     JSONObject obj;
     //private boolean valid;
     String jsonRpcString;
@@ -17,7 +17,7 @@ public abstract class JsonRpcObj {
         return valid;
     }*/
 
-    abstract protected JSONObject toJsonObj() throws JSONRPCException; //crea oggetto json rpc utilizzando attributi. implementata in maniera differente in richiesta, risposta e errore
+    abstract JSONObject toJsonObj() throws JSONRPCException; //crea oggetto json rpc utilizzando attributi. implementata in maniera differente in richiesta, risposta e errore
 
     static boolean checkMembersSubset(Enum<?> members[], JSONObject obj) {
         //verifica l'oggetto abbia solo i parametri contenuti nell'array dei membri
@@ -33,39 +33,37 @@ public abstract class JsonRpcObj {
         return true;
     }
 
-    static JSONObject putMember(JSONObject obj, String key, Member value) throws JSONRPCException {
+    static void putMember(JSONObject obj, String key, Member value) throws JSONRPCException {
         try {
             switch (value.getType()) {
                 case ARRAY:
-                    return obj.put(key, value.getJSONArray());
+                    obj.put(key, value.getJSONArray()); break;
                 case OBJ:
-                    return obj.put(key, value.getJSONObj());
+                    obj.put(key, value.getJSONObj()); break;
                 case BOOL:
-                    return obj.put(key, value.getBool());
+                    obj.put(key, value.getBool()); break;
                 case NUMBER:
-                    return obj.put(key, value.getNumber());
+                    obj.put(key, value.getNumber()); break;
                 case STRING:
-                    return obj.put(key, value.getString());
+                    obj.put(key, value.getString()); break;
                 case NULL:
-                    return obj.put(key, JSONObject.NULL);
+                    obj.put(key, JSONObject.NULL); break;
                 default: throw new JSONRPCException("Invalid member type");
             }
         } catch (JSONException e) {
             System.out.println(e.getMessage());
-            return obj;
         }
     }
 
-    static JSONObject putStructuredMember(JSONObject obj, String key, StructuredMember member) throws JSONRPCException {
+    static void putStructuredMember(JSONObject obj, String key, StructuredMember member) throws JSONRPCException {
         try {
             if (member.isArray()) {
-                return obj.put(key, member.getJSONArray());
+                obj.put(key, member.getJSONArray());
             } else {
-                return obj.put(key, member.getJSONObject());
+                obj.put(key, member.getJSONObject());
             }
         } catch (JSONException e) {
             System.out.println(e.getMessage());
-            return obj;
         }
     }
 

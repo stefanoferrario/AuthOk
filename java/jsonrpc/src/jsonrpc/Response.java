@@ -46,7 +46,7 @@ public class Response extends AbstractResponse {
 
 
     @Override
-    protected JSONObject toJsonObj() throws JSONRPCException {
+    JSONObject toJsonObj() throws JSONRPCException {
         JSONObject object = new JSONObject();
 
         try {

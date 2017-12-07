@@ -15,7 +15,7 @@ abstract class JsonRpcMessage extends JsonRpcObj {
         return id;
     }
 
-    static JSONObject putId(JSONObject obj, String key, Id id) throws JSONRPCException {
+    static void putId(JSONObject obj, String key, Id id) throws JSONRPCException {
         try {
             switch (id.getType()) {
                 case INT: obj.put(key, id.getInt()); break;
@@ -25,6 +25,5 @@ abstract class JsonRpcMessage extends JsonRpcObj {
         } catch (JSONException e) {
                 System.out.println(e.getMessage());
             }
-        return obj;
     }
 }
