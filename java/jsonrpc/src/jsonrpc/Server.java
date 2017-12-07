@@ -6,7 +6,6 @@ import org.json.JSONTokener;
 import zeromq.IZmqServer;
 import zeromq.ZmqServer;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Server implements IServer {
     private IZmqServer server;
@@ -26,7 +25,7 @@ public class Server implements IServer {
                 JSONArray arr = new JSONArray(receivedString);
                 if (arr.length() == 0) {throw new JSONRPCException("Request batch array is empty");}
                 currBatch = new Batch(arr);
-                return currBatch.getRequests();
+                return currBatch.getValidRequests();
             } else if (json instanceof JSONObject) {
                 currBatch = null;
                 //una richiesta non batch: arraylist<request> di dimensione 1
@@ -34,14 +33,14 @@ public class Server implements IServer {
                 ArrayList<Request> requests = new ArrayList<>();
                 requests.add(req);
                 return requests;
+            } else {
+                throw new JSONRPCException("Invalid request received");
             }
-        } catch (JSONRPCException | JSONException e) {
+        } catch (JSONException | JSONRPCException e) {
             //se json è invalido viene restituita in automatico un'unica risposta con errore di parsing (vedi documentazione)
             //indifferentemente se era una richiesta o un array di richieste
             Id id = getIdFromRequest(receivedString); //se è una richiesta unica tenta di recuperarne l'id, altrimenti id null
-            HashMap<String, Member> errorData = new HashMap<>();
-            errorData.put("Invalid request received", new Member(e.getMessage()));
-            Error err = new Error(Error.Errors.PARSE, new Member(new StructuredMember(errorData)));
+            Error err = new Error(Error.Errors.PARSE);
             Response errorResp = new Response(id, err);
             server.reply(errorResp.getJsonString());
             currBatch = null;
@@ -73,7 +72,8 @@ public class Server implements IServer {
         }
     }
 
-    private Id getIdFromRequest(String request) {
+
+    public static Id getIdFromRequest(String request) {
         try {
             JSONObject obj = new JSONObject(request);
             return Id.toId(obj.get(AbstractRequest.Members.ID.toString()));

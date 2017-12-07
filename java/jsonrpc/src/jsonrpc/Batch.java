@@ -4,57 +4,101 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.HashMap;
+import static jsonrpc.Server.getIdFromRequest;
 
-class Batch {
-    private HashMap<Request, Response> batch;
+public class Batch {
+    private ArrayList<Request> reqs;
+    private ArrayList<Response> resps;
 
-    Batch(ArrayList<Request> requests) {
-        batch = new HashMap<>();
-        for (Request r : requests) {
-            batch.put(r,null);
+
+    public Batch(ArrayList<Request> requests) {
+        reqs = requests;
+        resps = new ArrayList<>();
+        for (Request r : reqs) {
+            resps.add(null);
         }
     }
-    Batch(JSONArray requestArray) throws JSONException, JSONRPCException {
-        batch = new HashMap<>();
+    public Batch(JSONArray requestArray) throws JSONException, JSONRPCException {
+        reqs = new ArrayList<>();
+        resps = new ArrayList<>();
+
         for (int i=0; i<requestArray.length(); i++) {
-            batch.put(new Request(requestArray.getJSONObject(i).toString()),null);
-        }
-    }
-    private void put(Request keyReq, Response valueResp) {
-        batch.put(keyReq,valueResp);
-    }
-    void put(ArrayList<Response> responses) {
-        //gestire eccezioni
-        ArrayList<Request> requests = new ArrayList<>(batch.keySet());
-        int notifyCount = 0;
-        for (int i = 0; i < requests.size(); i++) {
-            Request req = requests.get(i);
-            if (!req.isNotify()) {
-                this.put(req, responses.get(i - notifyCount));
-                //la risposta ad una richiesta non notifica deve esserci, altrimenti indexoutofbounds
-            } else {
-                notifyCount++;
+            JSONObject o = requestArray.getJSONObject(i);
+
+            String stringReq = o.toString();
+            Request req = null;
+            Response resp = null;
+            try {
+                req = new Request(stringReq);
+                //resp = null;
+            } catch (JSONRPCException e) {
+                Id id = getIdFromRequest(stringReq); //tenta di recuperarne l'id, altrimenti id null
+                Error err = new Error(Error.Errors.INVALID_REQUEST);
+                //req = null;
+                resp = new Response(id, err);
+            } finally {
+                reqs.add(req);
+                resps.add(resp);
             }
         }
     }
-    void put(JSONArray responses) throws JSONException, JSONRPCException{
-        ArrayList<Response> reqs = new ArrayList<>();
-        for (int i = 0; i<responses.length(); i++) {
-            reqs.add(new Response(responses.get(i).toString()));
+    private void put(Request req, Response resp) {
+        int i = reqs.indexOf(req);
+        resps.set(i, resp);
+    }
+    public void put(ArrayList<Response> responses) {
+        //gestire eccezioni
+
+        int count = 0; //conta le richieste a cui non va inserita la risposta corrispondente perché non valide o notifiche
+        for (int i = 0; i < reqs.size(); i++) {
+            Request req = reqs.get(i);
+            if (req != null && !req.isNotify()) {
+                this.put(req, responses.get(i - count));
+                //la risposta ad una richiesta non notifica deve esserci, altrimenti indexoutofbounds
+            } else {
+                count++;
+            }
         }
-        this.put(reqs);
+    }
+    public void put(JSONArray responses) throws JSONException, JSONRPCException{
+        ArrayList<Response> resps = new ArrayList<>();
+        for (int i = 0; i<responses.length(); i++) {
+            resps.add(new Response(responses.get(i).toString()));
+        }
+        this.put(resps);
     }
 
-    ArrayList<Request> getRequests() {
-        return new ArrayList<>(batch.keySet());
+    public ArrayList<Request> getAllRequests() {
+        return reqs;
     }
-    ArrayList<Response> getResponses() {
-        return new ArrayList<>(batch.values());
+
+    public ArrayList<Request> getValidRequests() {
+        ArrayList<Request> rq = new ArrayList<>();
+        for (Request r : reqs) {
+            if (r!=null) {
+                rq.add(r);
+            }
+        }
+        return rq;
     }
-    String getResponseJSON() {
+
+    public ArrayList<Response> getAllResponses() {
+        return resps;
+    }
+
+    public ArrayList<Response> getValidResponses() {
+        ArrayList<Response> rp = new ArrayList<>();
+        for (Response r : resps) {
+            if (r!=null) {
+                rp.add(r);
+            }
+        }
+        return rp;
+    }
+
+    public String getResponseJSON() {
         JSONArray arr = new JSONArray();
-        for (Response r : batch.values()) {
+        for (Response r : resps) {
             if (r != null) { //le risposte alle notifiche non vengono inviate
                 arr.put(r.getObj());
             }
@@ -62,9 +106,9 @@ class Batch {
         return arr.toString();
     }
 
-    String getRequestJSON() {
+    public String getRequestJSON() {
         JSONArray arr = new JSONArray();
-        for (Request r : batch.keySet()) {
+        for (Request r : reqs) {
             arr.put(r.getObj());
         }
         return arr.toString();

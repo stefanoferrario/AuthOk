@@ -1,6 +1,5 @@
 package jsonrpc;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,13 +11,13 @@ public class Request extends AbstractRequest{
         super(method, params, id);
     }
 
-    Request(String jsonRpcString) throws JSONRPCException, JSONException{
+    Request(String jsonRpcString) throws JSONRPCException, JSONException {
         //https://stleary.github.io/JSON-java/
         //https://stackoverflow.com/questions/21720759/convert-a-json-string-to-a-hashmap
         obj = new JSONObject(jsonRpcString);
 
         /*definire eccezioni più specifiche*/
-        if (!obj.getString(Members.JSONRPC.toString()).equals(VER)) {throw new JSONRPCException("Not jsonrpc 2.0");}
+        if (!obj.has(Members.JSONRPC.toString()) || !obj.getString(Members.JSONRPC.toString()).equals(VER)) {throw new JSONRPCException("Not jsonrpc 2.0");}
         if (!obj.has(Members.METHOD.toString())) {throw new JSONRPCException("Method member not defined");}
         method = obj.getString(Members.METHOD.toString());
 

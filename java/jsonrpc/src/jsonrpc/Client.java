@@ -42,13 +42,13 @@ public class Client implements IClient {
         try {
             JSONArray arr = new JSONArray(returnedString);
             batch.put(arr);
-            return batch.getResponses();
+            return batch.getValidResponses();
         } catch (JSONException | JSONRPCException e) {
             Id id = new Id(); //da un batch di richieste non è possibile recuperare UN id
             HashMap<String, Member> errorData = new HashMap<>();
             try {
-                errorData.put("Invalid response received", new Member(e.getMessage()));
-                Error err = new Error(Error.Errors.PARSE, new Member(new StructuredMember(errorData)));
+                //errorData.put("Invalid response received", new Member(e.getMessage()));
+                Error err = new Error(Error.Errors.PARSE/*, new Member(new StructuredMember(errorData))*/);
                 Response errorResp = new Response(id, err);
                 ArrayList<Response> resp = new ArrayList<>();
                 resp.add(errorResp);
