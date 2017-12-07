@@ -2,6 +2,7 @@ package authorizer.GestoreAutorizzazioni;
 
 import authorizer.GestoreAutorizzazioni.Autorizzazione;
 import authorizer.GestoreToken.GestoreToken;
+import authorizer.GestoreRisorse.GestoreRisorse;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
@@ -82,7 +83,8 @@ public class GestoreAutorizzazioni {
             throw new Exception();
         }else{
             Date today = new Date();
-            return (today.before(value.getScadenza()) && value.getLivello() <= idRisorsa);
+            int level = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
+            return (today.before(value.getScadenza()) && level <= value.getLivello());
         }
     }
 
