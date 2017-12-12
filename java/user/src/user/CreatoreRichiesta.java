@@ -2,6 +2,7 @@ package user;
 
 import java.util.Date;
 import java.util.Scanner;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jsonrpc.Client;
@@ -12,21 +13,18 @@ import jsonrpc.Member;
 import jsonrpc.Request;
 import jsonrpc.Response;
 import jsonrpc.StructuredMember;
+import sistemacentrale.MethodsUtils.Methods;
 
 import java.io.*;
 import java.util.ArrayList;
 
-//1)gestione errori: li facciamo gestire all' utente della classe
-//2)singleton anche qui? no
-//3)come impostare la disposizione dei package del progetto intero : ricalcare struttura package del progetto
-//4)fare un metodo(private) per gestire da un unico punto l' errore che potrebbe ritornare dal metodo JSON
+//bisogna capire cosa fare per l' ID della connessione
 
 public class CreatoreRichiesta implements IntUtente, IntAdmin {
-	// campi:
+
 	private IClient clientUtente = new Client(5001); // meglio mettere una costante per le porte da usare
 	private ArrayList<Member> members = new ArrayList<>();
 
-	// metodi:
 	public void creaRisorsa() {
 		System.out.println("la risorsa è stata creata");
 	}
@@ -39,73 +37,91 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 		System.out.println("la risorsa è stata cancellata");
 	}
 
-	// questo metodo è da fare qui o la creazione dell' autorizzazione è tutto
-	// gestito dall' utente della classe?
-	// è ottimizzato il fatto di chiamare i metodi della classe che a loro volta
-	// aprono e chiudo connessiono json?
-
-	public String creaAutorizzazione(String nomeUtente, int livello, Date scadenza) throws JSONRPCException, IOException {
-		Scanner stdin = new Scanner(System.in);
-		Pattern pattern = Pattern.compile("s|S|n|N");
-		if (verificaEsistenzaAutorizzazione(nomeUtente)) {
-			System.out.println("Autorizzazione già esistente: sovrascrivere l' autorizzazione attuale? (s/n)");
-			if (stdin.next(pattern) == "s" || stdin.next(pattern) == "S") {
-				System.out.println("...SOVRASCRITTURA IN CORSO...");
-				revocaAutorizzazione(nomeUtente);
-			} else {
-				System.out.println("PROCEDURA DI AUTORIZZAZIONE INTERROTTA");
-				stdin.close();
-				return null;
+	// ritorna la stringa di autorizzazione, viene ritornato null se si sceglie di
+	// non sovrascrivere un' autorizzazione già esistente
+	public String creaAutorizzazione(String idUtente, int livello, Date scadenza) throws JSONRPCException, IOException {
+		boolean inputCorretto = false;
+		if (verificaEsistenzaAutorizzazione(idUtente)) {
+			Scanner scanner = new Scanner(System.in);
+			Pattern pattern = Pattern.compile("s|n");
+			String temp = null;
+			Matcher matcher =  null;
+			while (!inputCorretto) {
+				System.out.println("Autorizzazione già esistente: sovrascrivere l' autorizzazione attuale? (s/n)");
+				temp = scanner.nextLine();
+				matcher = pattern.matcher(temp);
+				// è fondamentale usare nextLine() e non next() perchè il pattern deve verificare l' intero input.
+				// per esempio: con next() un input tipo "s s " sarebbe accettato, con nextLine() no
+				if (matcher.matches()) {
+					// input senza errori
+					if (temp.equals("s")) {
+						revocaAutorizzazione(idUtente);
+					} else {
+						scanner.close();
+						return null;
+					}
+					inputCorretto = true;
+				} else { // input con errori
+					System.out.println("FORMATO INPUT NON CORRETTO: eseguire nuovamente l' operazione");
+				}
 			}
+			scanner.close();
 		}
-		stdin.close();
-		// il caso particolare di un' autorizzazione già presente è stato gestito,
-		// quindi adesso autorizzo e basta
+		// il caso particolare di un' autorizzazione già presente è stato gestito, eseguire semplice autorizzazione
 		members.clear();
-		members.add(new Member(nomeUtente));
+		members.add(new Member(idUtente));
 		members.add(new Member(livello));
 		members.add(new Member(scadenza.toString())); // questo è giusto???
 
 		Request req = new Request("creaautorizzazione", new StructuredMember(members), new Id(0));
 		Response rep = clientUtente.sendRequest(req);
-		return rep.getError().toString();
-
+		if (!rep.hasError()) {
+			return rep.getError().toString();
+		} else {
+			throw new JSONRPCException(rep.getError().toString());
+		}
 	}
 
-	public boolean revocaAutorizzazione(String nomeUtente) throws JSONRPCException {
+	// aspettare che è pronto il metodo sul server e poi modificare il getNome
+	public boolean revocaAutorizzazione(String idUtente) throws JSONRPCException {
 		members.clear();
-		members.add(new Member(nomeUtente));
+		members.add(new Member(idUtente));
 		Request req = new Request("revocaautorizzazione", new StructuredMember(members), new Id(0));
 		Response rep = clientUtente.sendRequest(req);
-		return rep.getResult().getBool();
+		if (!rep.hasError()) {
+			return rep.getResult().getBool();
+		} else {
+			throw new JSONRPCException(rep.getError().toString());
+		}
 	}
 
-	public boolean verificaEsistenzaAutorizzazione(String nomeUtente) throws JSONRPCException {
+	public boolean verificaEsistenzaAutorizzazione(String idUtente) throws JSONRPCException {
 		members.clear();
-		members.add(new Member(nomeUtente));
-		Request req = new Request("verificaesistenzaautorizzazione", new StructuredMember(members), new Id(0));
+		members.add(new Member(idUtente));
+		Request req = new Request(Methods.VERIFICA_ESISTENZA_AUTORIZZAZIONE.getName(), new StructuredMember(members),
+				new Id(0));
 		Response rep = clientUtente.sendRequest(req);
-		System.out.println(req.getMethod());
-		System.out.println(req.getId());
-		System.out.println(req.toString());
-		// l' errore bisognerebbe gestirlo in modo diverso da un' autorizzazione non
-		// esistente:
-		// secondo me bisognerebbe delegare ogni tipo di gestione dell' errore all'
-		// utente della classe
-		return rep.getResult().getBool();
+		if (!rep.hasError()) {
+			return rep.getResult().getBool();
+		} else {
+			throw new JSONRPCException(rep.getError().toString());
+		}
 	}
 
 	public String creaToken(String chiave, String idRisorsa) throws JSONRPCException {
 		members.clear();
 		members.add(new Member(chiave));
 		members.add(new Member(idRisorsa));
-		Request req = new Request("creatoken", new StructuredMember(members), new Id(0));
+		Request req = new Request(Methods.CREA_TOKEN.getName(), new StructuredMember(members), new Id(0));
 		Response rep = clientUtente.sendRequest(req);
-		return rep.getResult().getString();
+		if (!rep.hasError()) {
+			return rep.getResult().getString();
+		} else {
+			throw new JSONRPCException(rep.getError().toString());
+		}
 	}
 
 	public static void main(String[] args) throws JSONRPCException, IOException {
-		CreatoreRichiesta client = new CreatoreRichiesta();
-		client.verificaEsistenzaAutorizzazione("paolo");
+
 	}
 }
