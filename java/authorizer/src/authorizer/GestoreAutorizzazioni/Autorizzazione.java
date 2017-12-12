@@ -1,5 +1,6 @@
 package authorizer.GestoreAutorizzazioni;
 
+import java.security.InvalidParameterException;
 import java.util.Date;
 
 class Autorizzazione {
@@ -9,6 +10,9 @@ class Autorizzazione {
 
     //Costruttore visibilità
     Autorizzazione(String nome,int livello,Date scadenza){
+        if (nome == null) {throw new InvalidParameterException("Name is null");}
+        if (scadenza == null) {throw new InvalidParameterException("Date is null");}
+        if (livello<1 || livello >10) {throw new InvalidParameterException("Invalid level");}
         this.nomeUtente = nome;
         this.livello = livello;
         this.scadenza = scadenza;

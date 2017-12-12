@@ -1,6 +1,5 @@
 package authorizer.GestoreAutorizzazioni;
 
-import authorizer.GestoreAutorizzazioni.Autorizzazione;
 import authorizer.GestoreToken.GestoreToken;
 import authorizer.GestoreRisorse.GestoreRisorse;
 import java.util.Date;
@@ -74,13 +73,13 @@ public class GestoreAutorizzazioni {
         return false;
     }
 
-    public boolean verificaValiditaAutorizzazione(String chiave,int idRisorsa) throws Exception{
+    public boolean verificaValiditaAutorizzazione(String chiave,int idRisorsa) {
         // String key = autorizzazioni.keySet().iterator().next(); chiave = key;
 
         Autorizzazione value = autorizzazioni.get(chiave);
 
-        if (value == null){ //Se non è presente nessuna autorizzazione sollevo una eccezione
-            throw new Exception();
+        if (value == null){ //Se non è presente nessuna autorizzazione non è valida
+            return false;
         }else{
             Date today = new Date();
             int level = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
