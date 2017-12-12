@@ -6,7 +6,6 @@ import java.util.*;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
 
-import javax.xml.crypto.Data;
 
 public class GestoreToken {
 
@@ -66,24 +65,17 @@ public class GestoreToken {
 
     public Date verificaToken(String aString, int idRisorsa){
         Date tempoRestante=null;
-        Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
-        while (iterator.hasNext()) {
-            HashMap.Entry<String, Token> entry = iterator.next();
-            if (aString.equals(entry.getKey())){
-                if (idRisorsa==entry.getValue().getIdRisorsa()) {
-                    if(System.currentTimeMillis()-entry.getValue().getData().getTime()>82800000){
-                        System.out.println("Il token "+ entry.getKey() + " relativo alla risorsa " + entry.getValue().getIdRisorsa() +" è scaduto");
-                    }
-                    else{
-                        long tempTempoRestante=82800000-(System.currentTimeMillis()-entry.getValue().getData().getTime());
-                        Date _tempoRestante= new Date(tempTempoRestante);
-                        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
-                        String risultato = sdf.format(_tempoRestante);
-                        System.out.println("Tempo di validità restante del token "+ entry.getKey() + " relativo alla risorsa " + entry.getValue().getIdRisorsa() + ": "+risultato);
-                        return _tempoRestante;
-                    }
-
-                }
+        Token temp= tokens.get(aString);
+        if (idRisorsa == temp.getIdRisorsa()) {
+            if (System.currentTimeMillis() - temp.getData().getTime() > 82800000) {
+                System.out.println("Il token relativo alla risorsa " + temp.getIdRisorsa() + " è scaduto");
+            } else {
+                long tempTempoRestante = 82800000 - (System.currentTimeMillis() - temp.getData().getTime());
+                Date _tempoRestante = new Date(tempTempoRestante);
+                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+                String risultato = sdf.format(_tempoRestante);
+                System.out.println("Tempo di validità restante del token relativo alla risorsa " + temp.getIdRisorsa() + ": " + risultato);
+                return _tempoRestante;
             }
         }
         return tempoRestante;
