@@ -9,7 +9,6 @@ public class ZmqServer implements IZmqServer{
     private ZFrame identity;
     private ZFrame empty;
 
-    //chiedere se è una buona soluzione. utilizzare questa libreria obbliga ad avere un solo server
     public ZmqServer(int port) {
         ZMQ.Context ctx = ZMQ.context(1);
         socket = ctx.socket(ZMQ.ROUTER);
