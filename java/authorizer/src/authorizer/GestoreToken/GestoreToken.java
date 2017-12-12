@@ -6,6 +6,8 @@ import java.util.*;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
 
+import javax.xml.crypto.Data;
+
 public class GestoreToken {
 
     private static GestoreToken instance = null;
@@ -62,8 +64,8 @@ public class GestoreToken {
 
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
 
-    public long verificaToken(String aString, int idRisorsa){
-        long tempoRestante=0;
+    public Data verificaToken(String aString, int idRisorsa){
+        Data tempoRestante=null;
         Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
@@ -73,11 +75,12 @@ public class GestoreToken {
                         System.out.println("Il token "+ entry.getKey() + " relativo alla risorsa " + entry.getValue().getIdRisorsa() +" è scaduto");
                     }
                     else{
-                        tempoRestante=82800000-(System.currentTimeMillis()-entry.getValue().getData().getTime());
-                        Date _tempoRestante= new Date(tempoRestante);
+                        long tempTempoRestante=82800000-(System.currentTimeMillis()-entry.getValue().getData().getTime());
+                        Date _tempoRestante= new Date(tempTempoRestante);
                         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
                         String risultato = sdf.format(_tempoRestante);
                         System.out.println("Tempo di validità restante del token "+ entry.getKey() + " relativo alla risorsa " + entry.getValue().getIdRisorsa() + ": "+risultato);
+                        return (Data) _tempoRestante;
                     }
 
                 }
