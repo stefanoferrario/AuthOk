@@ -16,6 +16,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class Server {
@@ -135,6 +137,16 @@ public class Server {
 
     public static void main(String args[]) {
         Server s = new Server();
+
+        Date date=new Date();
+        Timer timer = new Timer();
+
+        timer.schedule(new TimerTask(){
+            public void run(){
+                GestoreToken.getInstance().cancellaTokenScaduti();
+            }
+        },date, 24*60*60*1000);//24*60*60*1000 add 24 hours delay between job executions.
+
         while (true) {
             s.receive();
         }
