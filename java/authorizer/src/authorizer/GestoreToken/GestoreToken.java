@@ -64,12 +64,12 @@ public class GestoreToken {
 
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
 
-    public Data verificaToken(String aString, int idRisorsa){
-        Data tempoRestante=null;
+    public Date verificaToken(String aString, int idRisorsa){
+        Date tempoRestante=null;
         Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
-            if (aString==entry.getKey()){
+            if (aString.equals(entry.getKey())){
                 if (idRisorsa==entry.getValue().getIdRisorsa()) {
                     if(System.currentTimeMillis()-entry.getValue().getData().getTime()>82800000){
                         System.out.println("Il token "+ entry.getKey() + " relativo alla risorsa " + entry.getValue().getIdRisorsa() +" è scaduto");
@@ -80,7 +80,7 @@ public class GestoreToken {
                         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
                         String risultato = sdf.format(_tempoRestante);
                         System.out.println("Tempo di validità restante del token "+ entry.getKey() + " relativo alla risorsa " + entry.getValue().getIdRisorsa() + ": "+risultato);
-                        return (Data) _tempoRestante;
+                        return _tempoRestante;
                     }
 
                 }
