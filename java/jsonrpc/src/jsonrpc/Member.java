@@ -2,6 +2,7 @@ package jsonrpc;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,14 +18,14 @@ public class Member {
         value = JSONObject.NULL;
         type = Types.NULL;
     }
-    public Member(String string) throws JSONRPCException {
-        if (string == null) {throw new JSONRPCException("Member value is null");}
-        if (string.isEmpty()) {throw new JSONRPCException("Member value is empty");}
+    public Member(String string) {
+        if (string == null) {throw new NullPointerException("Member value is null");}
+        if (string.isEmpty()) {throw new InvalidParameterException("Member value is empty");}
         value = string;
         type = Types.STRING;
     }
-    public Member(Number num) throws JSONRPCException {
-        if (num == null) {throw new JSONRPCException("Member value is null");}
+    public Member(Number num) {
+        if (num == null) {throw new NullPointerException("Member value is null");}
         value = num;
         type = Types.NUMBER;
     }
@@ -32,18 +33,18 @@ public class Member {
         value = bool;
         type = Types.BOOL;
     }
-    public Member(JSONObject obj) throws JSONRPCException {
-        if (obj == null) {throw new JSONRPCException("Member value is null");}
+    public Member(JSONObject obj) {
+        if (obj == null) {throw new NullPointerException("Member value is null");}
         value = new StructuredMember(obj);
         type = Types.OBJ;
     }
-    public Member(JSONArray array) throws JSONRPCException {
-        if (array == null) {throw new JSONRPCException("Member value is null");}
+    public Member(JSONArray array) {
+        if (array == null) {throw new NullPointerException("Member value is null");}
         value = new StructuredMember(array);
         type = Types.ARRAY;
     }
-    public Member(StructuredMember m) throws JSONRPCException {
-        if (m == null) {throw new JSONRPCException("Member value is null");}
+    public Member(StructuredMember m) {
+        if (m == null) {throw new NullPointerException("Member value is null");}
         value = m;
         type = m.isArray() ? Types.ARRAY : Types.OBJ;
     }
@@ -57,46 +58,46 @@ public class Member {
     /*public boolean isNull() {
         return type == Types.NULL;
     }*/
-    public boolean getBool() throws ClassCastException{
+    public boolean getBool() {
         if (type != Types.BOOL) {throw new ClassCastException("Not a boolean");}
         return (boolean)value;
     }
-    public Number getNumber() throws ClassCastException {
+    public Number getNumber() {
         if (type != Types.NUMBER) {throw new ClassCastException("Not a number");}
         return (Number)value;
     }
-    public int getInt() throws ClassCastException {
+    public int getInt() {
         if (!(value instanceof Integer)) {throw new ClassCastException("Not an integer");}
         return (int)value;
     }
-    public String getString() throws ClassCastException {
+    public String getString() {
         if (type != Types.STRING) {throw new ClassCastException("Not a string");}
         return (String)value;
     }
 
-    public StructuredMember getStructuredMember() throws ClassCastException {
+    public StructuredMember getStructuredMember() {
         if (type != Types.OBJ && type != Types.ARRAY) {throw new ClassCastException("Not a structured member");}
         return (StructuredMember)value;
     }
-    public ArrayList<Member> getList() throws ClassCastException {
+    public ArrayList<Member> getList() {
         if (type != Types.ARRAY) {throw new ClassCastException("Not a json array");}
         return ((StructuredMember)value).getList();
     }
-    public HashMap<String, Member> getMap() throws ClassCastException {
+    public HashMap<String, Member> getMap() {
         if (type != Types.OBJ) {throw new ClassCastException("Not a json object");}
         return ((StructuredMember)value).getMap();
     }
 
-    JSONObject getJSONObj() throws ClassCastException {
+    JSONObject getJSONObj() {
         if (type != Types.OBJ) {throw new ClassCastException("Not a json object");}
         return ((StructuredMember)value).getJSONObject();
     }
-    JSONArray getJSONArray() throws ClassCastException {
+    JSONArray getJSONArray() {
         if (type != Types.ARRAY) {throw new ClassCastException("Not a json array");}
         return ((StructuredMember)value).getJSONArray();
     }
 
-    private static Member parse(Object value) throws JSONRPCException {
+    private static Member parse(Object value) {
         if (value == null) {
             return new Member();
         } else if(value instanceof JSONArray) {
@@ -110,11 +111,11 @@ public class Member {
         } else if(value instanceof Boolean) {
             return new Member((boolean)value);
         } else {
-            throw new JSONRPCException("Not a valid parameter type");
+            throw new InvalidParameterException("Not a valid parameter type");
         }
     }
 
-    static Member toMember(Object obj) throws JSONRPCException {
+    static Member toMember(Object obj) {
         return parse(obj);
     }
 }

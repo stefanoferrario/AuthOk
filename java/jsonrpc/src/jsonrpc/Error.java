@@ -2,6 +2,7 @@ package jsonrpc;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.security.InvalidParameterException;
 
 public class Error extends JsonRpcObj {
     enum ErrMembers {
@@ -32,18 +33,22 @@ public class Error extends JsonRpcObj {
         public String getMessage() {return message;}
     }
     private String message;
-    private Integer code; //da specifica deve essere intero
+    private int code; //da specifica deve essere intero
     private Member data;//primitive o structure
 
-    public Error(String errorMessage, int errorCode, Member errorData) throws JSONRPCException {
-        if (errorMessage == null || errorMessage.isEmpty()) {throw new JSONRPCException("Error message not defined");}
+    public Error(String errorMessage, int errorCode, Member errorData) {
+        if (errorMessage == null || errorMessage.isEmpty()) {throw new InvalidParameterException("Error message not defined");}
         this.message = errorMessage;
         this.code = errorCode;
         this.data = errorData;
-        this.obj = toJsonObj();
+        try {
+            this.obj = toJsonObj();
+        } catch (JSONRPCException e) {
+            throw new InvalidParameterException(e.getMessage());
+        }
         this.jsonRpcString = obj.toString();
     }
-    public Error(String errorMessage, int errorCode) throws JSONRPCException {
+    public Error(String errorMessage, int errorCode) {
         this(errorMessage, errorCode, null);
     }
     public Error(Errors error) {
@@ -52,14 +57,13 @@ public class Error extends JsonRpcObj {
         this.data = null;
         try {
             this.obj = toJsonObj();
-            this.jsonRpcString = obj.toString();
         } catch (JSONRPCException e) {
-            //this.jsonRpcString = "{...}";
-            //va costruita manualmente la stringa?
+            throw new InvalidParameterException(e.getMessage());
         }
+        this.jsonRpcString = obj.toString();
     }
 
-    public Error(Errors error, Member errorData) throws JSONRPCException {
+    public Error(Errors error, Member errorData) {
         this(error.getMessage(), error.getCode(), errorData);
     }
 
@@ -70,7 +74,7 @@ public class Error extends JsonRpcObj {
         return code;
     }
     public Member getErrorData() throws JSONRPCException {
-        if (data == null) {throw new JSONRPCException("No error data defined");}
+        if (data == null) {throw new NullPointerException("No error data defined");}
         return data;
     }
     public boolean hasErrorData() {
@@ -78,8 +82,10 @@ public class Error extends JsonRpcObj {
     }
 
     JSONObject toJsonObj() throws JSONRPCException{
-        if (code == null) {throw new JSONRPCException("Error code not defined");} //obbligatori
+        //obbligatori
+        //if (code == null) {throw new JSONRPCException("Error code not defined");} code non è più Integer
         if (message == null) { throw new JSONRPCException("Error message not defined");}
+
         JSONObject object = new JSONObject();
         try {
             object.put(ErrMembers.CODE.toString(), code);
@@ -95,19 +101,19 @@ public class Error extends JsonRpcObj {
         return object;
     }
 
-    Error(JSONObject error) throws JSONRPCException {
+    Error(JSONObject error) {
         this.obj = error;
 
         try {
             if (obj.has(ErrMembers.CODE.toString())) {
                 code = error.getInt(ErrMembers.CODE.toString());
             } else {
-                throw new JSONRPCException("Error code not found");
+                throw new InvalidParameterException("Error code not found");
             }
             if (obj.has(ErrMembers.MESSAGE.toString())) {
                 message = error.getString(ErrMembers.MESSAGE.toString());
             } else {
-                throw new JSONRPCException("Error message not found");
+                throw new InvalidParameterException("Error message not found");
             }
 
             if (obj.has(ErrMembers.DATA.toString())) {
@@ -117,10 +123,11 @@ public class Error extends JsonRpcObj {
             }
         } catch (JSONException e) {
             System.out.println(e.getMessage());
+            throw new InvalidParameterException(e.getMessage());
         }
 
         //verifica che non ci siano altri parametri
-        if (!checkMembersSubset(ErrMembers.values(), obj)) {throw new JSONRPCException("Unexpected paramater");}
+        if (!checkMembersSubset(ErrMembers.values(), obj)) {throw new InvalidParameterException("Unexpected paramater");}
 
         this.jsonRpcString = obj.toString();
     }

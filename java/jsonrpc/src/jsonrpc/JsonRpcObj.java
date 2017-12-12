@@ -2,6 +2,7 @@ package jsonrpc;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 abstract class JsonRpcObj {
@@ -33,7 +34,7 @@ abstract class JsonRpcObj {
         return true;
     }
 
-    static void putMember(JSONObject obj, String key, Member value) throws JSONRPCException {
+    static void putMember(JSONObject obj, String key, Member value) {
         try {
             switch (value.getType()) {
                 case ARRAY:
@@ -48,14 +49,14 @@ abstract class JsonRpcObj {
                     obj.put(key, value.getString()); break;
                 case NULL:
                     obj.put(key, JSONObject.NULL); break;
-                default: throw new JSONRPCException("Invalid member type");
+                default: throw new InvalidParameterException("Invalid member type");
             }
         } catch (JSONException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    static void putStructuredMember(JSONObject obj, String key, StructuredMember member) throws JSONRPCException {
+    static void putStructuredMember(JSONObject obj, String key, StructuredMember member) {
         try {
             if (member.isArray()) {
                 obj.put(key, member.getJSONArray());

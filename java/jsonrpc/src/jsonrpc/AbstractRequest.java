@@ -1,5 +1,7 @@
 package jsonrpc;
 
+import java.security.InvalidParameterException;
+
 public abstract class AbstractRequest  extends JsonRpcMessage {
     enum Members {
         JSONRPC("jsonrpc"), METHOD("method"), ID("id"), PARAMS("params");
@@ -16,12 +18,16 @@ public abstract class AbstractRequest  extends JsonRpcMessage {
     String method;
     StructuredMember params; //è un oggetto strutturato che può essere array o mappa key-value
 
-    AbstractRequest(String method, StructuredMember params, Id id) throws JSONRPCException {
+    AbstractRequest(String method, StructuredMember params, Id id) {
         this.notify = id == null;
         this.id = id;
         this.method = method;
         this.params = params;
-        this.obj = toJsonObj();
+        try {
+            this.obj = toJsonObj();
+        } catch (JSONRPCException e) {
+            throw new InvalidParameterException(e.getMessage());
+        }
         this.jsonRpcString = obj.toString();
     }
 

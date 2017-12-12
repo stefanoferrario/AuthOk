@@ -7,7 +7,7 @@ abstract class JsonRpcMessage extends JsonRpcObj {
     Id id; //può essere String o Integer (o null in alcuni casi (non notifica))
     static final String VER = "2.0";
 
-    public Id getId() throws NullPointerException {
+    public Id getId() {
         //id nullo è diverso da notifica
         if (id == null) {
             throw new NullPointerException("Notify: id undefined"); //è notifica
@@ -15,7 +15,7 @@ abstract class JsonRpcMessage extends JsonRpcObj {
         return id;
     }
 
-    static void putId(JSONObject obj, String key, Id id) throws JSONRPCException {
+    static void putId(JSONObject obj, String key, Id id) {
         try {
             switch (id.getType()) {
                 case INT: obj.put(key, id.getInt()); break;

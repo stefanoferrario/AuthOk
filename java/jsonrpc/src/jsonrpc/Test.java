@@ -3,7 +3,6 @@ package jsonrpc;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,9 +30,7 @@ public class Test {
 
         ArrayList<Request> requests = new ArrayList<>();
         for (String s : testReq) {
-            try {
-                requests.add(new Request(s));
-            } catch (JSONRPCException | JSONException e) {/**/}
+            requests.add(new Request(s));
         }
 
         Batch b = new Batch(requests);
@@ -41,9 +38,7 @@ public class Test {
 
         ArrayList<Response> responses = new ArrayList<>();
         for (String s : testResp) {
-            try {
-                responses.add(new Response(s));
-            } catch (JSONRPCException | JSONException e) {/**/}
+            responses.add(new Response(s));
         }
 
         b.put(responses);
@@ -56,55 +51,49 @@ public class Test {
         ArrayList<Member> pl = new ArrayList<>();
         HashMap<String, Member> hm = new HashMap<>();
 
-        try {
-            pl.add(new Member());
-            pl.add(new Member("aaaa"));
-            pl.add(new Member(3));
-            pl.add(new Member(2.75));
-            pl.add(new Member(false));
-            params.add(new StructuredMember(pl));
+        pl.add(new Member());
+        pl.add(new Member("aaaa"));
+        pl.add(new Member(3));
+        pl.add(new Member(2.75));
+        pl.add(new Member(false));
+        params.add(new StructuredMember(pl));
 
-            int key = 0;
-            for (Member t : pl) {
-                hm.put("key"+key, t);
-                key++;
-            }
-            params.add(new StructuredMember(hm));
-
-            ArrayList<Member> memberlist = new ArrayList<>();
-            HashMap<String, Member> membermap = new HashMap<>();
-            Member m1 = new Member(1);
-            Member m2 = new Member("prova");
-            memberlist.add(m1);
-            memberlist.add(m2);
-            membermap.put("numero", m1);
-            membermap.put("stringa", m2);
-
-            ArrayList<Member> n_arr = new ArrayList<>();
-            n_arr.add(new Member(10));
-            n_arr.add(new Member(11));
-            n_arr.add(new Member(12));
-            Member numarray = new Member(new StructuredMember(n_arr));
-            memberlist.add(numarray);
-            membermap.put("array", numarray);
-
-            HashMap<String, Member> b_map = new HashMap<>();
-            b_map.put("b1",new Member(false));
-            b_map.put("b2",new Member(true));
-            Member boolmap = new Member(new StructuredMember(b_map));
-            memberlist.add(boolmap);
-            membermap.put("map", boolmap);
-
-
-
-            params.add(new StructuredMember(memberlist));
-            params.add(new StructuredMember(membermap));
-
-
-
-        } catch (JSONRPCException e) {
-            System.out.println(e.getClass().toString() + " - " + e.getMessage());
+        int key = 0;
+        for (Member t : pl) {
+            hm.put("key"+key, t);
+            key++;
         }
+        params.add(new StructuredMember(hm));
+
+        ArrayList<Member> memberlist = new ArrayList<>();
+        HashMap<String, Member> membermap = new HashMap<>();
+        Member m1 = new Member(1);
+        Member m2 = new Member("prova");
+        memberlist.add(m1);
+        memberlist.add(m2);
+        membermap.put("numero", m1);
+        membermap.put("stringa", m2);
+
+        ArrayList<Member> n_arr = new ArrayList<>();
+        n_arr.add(new Member(10));
+        n_arr.add(new Member(11));
+        n_arr.add(new Member(12));
+        Member numarray = new Member(new StructuredMember(n_arr));
+        memberlist.add(numarray);
+        membermap.put("array", numarray);
+
+        HashMap<String, Member> b_map = new HashMap<>();
+        b_map.put("b1",new Member(false));
+        b_map.put("b2",new Member(true));
+        Member boolmap = new Member(new StructuredMember(b_map));
+        memberlist.add(boolmap);
+        membermap.put("map", boolmap);
+
+
+
+        params.add(new StructuredMember(memberlist));
+        params.add(new StructuredMember(membermap));
+
 
         String method = "testmetodo";
         ArrayList<Id> ids = new ArrayList<>();
@@ -114,19 +103,15 @@ public class Test {
 
         for (StructuredMember p : params) {
             for (Id i : ids) {
-                try {
-                    AbstractRequest req = new Request(method, p, i);
-                    AbstractRequest notify = new Request(method, p);
-                    readReq(req);
-                    System.out.println(System.lineSeparator());
-                    readReq(notify);
-                } catch (JSONRPCException e) {
-                    System.out.println(e.getClass().toString() + " - " + e.getMessage());
-                } finally {
-                    System.out.println(System.lineSeparator());
-                    System.out.println(System.lineSeparator());
-                    System.out.println(System.lineSeparator());
-                }
+                AbstractRequest req = new Request(method, p, i);
+                AbstractRequest notify = new Request(method, p);
+                readReq(req);
+                System.out.println(System.lineSeparator());
+                readReq(notify);
+
+                System.out.println(System.lineSeparator());
+                System.out.println(System.lineSeparator());
+                System.out.println(System.lineSeparator());
             }
         }
 
@@ -144,33 +129,25 @@ public class Test {
 
         for (Id i : ids) {
             for (Member res : results) {
-                try {
-                    AbstractResponse resp = new Response(i, res);
-                    readResp(resp);
-                } catch (JSONRPCException e) {
-                    System.out.println(e.getClass().toString() + " - " + e.getMessage());
-                }
+                AbstractResponse resp = new Response(i, res);
+                readResp(resp);
             }
         }
 
         ArrayList<Error> errors = new ArrayList<>();
-        try {
-            errors.add(new Error(Error.Errors.METHOD_NOT_FOUND));
-            errors.add(new Error(Error.Errors.METHOD_NOT_FOUND, null));
-            errors.add(new Error(Error.Errors.METHOD_NOT_FOUND, new Member(1)));
-            errors.add(new Error("message", 0));
-            errors.add(new Error("msg", 0, null));
-            errors.add(new Error("msg",0, new Member(55)));
-            errors.add(new Error("msg", 0, new Member()));
+        errors.add(new Error(Error.Errors.METHOD_NOT_FOUND));
+        errors.add(new Error(Error.Errors.METHOD_NOT_FOUND, null));
+        errors.add(new Error(Error.Errors.METHOD_NOT_FOUND, new Member(1)));
+        errors.add(new Error("message", 0));
+        errors.add(new Error("msg", 0, null));
+        errors.add(new Error("msg",0, new Member(55)));
+        errors.add(new Error("msg", 0, new Member()));
 
-            for (Error e : errors) {
-                AbstractResponse resp = new Response(new Id(1), e);
-                readResp(resp);
-            }
-
-        } catch (JSONRPCException e) {
-            System.out.println(e.getMessage());
+        for (Error e : errors) {
+            AbstractResponse resp = new Response(new Id(1), e);
+            readResp(resp);
         }
+
     }
     private static void testResponseFromString() {
         ArrayList<String> testStrings = new ArrayList<>();
@@ -185,16 +162,11 @@ public class Test {
         testStrings.add("{\"jsonrpc\": \"2.0\", \"result\": 19, \"id\": \"stringid\"}");
 
         for (String ts : testStrings) {
-            try {
-                System.out.println(ts);
-                readResp(new Response(ts));
-            } catch (JSONException | JSONRPCException e) {
-                System.out.println("COSTRUTTORE: " + e.getClass().toString() + " - " + e.getMessage());
-            } finally {
-                System.out.println(System.lineSeparator());
-                System.out.println(System.lineSeparator());
-                System.out.println(System.lineSeparator());
-            }
+            System.out.println(ts);
+            readResp(new Response(ts));
+            System.out.println(System.lineSeparator());
+            System.out.println(System.lineSeparator());
+            System.out.println(System.lineSeparator());
         }
     }
 
@@ -261,16 +233,11 @@ public class Test {
         testStrings.add("{\"jsonrpc\": \"2.0\", \"method\": \"subtract\", \"params\": [42, 23], \"id\": null}"); //id nullo
 
         for (String ts : testStrings) {
-            try {
-                System.out.println(ts);
-                readReq(new Request(ts));
-            } catch (JSONException | JSONRPCException e) {
-                System.out.println("COSTRUTTORE: " + e.getClass().toString() + " - " + e.getMessage());
-            } finally {
-                System.out.println(System.lineSeparator());
-                System.out.println(System.lineSeparator());
-                System.out.println(System.lineSeparator());
-            }
+            System.out.println(ts);
+            readReq(new Request(ts));
+            System.out.println(System.lineSeparator());
+            System.out.println(System.lineSeparator());
+            System.out.println(System.lineSeparator());
 
         }
     }

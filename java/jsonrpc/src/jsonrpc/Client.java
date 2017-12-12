@@ -3,6 +3,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import zeromq.IZmqClient;
 import zeromq.ZmqClient;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,7 +21,7 @@ public class Client implements IClient {
 
         try {
             return new Response(returnedString);
-        } catch (JSONException | JSONRPCException e) {
+        } catch (InvalidParameterException e) {
             HashMap<String, Member> errorData = new HashMap<>();
             errorData.put("Invalid response received", new Member(e.getMessage()));
             Error err = new Error(Error.Errors.PARSE, new Member(new StructuredMember(errorData)));
@@ -43,20 +44,15 @@ public class Client implements IClient {
             JSONArray arr = new JSONArray(returnedString);
             batch.put(arr);
             return batch.getValidResponses();
-        } catch (JSONException | JSONRPCException e) {
+        } catch (JSONException e) {
             Id id = new Id(); //da un batch di richieste non è possibile recuperare UN id
-            HashMap<String, Member> errorData = new HashMap<>();
-            try {
-                //errorData.put("Invalid response received", new Member(e.getMessage()));
-                Error err = new Error(Error.Errors.PARSE/*, new Member(new StructuredMember(errorData))*/);
-                Response errorResp = new Response(id, err);
-                ArrayList<Response> resp = new ArrayList<>();
-                resp.add(errorResp);
-                return resp;
-            } catch (JSONRPCException j) {
-                System.out.println(j.getMessage());
-                return new ArrayList<>();
-            }
+            //HashMap<String, Member> errorData = new HashMap<>();
+            //errorData.put("Invalid response received", new Member(e.getMessage()));
+            Error err = new Error(Error.Errors.PARSE/*, new Member(new StructuredMember(errorData))*/);
+            Response errorResp = new Response(id, err); //la creazione è sicura non serve try catch
+            ArrayList<Response> resp = new ArrayList<>();
+            resp.add(errorResp);
+            return resp;
         }
     }
 }

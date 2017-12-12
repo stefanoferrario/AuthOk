@@ -1,6 +1,7 @@
 package jsonrpc;
 
 import org.json.JSONObject;
+import java.security.InvalidParameterException;
 
 public class Id {
     //id = string o int o null
@@ -28,12 +29,12 @@ public class Id {
         type = Types.NULL;
     }
 
-    public int getInt() throws ClassCastException {
+    public int getInt() {
         if (type != Types.INT) {throw new ClassCastException("Not an integer");}
         return (Integer)value;
     }
 
-    public String getString() throws ClassCastException {
+    public String getString() {
         if (type != Types.STRING) {throw new ClassCastException("Not a string");}
         return (String)value;
     }
@@ -45,7 +46,7 @@ public class Id {
         return type;
     }
 
-    static Id toId(Object id) throws JSONRPCException {
+    static Id toId(Object id) {
         if (id == null) {throw new NullPointerException("Null id");}
 
         if (id.equals(JSONObject.NULL)) {
@@ -55,7 +56,7 @@ public class Id {
         } else if (id instanceof String) {
             return new Id((String) id);
         } else {
-            throw new JSONRPCException("Invalid id");
+            throw new InvalidParameterException("Invalid id");
         }
     }
 }

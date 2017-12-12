@@ -17,7 +17,7 @@ public class Server implements IServer {
     }
 
     @Override
-    public ArrayList<Request> receive() throws JSONRPCException {
+    public ArrayList<Request> receive() {
         String receivedString = server.receive();
         try {
             Object json = new JSONTokener(receivedString).nextValue();
@@ -34,7 +34,7 @@ public class Server implements IServer {
                 requests.add(req);
                 return requests;
             } else {
-                throw new JSONRPCException("Invalid request received");
+                throw new JSONRPCException("Invalid json received");
             }
         } catch (JSONException | JSONRPCException e) {
             //se json è invalido viene restituita in automatico un'unica risposta con errore di parsing (vedi documentazione)
@@ -77,7 +77,7 @@ public class Server implements IServer {
         try {
             JSONObject obj = new JSONObject(request);
             return Id.toId(obj.get(AbstractRequest.Members.ID.toString()));
-        } catch (JSONException | JSONRPCException e) {
+        } catch (JSONException e) {
             return new Id(); //se non è possibile recuperarlo della richiesta si crea un id nullo
         }
     }

@@ -3,6 +3,7 @@ package jsonrpc;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,28 +14,28 @@ public class StructuredMember {
 
     private boolean isArray;
 
-    StructuredMember(JSONObject obj) throws JSONRPCException {
-        if (obj.length() == 0) {throw new JSONRPCException("Json object is empty");}
+    StructuredMember(JSONObject obj) {
+        if (obj.length() == 0) {throw new InvalidParameterException("Json object is empty");}
         map = obj;
         list = null;
         isArray = false;
     }
-    StructuredMember(JSONArray array) throws JSONRPCException{
-        if (array.length() == 0) {throw new JSONRPCException("Json array is empty");}
+    StructuredMember(JSONArray array) {
+        if (array.length() == 0) {throw new InvalidParameterException("Json array is empty");}
         list = array;
         map = null;
         isArray = true;
     }
 
-    public StructuredMember(HashMap<String, Member> members) throws JSONRPCException {
-        if (members.size() == 0) {throw new JSONRPCException("Members map is empty");}
+    public StructuredMember(HashMap<String, Member> members) {
+        if (members.size() == 0) {throw new InvalidParameterException("Members map is empty");}
         map = toMap(members);
         list = null;
         isArray = false;
     }
 
-    public StructuredMember(ArrayList<Member> members) throws JSONRPCException{
-        if (members.size() == 0) {throw new JSONRPCException("Members list is empty");}
+    public StructuredMember(ArrayList<Member> members) {
+        if (members.size() == 0) {throw new InvalidParameterException("Members list is empty");}
         list = toList(members);
         map = null;
         isArray = true;
@@ -45,7 +46,7 @@ public class StructuredMember {
         return isArray;
     }
 
-    public HashMap<String, Member> getMap() throws ClassCastException {
+    public HashMap<String, Member> getMap() {
         if (isArray) {throw new ClassCastException("Not a json object");}
 
         HashMap<String, Member> hashmap = new HashMap<>();
@@ -55,14 +56,14 @@ public class StructuredMember {
             try {
                 Object value = map.get(key);
                 hashmap.put(key, Member.toMember(value));
-            } catch (JSONRPCException | JSONException e) {
+            } catch (JSONException e) {
                 System.out.println(e.getMessage());
             }
         }
         return hashmap;
     }
 
-    public ArrayList<Member> getList() throws ClassCastException {
+    public ArrayList<Member> getList() {
         if (!isArray) {throw new ClassCastException("Not a json array");}
 
         ArrayList<Member > arraylist = new ArrayList<>();
@@ -70,19 +71,19 @@ public class StructuredMember {
             try {
                 Object value = list.get(i);
                 arraylist.add(Member.toMember(value));
-            } catch (JSONException | JSONRPCException e) {
+            } catch (JSONException e) {
                 System.out.println(e.getMessage());
             }
         }
         return arraylist;
     }
 
-    JSONObject getJSONObject() throws ClassCastException {
+    JSONObject getJSONObject() {
         if (isArray) {throw new ClassCastException("Not a json object");}
         return map;
     }
 
-    JSONArray getJSONArray() throws ClassCastException {
+    JSONArray getJSONArray() {
         if (!isArray) {throw new ClassCastException("Not a json array");}
         return list;
     }
@@ -99,7 +100,7 @@ public class StructuredMember {
                     case STRING: o.put(entry.getKey(), entry.getValue().getString()); break;
                     case NULL: o.put(entry.getKey(), JSONObject.NULL); break;
                 }
-            } catch (JSONException | JSONRPCException e) {
+            } catch (JSONException e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -118,14 +119,14 @@ public class StructuredMember {
                     case STRING: a.put(value.getString()); break;
                     case NULL: a.put(JSONObject.NULL); break;
                 }
-            } catch (JSONRPCException e) {
+            } catch (InvalidParameterException | NullPointerException e) {
                 System.out.println(e.getMessage());
             }
         }
         return a;
     }
 
-    static StructuredMember toStructuredMember(Object obj) throws JSONRPCException{
+    static StructuredMember toStructuredMember(Object obj) {
         if (obj == null) {throw new NullPointerException("Null structured member");}
 
         if (obj instanceof JSONArray) {
@@ -133,7 +134,7 @@ public class StructuredMember {
         } else if (obj instanceof  JSONObject) {
             return new StructuredMember((JSONObject)obj);
         } else {
-            throw new JSONRPCException("Not a structured member");
+            throw new InvalidParameterException("Not a structured member");
         }
     }
 }

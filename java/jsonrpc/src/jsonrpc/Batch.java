@@ -3,6 +3,7 @@ package jsonrpc;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import static jsonrpc.Server.getIdFromRequest;
 
@@ -18,20 +19,20 @@ class Batch {
             resps.add(null);
         }
     }
-    Batch(JSONArray requestArray) throws JSONException, JSONRPCException {
+    Batch(JSONArray requestArray) {
         reqs = new ArrayList<>();
         resps = new ArrayList<>();
 
         for (int i=0; i<requestArray.length(); i++) {
-            JSONObject o = requestArray.getJSONObject(i);
-
-            String stringReq = o.toString();
             Request req = null;
             Response resp = null;
+            String stringReq = null;
             try {
+                JSONObject o = requestArray.getJSONObject(i);
+                stringReq = o.toString();
                 req = new Request(stringReq);
                 //resp = null;
-            } catch (JSONRPCException e) {
+            } catch (InvalidParameterException | JSONException e) {
                 Id id = getIdFromRequest(stringReq); //tenta di recuperarne l'id, altrimenti id null
                 Error err = new Error(Error.Errors.INVALID_REQUEST);
                 //req = null;
@@ -60,10 +61,14 @@ class Batch {
             }
         }
     }
-    void put(JSONArray responses) throws JSONException, JSONRPCException{
+    void put(JSONArray responses) {
         ArrayList<Response> resps = new ArrayList<>();
         for (int i = 0; i<responses.length(); i++) {
-            resps.add(new Response(responses.get(i).toString()));
+            try {
+                resps.add(new Response(responses.get(i).toString()));
+            } catch (JSONException e) {
+                System.out.println(e.getMessage());
+            }
         }
         this.put(resps);
     }

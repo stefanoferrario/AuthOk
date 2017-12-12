@@ -1,5 +1,7 @@
 package jsonrpc;
 
+import java.security.InvalidParameterException;
+
 public abstract class AbstractResponse extends JsonRpcMessage {
     enum Members {
         JSONRPC("jsonrpc"), RESULT("result"), ERROR("error"), ID("id");
@@ -16,21 +18,25 @@ public abstract class AbstractResponse extends JsonRpcMessage {
     Error error;
 
     //setup
-    private AbstractResponse(Id id, Member result, Error error) throws JSONRPCException {
+    private AbstractResponse(Id id, Member result, Error error) {
         if (id == null) {id = new Id();}
         if (result != null && (error != null) || (result == null && error == null)) {
-            throw new JSONRPCException("Response has to have either a result or an error");
+            throw new InvalidParameterException("Response has to have either a result or an error");
         }
         this.id = id;
         this.result = result;
         this.error = error;
-        this.obj = toJsonObj();
+        try {
+            this.obj = toJsonObj();
+        } catch (JSONRPCException e) {
+            throw new InvalidParameterException(e.getMessage());
+        }
         this.jsonRpcString = obj.toString();
     }
-    AbstractResponse(Id id, Member result) throws JSONRPCException {
+    AbstractResponse(Id id, Member result) {
         this(id, result, null);
     }
-    AbstractResponse(Id id, Error error) throws JSONRPCException {
+    AbstractResponse(Id id, Error error) {
         this(id, null, error);
     }
     AbstractResponse() {

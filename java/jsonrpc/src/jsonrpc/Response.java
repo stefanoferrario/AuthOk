@@ -2,43 +2,48 @@ package jsonrpc;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.security.InvalidParameterException;
 
 public class Response extends AbstractResponse {
-    public Response(Id id, Member result) throws JSONRPCException {
+    public Response(Id id, Member result) {
         super(id, result);
     }
 
-    public Response(Id id, Error error) throws JSONRPCException {
+    public Response(Id id, Error error) {
         super(id, error);
     }
 
-    Response(String jsonRpcString) throws JSONException, JSONRPCException {
-        obj = new JSONObject(jsonRpcString);
+    Response(String jsonRpcString) {
+        try {
+            obj = new JSONObject(jsonRpcString);
 
-        if (!obj.getString(Members.JSONRPC.toString()).equals(VER)) {
-            throw new JSONRPCException("Not jsonrpc 2.0");
-        }
+            if (!obj.getString(Members.JSONRPC.toString()).equals(VER)) {
+                throw new InvalidParameterException("Not jsonrpc 2.0");
+            }
 
-        if (obj.has(Members.RESULT.toString())) {
-            result = Member.toMember(obj.get(Members.RESULT.toString()));
-            error = null;
-        } else if (obj.has(Members.ERROR.toString())) {
-            error = new Error((JSONObject) obj.get(Members.ERROR.toString()));
-            result = null;
-        } else {
-            throw new JSONRPCException("Method member not defined");
-        }
+            if (obj.has(Members.RESULT.toString())) {
+                result = Member.toMember(obj.get(Members.RESULT.toString()));
+                error = null;
+            } else if (obj.has(Members.ERROR.toString())) {
+                error = new Error((JSONObject) obj.get(Members.ERROR.toString()));
+                result = null;
+            } else {
+                throw new InvalidParameterException("Method member not defined");
+            }
 
-        //obbligatorio nelle risposte
-        if (obj.has(Members.ID.toString())) {
-            id = Id.toId(obj.get(Members.ID.toString()));
-        } else {
-            throw new JSONRPCException("ID member not defined");
+            //obbligatorio nelle risposte
+            if (obj.has(Members.ID.toString())) {
+                id = Id.toId(obj.get(Members.ID.toString()));
+            } else {
+                throw new InvalidParameterException("ID member not defined");
+            }
+        } catch (JSONException e) {
+            throw new InvalidParameterException(e.getMessage());
         }
 
         //verifica che non ci siano altri parametri
         if (!checkMembersSubset(Members.values(), obj)) {
-            throw new JSONRPCException("Unexpected member");
+            throw new InvalidParameterException("Unexpected member");
         }
 
         this.jsonRpcString = obj.toString();
@@ -46,7 +51,7 @@ public class Response extends AbstractResponse {
 
 
     @Override
-    JSONObject toJsonObj() throws JSONRPCException {
+    JSONObject toJsonObj() {
         JSONObject object = new JSONObject();
 
         try {
