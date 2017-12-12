@@ -11,9 +11,7 @@ import jsonrpc.StructuredMember;
 import jsonrpc.Request;
 import jsonrpc.Response;
 import java.security.InvalidParameterException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
@@ -48,7 +46,7 @@ public class Server {
 
         for (Request req : reqs) {
             try {
-                Member result = selectMethod(Methods.valueOf(req.getMethod()), req.getParams());
+                Member result = selectMethod(MethodsUtils.Methods.valueOf(req.getMethod()), req.getParams());
                 if (!req.isNotify()) {resps.add(new Response(req.getId(), result));}
             } catch (InvalidParameterException e) {
                 Error error = new Error(Error.Errors.INVALID_PARAMS, new Member(e.getMessage()));
@@ -70,7 +68,7 @@ public class Server {
         }
     }
 
-    private Member selectMethod(Methods method, StructuredMember params) {
+    private Member selectMethod(MethodsUtils.Methods method, StructuredMember params) {
         ArrayList<Member> p = new ArrayList<>();
         try {
             if (params!=null) //i parametri sono opzionali
@@ -89,15 +87,14 @@ public class Server {
                 case VERIFICA_TOKEN:
                     //far restituire un tipo data
                     Date time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
-                    return new Member(0/*time*/);
+                    return new Member(MethodsUtils.DATE_FORMAT.format(time));
                 case CREA_AUTORIZAZIONE:
-                    DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                    Date date = dateFormat.parse(p.get(2).getString());
+                    Date date = MethodsUtils.DATE_FORMAT.parse(p.get(2).getString());
                     String key = authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), date);
                     return new Member(key);
                 case VERIFICA_ESISTENZA_AUTORIZZAZIONE:
-                    boolean existance = authManager.verificaEsistenzaAutorizzazione(p.get(0).getString());
-                    return new Member(existance);
+                    boolean existence = authManager.verificaEsistenzaAutorizzazione(p.get(0).getString());
+                    return new Member(existence);
                 case CREA_RISORSA:
                     //resourceManager.creaRisorsa(...);
                     return new Member(); //TODO
