@@ -43,39 +43,22 @@ public class Server {
     }
 
     private void receive() {
-        ArrayList<Request> reqs;
-        try {
-            reqs = serverJsonRpc.receive();
-        } catch (JSONRPCException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-
+        ArrayList<Request> reqs = serverJsonRpc.receive();
         ArrayList<Response> resps = new ArrayList<>();
 
         for (Request req : reqs) {
-            Response resp = null;
             try {
-                try {
-                    Member result = selectMethod(Methods.valueOf(req.getMethod()), req.getParams());
-                    resp = new Response(req.getId(), result);
-                } catch (InvalidParameterException e) {
-                    Error error = new Error(Error.Errors.INVALID_PARAMS);
-                    resp = new Response(req.getId(), error);
-                } catch (IllegalArgumentException e) {
-                    //lanciata dal Methods.valueOf() se la stringa non corrisponde a un metodo
-                    Error error = new Error(Error.Errors.METHOD_NOT_FOUND);
-                    resp = new Response(req.getId(), error);
-                } catch (UnsupportedOperationException e) {
-                    //errore
-                }
-            } catch (JSONRPCException e) {
-                System.out.println(e.getMessage());
-                resp = null;
-            } finally {
-                if (!req.isNotify()) {
-                    resps.add(resp);
-                }
+                Member result = selectMethod(Methods.valueOf(req.getMethod()), req.getParams());
+                if (!req.isNotify()) {resps.add(new Response(req.getId(), result));}
+            } catch (InvalidParameterException e) {
+                Error error = new Error(Error.Errors.INVALID_PARAMS, new Member(e.getMessage()));
+                if (!req.isNotify()) {resps.add(new Response(req.getId(), error));}
+            } catch (IllegalArgumentException e) {
+                //lanciata dal Methods.valueOf() se la stringa non corrisponde a un metodo
+                Error error = new Error(Error.Errors.METHOD_NOT_FOUND);
+                if (!req.isNotify()) {resps.add(new Response(req.getId(), error));}
+            } catch (UnsupportedOperationException e) {
+                //errore
             }
         }
 
@@ -87,7 +70,7 @@ public class Server {
         }
     }
 
-    private Member selectMethod(Methods method, StructuredMember params)  throws InvalidParameterException {
+    private Member selectMethod(Methods method, StructuredMember params) {
         ArrayList<Member> p = new ArrayList<>();
         try {
             if (params!=null) //i parametri sono opzionali
@@ -105,8 +88,8 @@ public class Server {
                     return new Member(token);
                 case VERIFICA_TOKEN:
                     //far restituire un tipo data
-                    long time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
-                    return new Member(time);
+                    Date time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
+                    return new Member(0/*time*/);
                 case CREA_AUTORIZAZIONE:
                     DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                     Date date = dateFormat.parse(p.get(2).getString());
@@ -117,22 +100,21 @@ public class Server {
                     return new Member(existance);
                 case CREA_RISORSA:
                     //resourceManager.creaRisorsa(...);
-                    break;
+                    return new Member(); //TODO
                 case MODIFICA_RISORSA:
                     //resourceManager.modificaRisorsa(...);
-                    break;
+                    return new Member(); //TODO
                 case CANCELLA_RISORSA:
                     //resourceManager.cancellaRisorsa(...);
-                    break;
+                    return new Member(); //TODO
+                default:
+                    throw new IllegalArgumentException(); //non viene mai chiamata ma deve esserci un ritorno per ogni ramo dello switch
             }
         } catch (ClassCastException e) {
             throw new InvalidParameterException("Wrong parameter type: " + e.getMessage());
         } catch (ParseException e) {
             throw new InvalidParameterException("Invalid date format: " + e.getMessage());
-        } catch (JSONRPCException e) {
-            System.out.println(e.getMessage());
         }
-        return null;
     }
 
     public static void main(String args[]) {
