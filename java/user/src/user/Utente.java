@@ -3,52 +3,40 @@ package user;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Scanner;
 
 import jsonrpc.JSONRPCException;
 
 public class Utente {
 
-	public Utente(String _nome) {
-		nome = _nome;
-	}
-
 	private String nome = "default";
-	private String chiave = "0000";
-	@SuppressWarnings("unused")
-	private ArrayList<String> tokens;
+	private String chiave = "0";
+	private ArrayList<String> tokens; //lista dei token posseduti dall' utente
+	
+	//si ASSUME che l' identificativo dell' utente sia UNIVOCO
+	public Utente(String idUtente) {nome = idUtente;}
 
-	public String getChiave() {
-		return chiave;
-	}
+	public String getChiave() {return chiave;}
 
-	public String getNome() {
-		return nome;
-	}
+	public String getNome() {return nome;}
 
-	public void setChiave(String s) {
-		chiave = s;
-	}
+	public void setChiave(String s) {chiave = s;}
 
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 		IntUtente clientUtente = new CreatoreRichiesta();
+		//creo un utente
 		Utente utente = new Utente("Paolo");
-		Scanner scanner = new Scanner(System.in);
+		//autorizzo l' utente
+		Date data = new Date();
+		data.setYear(2018);
+		data.setMonth(0);
+		data.setDate(31);
 		try {
-			if(clientUtente.verificaEsistenzaAutorizzazione("Paolo")) 
-				System.out.println("l' utente è autorizzato");
-			else 
-				System.out.println("l' utente NON è autorizzato");
-			System.out.println(utente.getChiave());
-			System.out.println("Inserire livello per l' autorizzazione");
-			utente.setChiave(clientUtente.creaAutorizzazione(utente.getNome(), scanner.nextInt(), new Date()));
-			System.out.println(utente.getChiave());
+			utente.setChiave(clientUtente.creaAutorizzazione(utente.getNome(), 7 , data));
 		} catch (JSONRPCException e) {
 			e.printStackTrace();
-		} catch (IOException e){
+		} catch(IOException e) {
 			e.printStackTrace();
-		}finally {
-			scanner.close();
 		}
 	}
 }
