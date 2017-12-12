@@ -1,10 +1,14 @@
 package authorizer.GestoreToken;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Period;
 import java.util.*;
 
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
+
+import static java.time.temporal.ChronoUnit.MILLIS;
 
 
 public class GestoreToken {
@@ -63,19 +67,20 @@ public class GestoreToken {
 
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
 
-    public Date verificaToken(String aString, int idRisorsa){
-        Date tempoRestante=null;
+    public Duration verificaToken(String aString, int idRisorsa){
+        Duration tempoRestante=Duration.ZERO;
         Token temp= tokens.get(aString);
         if (idRisorsa == temp.getIdRisorsa()) {
-            if (System.currentTimeMillis() - temp.getData().getTime() > 82800000) {
+            if (System.currentTimeMillis() - temp.getData().getTime() > 86400000) {
                 System.out.println("Il token relativo alla risorsa " + temp.getIdRisorsa() + " è scaduto");
             } else {
-                long tempTempoRestante = 82800000 - (System.currentTimeMillis() - temp.getData().getTime());
+                long tempTempoRestante = 86400000 - (System.currentTimeMillis() - temp.getData().getTime());
                 Date _tempoRestante = new Date(tempTempoRestante);
                 SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
                 String risultato = sdf.format(_tempoRestante);
                 System.out.println("Tempo di validità restante del token relativo alla risorsa " + temp.getIdRisorsa() + ": " + risultato);
-                return _tempoRestante;
+                tempoRestante=Duration.of(tempTempoRestante,MILLIS);
+                return tempoRestante;
             }
         }
         return tempoRestante;
@@ -85,7 +90,7 @@ public class GestoreToken {
         Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
-            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>82800000) {
+            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>86400000) {
                 iterator.remove();
             }
         }
