@@ -24,6 +24,7 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 
 	private IClient clientUtente = new Client(5001); // meglio mettere una costante per le porte da usare
 	private ArrayList<Member> members = new ArrayList<>();
+	private static int contatoreID = 0;
 
 	public void creaRisorsa() {
 		System.out.println("la risorsa è stata creata");
@@ -37,6 +38,8 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 		System.out.println("la risorsa è stata cancellata");
 	}
 
+	private static int getId() {return contatoreID++;}
+	
 	// ritorna la stringa di autorizzazione, viene ritornato null se si sceglie di
 	// non sovrascrivere un' autorizzazione già esistente
 	public String creaAutorizzazione(String idUtente, int livello, Date scadenza) throws JSONRPCException, IOException {
@@ -73,10 +76,10 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 		members.add(new Member(livello));
 		members.add(new Member(scadenza.toString())); // questo è giusto???
 
-		Request req = new Request("creaautorizzazione", new StructuredMember(members), new Id(0));
+		Request req = new Request("creaautorizzazione", new StructuredMember(members), new Id(getId()));
 		Response rep = clientUtente.sendRequest(req);
 		if (!rep.hasError()) {
-			return rep.getError().toString();
+			return rep.getResult().getString();
 		} else {
 			throw new JSONRPCException(rep.getError().toString());
 		}
@@ -86,7 +89,7 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 	public boolean revocaAutorizzazione(String idUtente) throws JSONRPCException {
 		members.clear();
 		members.add(new Member(idUtente));
-		Request req = new Request("revocaautorizzazione", new StructuredMember(members), new Id(0));
+		Request req = new Request("revocaautorizzazione", new StructuredMember(members), new Id(getId()));
 		Response rep = clientUtente.sendRequest(req);
 		if (!rep.hasError()) {
 			return rep.getResult().getBool();
@@ -98,8 +101,7 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 	public boolean verificaEsistenzaAutorizzazione(String idUtente) throws JSONRPCException {
 		members.clear();
 		members.add(new Member(idUtente));
-		Request req = new Request(Methods.VERIFICA_ESISTENZA_AUTORIZZAZIONE.getName(), new StructuredMember(members),
-				new Id(0));
+		Request req = new Request(Methods.VERIFICA_ESISTENZA_AUTORIZZAZIONE.getName(), new StructuredMember(members), new Id(getId()));
 		Response rep = clientUtente.sendRequest(req);
 		if (!rep.hasError()) {
 			return rep.getResult().getBool();
@@ -112,7 +114,7 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 		members.clear();
 		members.add(new Member(chiave));
 		members.add(new Member(idRisorsa));
-		Request req = new Request(Methods.CREA_TOKEN.getName(), new StructuredMember(members), new Id(0));
+		Request req = new Request(Methods.CREA_TOKEN.getName(), new StructuredMember(members), new Id(getId()));
 		Response rep = clientUtente.sendRequest(req);
 		if (!rep.hasError()) {
 			return rep.getResult().getString();
