@@ -13,11 +13,11 @@ public class Response extends AbstractResponse {
         super(id, error);
     }
 
-    Response(String jsonRpcString) {
+    public Response(String jsonRpcString) { //public solo per test junit
         try {
             obj = new JSONObject(jsonRpcString);
 
-            if (!obj.getString(Members.JSONRPC.toString()).equals(VER)) {
+            if (!obj.has(Members.JSONRPC.toString()) || !obj.getString(Members.JSONRPC.toString()).equals(VER)) {
                 throw new InvalidParameterException("Not jsonrpc 2.0");
             }
 

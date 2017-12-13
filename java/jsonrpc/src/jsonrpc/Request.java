@@ -12,7 +12,7 @@ public class Request extends AbstractRequest{
         super(method, params, id);
     }
 
-    Request(String jsonRpcString) {
+    public Request(String jsonRpcString) { //public solo per il test junit
         //https://stleary.github.io/JSON-java/
         //https://stackoverflow.com/questions/21720759/convert-a-json-string-to-a-hashmap
         try {
