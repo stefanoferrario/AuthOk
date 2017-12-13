@@ -66,19 +66,18 @@ public class GestoreToken {
 
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
 
-    public Duration verificaToken(String aString, int idRisorsa){
-        Duration tempoRestante=Duration.ZERO;
+    public long verificaToken(String aString, int idRisorsa){
+        long tempoRestante=0;
         Token temp= tokens.get(aString);
         if (idRisorsa == temp.getIdRisorsa()) {
             if (System.currentTimeMillis() - temp.getData().getTime() > 86400000) {
                 System.out.println("Il token relativo alla risorsa " + temp.getIdRisorsa() + " è scaduto");
             } else {
-                long tempTempoRestante = 86400000 - (System.currentTimeMillis() - temp.getData().getTime());
-                Date _tempoRestante = new Date(tempTempoRestante);
+                tempoRestante = 86400000 - (System.currentTimeMillis() - temp.getData().getTime());
+                Date _tempoRestante = new Date(tempoRestante);
                 SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
                 String risultato = sdf.format(_tempoRestante);
                 System.out.println("Tempo di validità restante del token relativo alla risorsa " + temp.getIdRisorsa() + ": " + risultato);
-                tempoRestante=Duration.of(tempTempoRestante,MILLIS);
                 return tempoRestante;
             }
         }

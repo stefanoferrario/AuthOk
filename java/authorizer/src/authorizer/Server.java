@@ -12,6 +12,7 @@ import jsonrpc.Request;
 import jsonrpc.Response;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
@@ -85,8 +86,7 @@ public class Server {
                     String token = tokenManager.creaToken(p.get(0).getString(), p.get(1).getInt());
                     return new Member(token);
                 case VERIFICA_TOKEN:
-                    //far restituire un tipo data
-                    Date time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
+                    Duration time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
                     return new Member(MethodsUtils.DATE_FORMAT.format(time));
                 case CREA_AUTORIZAZIONE:
                     Date date = MethodsUtils.DATE_FORMAT.parse(p.get(2).getString());

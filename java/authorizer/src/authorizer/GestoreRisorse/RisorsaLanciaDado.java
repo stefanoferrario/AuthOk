@@ -17,8 +17,8 @@ public class RisorsaLanciaDado extends Risorsa {
 	public void lanciaDado() {facciaDado = new Random().nextInt((6-1) + 1) + 1;}
 	
 	@SuppressWarnings("unused")
-	private static Duration verificaToken(Token token) {
-		Duration d = GestoreToken.getInstance().verificaToken(token.getChiave(), token.getIdRisorsa());
+	private static long verificaToken(Token token) {
+		long d = GestoreToken.getInstance().verificaToken(token.getChiave(), token.getIdRisorsa());
 		return d;
 	}
 	

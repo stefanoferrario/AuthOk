@@ -37,8 +37,8 @@ public class RisorsaFibonacci extends Risorsa {
 	}
 
 	@SuppressWarnings("unused")
-	private Duration verificaToken(Token token) {
-		Duration d = GestoreToken.getInstance().verificaToken(token.getChiave(), token.getIdRisorsa());
+	private long verificaToken(Token token) {
+		long d = GestoreToken.getInstance().verificaToken(token.getChiave(), token.getIdRisorsa());
 		return d;
 	}
 
