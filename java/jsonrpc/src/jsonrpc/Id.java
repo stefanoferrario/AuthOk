@@ -1,5 +1,6 @@
 package jsonrpc;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.security.InvalidParameterException;
 
@@ -74,5 +75,14 @@ public class Id {
             default: return false;
         }
 
+    }
+
+    public static Id getIdFromRequest(String request) {
+        try {
+            JSONObject obj = new JSONObject(request);
+            return toId(obj.get(AbstractRequest.Members.ID.toString()));
+        } catch (JSONException e) {
+            return new Id(); //se non è possibile recuperarlo della richiesta si crea un id nullo
+        }
     }
 }

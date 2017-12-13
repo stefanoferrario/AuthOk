@@ -39,7 +39,7 @@ public class Server implements IServer {
         } catch (JSONException | JSONRPCException e) {
             //se json è invalido viene restituita in automatico un'unica risposta con errore di parsing (vedi documentazione)
             //indifferentemente se era una richiesta o un array di richieste
-            Id id = getIdFromRequest(receivedString); //se è una richiesta unica tenta di recuperarne l'id, altrimenti id null
+            Id id = Id.getIdFromRequest(receivedString); //se è una richiesta unica tenta di recuperarne l'id, altrimenti id null
             Error err = new Error(Error.Errors.PARSE);
             Response errorResp = new Response(id, err);
             server.reply(errorResp.getJsonString());
@@ -72,13 +72,4 @@ public class Server implements IServer {
         }
     }
 
-
-    static Id getIdFromRequest(String request) {
-        try {
-            JSONObject obj = new JSONObject(request);
-            return Id.toId(obj.get(AbstractRequest.Members.ID.toString()));
-        } catch (JSONException e) {
-            return new Id(); //se non è possibile recuperarlo della richiesta si crea un id nullo
-        }
-    }
 }
