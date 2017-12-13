@@ -38,21 +38,27 @@ public class Client implements IClient {
 
     public ArrayList<Response> sendBatch(ArrayList<Request> requests) {
         Batch batch = new Batch(requests);
-        String returnedString = zmqClient.request(batch.getRequestJSON());
 
-        try {
-            JSONArray arr = new JSONArray(returnedString);
-            batch.put(arr);
-            return batch.getValidResponses();
-        } catch (JSONException e) {
-            Id id = new Id(); //da un batch di richieste non è possibile recuperare UN id
-            //HashMap<String, Member> errorData = new HashMap<>();
-            //errorData.put("Invalid response received", new Member(e.getMessage()));
-            Error err = new Error(Error.Errors.PARSE/*, new Member(new StructuredMember(errorData))*/);
-            Response errorResp = new Response(id, err); //la creazione è sicura non serve try catch
-            ArrayList<Response> resp = new ArrayList<>();
-            resp.add(errorResp);
-            return resp;
+        if (batch.isOnlyNotifies()) {
+            zmqClient.send(batch.getRequestJSON());
+            return null;
+        } else {
+            String returnedString = zmqClient.request(batch.getRequestJSON());
+
+            try {
+                JSONArray arr = new JSONArray(returnedString);
+                batch.put(arr);
+                return batch.getValidResponses();
+            } catch (JSONException e) {
+                Id id = new Id(); //da un batch di richieste non è possibile recuperare UN id
+                //HashMap<String, Member> errorData = new HashMap<>();
+                //errorData.put("Invalid response received", new Member(e.getMessage()));
+                Error err = new Error(Error.Errors.PARSE/*, new Member(new StructuredMember(errorData))*/);
+                Response errorResp = new Response(id, err); //la creazione è sicura non serve try catch
+                ArrayList<Response> resp = new ArrayList<>();
+                resp.add(errorResp);
+                return resp;
+            }
         }
     }
 }
