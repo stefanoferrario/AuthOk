@@ -118,4 +118,21 @@ public class Member {
     static Member toMember(Object obj) {
         return parse(obj);
     }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof Member))return false;
+        Member o = (Member) other;
+        if (this.type != o.type) return false;
+
+        switch (this.type) {
+            case NULL: return true;
+            case STRING: return getString().equals(o.getString());
+            case NUMBER: return getNumber().equals(o.getNumber());
+            case BOOL: return getBool()==o.getBool();
+            default: return getStructuredMember().equals(o.getStructuredMember());
+        }
+    }
 }

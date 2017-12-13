@@ -137,4 +137,17 @@ public class StructuredMember {
             throw new InvalidParameterException("Not a structured member");
         }
     }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof StructuredMember))return false;
+        StructuredMember o = (StructuredMember) other;
+        if (this.isArray) {
+            return o.isArray && getList().equals(o.getList());
+        } else {
+            return (!o.isArray) && getMap().equals(o.getMap());
+        }
+    }
 }

@@ -135,4 +135,17 @@ public class Error extends JsonRpcObj {
     JSONObject getJsonObj() {
         return this.obj;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof Error))return false;
+        Error o = (Error) other;
+
+        if (this.data==null)
+            return this.code == o.code && this.message.equals(o.message) && o.data==null;
+        else
+            return this.code == o.code && this.message.equals(o.message) && this.data.equals(o.data);
+    }
 }
