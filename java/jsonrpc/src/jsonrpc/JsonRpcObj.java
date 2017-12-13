@@ -68,7 +68,7 @@ abstract class JsonRpcObj {
         }
     }
 
-    JSONObject getObj() {
+    public JSONObject getObj() {
         return this.obj;
-    }
+    } //public solo per test
 }
