@@ -54,4 +54,24 @@ public abstract class AbstractResponse extends JsonRpcMessage {
     public boolean hasError() {
         return this.result == null;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof AbstractResponse))return false;
+        AbstractResponse o = (AbstractResponse) other;
+
+        if (this.id != null) {
+            if (!this.id.equals(o.id)) {return false;}
+        } else {
+            if (o.id != null) {return false;}
+        }
+
+        if (this.error == null) {
+            return o.error == null && this.result.equals(o.result);
+        } else {
+            return this.error.equals(o.error) && o.result == null;
+        }
+    }
 }

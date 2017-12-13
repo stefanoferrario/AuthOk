@@ -59,4 +59,20 @@ public class Id {
             throw new InvalidParameterException("Invalid id");
         }
     }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof Id))return false;
+        Id o = (Id) other;
+
+        switch (this.type) {
+            case NULL: return o.type == Types.NULL;
+            case STRING: return o.type == Types.STRING && getString().equals(o.getString());
+            case INT: return o.type == Types.INT && ((Integer)getInt()).equals(o.getInt());
+            default: return false;
+        }
+
+    }
 }

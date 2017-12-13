@@ -56,4 +56,25 @@ public abstract class AbstractRequest  extends JsonRpcMessage {
     public boolean isNotify() {
         return notify;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof AbstractRequest))return false;
+        AbstractRequest o = (AbstractRequest) other;
+
+        //jsonobj, jsonRpcString
+
+        if (this.id != null) {
+            if (!this.id.equals(o.id)) {return false;}
+        } else {
+            if (o.id != null) {return false;}
+        }
+
+        if (this.params==null)
+            return this.notify == o.notify && this.method.equals(o.method) && o.params==null;
+        else
+            return this.notify == o.notify && this.method.equals(o.method) && this.params.equals(o.params);
+    }
 }
