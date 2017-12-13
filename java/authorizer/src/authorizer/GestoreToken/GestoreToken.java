@@ -25,55 +25,51 @@ public class GestoreToken {
     }
 
     //Metodo per la creazione di un nuovo token
-    public String creaToken (String chiave, int idRisorsa) {
+    public String creaToken (String chiave, int idRisorsa) throws TokenException {
         String stringaToken = null;
         boolean chiaveValida = false;
         int livelloRisorsa = 0;
 
         int livelloChiave = 0;
         //verifica della Chiave
-        try {
-            chiaveValida = GestoreAutorizzazioni.getInstance().verificaValiditaAutorizzazione(chiave, idRisorsa);
-            if (!chiaveValida) {
-                throw new TokenException("La chiave fornita non è valida");
-            } else {
-                //Se la chiave è valida estrae il livello dell'autorizzazione
-                livelloChiave = GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
-            }
-            //Analisi della Risorsa
-            if (GestoreRisorse.getInstance().contieneRisorsa(idRisorsa)) {
-                livelloRisorsa = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
-            } else {
-                throw new TokenException("ID Risorsa fornito non valido");
-            }
 
-            if (livelloRisorsa > livelloChiave) {
-                throw new TokenException("Livello autorizzazione insufficiente");
-            }
-            stringaToken = instance.generaCodice(20, true);
-            Token newToken = new Token(chiave, idRisorsa, (System.currentTimeMillis()));
-            System.out.println("Token generato: " + stringaToken);
-            tokens.put(stringaToken, newToken);
-
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        } finally {
-            return stringaToken;
+        chiaveValida = GestoreAutorizzazioni.getInstance().verificaValiditaAutorizzazione(chiave, idRisorsa);
+        if (!chiaveValida) {
+            throw new TokenException("La chiave fornita non è valida");
+        } else {
+            //Se la chiave è valida estrae il livello dell'autorizzazione
+            livelloChiave = GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
         }
+        //Analisi della Risorsa
+        if (GestoreRisorse.getInstance().contieneRisorsa(idRisorsa)) {
+            livelloRisorsa = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
+        } else {
+            throw new TokenException("ID Risorsa fornito non valido");
+        }
+
+        if (livelloRisorsa > livelloChiave) {
+            throw new TokenException("Livello autorizzazione insufficiente");
+        }
+        stringaToken = instance.generaCodice(20, true);
+        Token newToken = new Token(chiave, idRisorsa, (System.currentTimeMillis()));
+        System.out.println("Token generato: " + stringaToken);
+        tokens.put(stringaToken, newToken);
+
+        return stringaToken;
     }
 
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
 
-    public long verificaToken(String aString, int idRisorsa){
+    public long verificaToken(String aString, int idRisorsa) throws TokenException {
         long tempoRestante=0;
         Token temp= tokens.get(aString);
         if (idRisorsa == temp.getIdRisorsa()) {
-            if (System.currentTimeMillis() - temp.getData().getTime() > 86400000) {
-                System.out.println("Il token relativo alla risorsa " + temp.getIdRisorsa() + " è scaduto");
+            if (System.currentTimeMillis() - temp.getData().getTime() > 82800000) {
+                throw new TokenException("Il token relativo alla risorsa " + temp.getIdRisorsa() + " è scaduto");
             } else {
-                tempoRestante = 86400000 - (System.currentTimeMillis() - temp.getData().getTime());
+                tempoRestante = 82800000 - (System.currentTimeMillis() - temp.getData().getTime());
                 Date _tempoRestante = new Date(tempoRestante);
-                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                 String risultato = sdf.format(_tempoRestante);
                 System.out.println("Tempo di validità restante del token relativo alla risorsa " + temp.getIdRisorsa() + ": " + risultato);
                 return tempoRestante;
@@ -86,7 +82,7 @@ public class GestoreToken {
         Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
-            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>86400000) {
+            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>82800000) {
                 iterator.remove();
             }
         }
@@ -167,7 +163,7 @@ public class GestoreToken {
     }
 
 
-    public static void main(String [] args) {
+    public static void main(String [] args) throws TokenException {
 
         GestoreToken gestoreToken=instance.getInstance();
         gestoreToken.creaToken(GestoreAutorizzazioni.getInstance().creaAutorizzazione("Stefano",9 ,new Date()),23492);
