@@ -88,8 +88,8 @@ public class Server {
                     return new Member(token);
                 case VERIFICA_TOKEN:
                     //far restituire un tipo data
-                    Duration time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
-                    return new Member(time.get(ChronoUnit.SECONDS));
+                    long time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
+                    return new Member(time);
                 case CREA_AUTORIZAZIONE:
                     Date date = MethodsUtils.DATE_FORMAT.parse(p.get(2).getString());
                     String key = authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), date);
