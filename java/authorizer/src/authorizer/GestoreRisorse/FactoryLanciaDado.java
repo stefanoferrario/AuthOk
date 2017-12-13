@@ -1,4 +1,4 @@
-package sistemacentrale.gestorerisorse;
+package authorizer.GestoreRisorse;
 
 class FactoryLanciaDado implements FactoryRisorsa {
 

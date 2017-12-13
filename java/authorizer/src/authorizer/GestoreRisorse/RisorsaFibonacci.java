@@ -1,9 +1,10 @@
-package sistemacentrale.gestorerisorse;
+package authorizer.GestoreRisorse;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
-import sistemacentrale.gestoretoken.GestoreToken;
-import sistemacentrale.gestoretoken.Token;
+import authorizer.GestoreToken.GestoreToken;
+import authorizer.GestoreToken.*;
 
 public class RisorsaFibonacci extends Risorsa {
 
@@ -36,8 +37,8 @@ public class RisorsaFibonacci extends Risorsa {
 	}
 
 	@SuppressWarnings("unused")
-	private Date verificaToken(Token token) {
-		Date d = GestoreToken.getInstance().verificaToken(token.getChiave(), token.getIdRisorsa());
+	private Duration verificaToken(Token token) {
+		Duration d = GestoreToken.getInstance().verificaToken(token.getChiave(), token.getIdRisorsa());
 		return d;
 	}
 

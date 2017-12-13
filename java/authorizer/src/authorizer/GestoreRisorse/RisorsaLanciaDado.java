@@ -1,7 +1,8 @@
-package sistemacentrale.gestorerisorse;
+package authorizer.GestoreRisorse;
+import java.time.Duration;
 import java.util.Random;
 import java.util.Date;
-import sistemacentrale.gestoretoken.*;
+import authorizer.GestoreToken.*;
 
 public class RisorsaLanciaDado extends Risorsa {
 	private int facciaDado = 0;
@@ -16,8 +17,8 @@ public class RisorsaLanciaDado extends Risorsa {
 	public void lanciaDado() {facciaDado = new Random().nextInt((6-1) + 1) + 1;}
 	
 	@SuppressWarnings("unused")
-	private static Date verificaToken(Token token) {
-		Date d = GestoreToken.getInstance().verificaToken(token.getChiave(), token.getIdRisorsa());
+	private static Duration verificaToken(Token token) {
+		Duration d = GestoreToken.getInstance().verificaToken(token.getChiave(), token.getIdRisorsa());
 		return d;
 	}
 	

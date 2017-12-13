@@ -1,4 +1,4 @@
-package sistemacentrale.gestorerisorse;
+package authorizer.GestoreRisorse;
 
 public abstract class Risorsa {
 	

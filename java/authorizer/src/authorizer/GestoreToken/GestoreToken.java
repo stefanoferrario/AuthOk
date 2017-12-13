@@ -2,7 +2,6 @@ package authorizer.GestoreToken;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.Period;
 import java.util.*;
 
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;

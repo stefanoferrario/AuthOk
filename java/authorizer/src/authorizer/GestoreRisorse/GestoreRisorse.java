@@ -1,4 +1,4 @@
-package sistemacentrale.gestorerisorse;
+package authorizer.GestoreRisorse;
 
 import java.util.HashMap;
 
@@ -18,7 +18,7 @@ public class GestoreRisorse {
 		return gestoreRisorse;
 	}
 
-	// serve a verificare se un idRisorsa è già associato ad una risorsa nella
+	// serve a verificare se un idRisorsa ï¿½ giï¿½ associato ad una risorsa nella
 	// HashMap
 	public boolean contieneRisorsa(int idRisorsa) {
 		if (dataBaseRisorse.containsKey(idRisorsa))
@@ -38,7 +38,7 @@ public class GestoreRisorse {
 		return dataBaseRisorse.put(idRisorsa, risorsa);
 	}
 
-	// se non è presente una risorsa da modificare torna null, altrimenti torna la
+	// se non ï¿½ presente una risorsa da modificare torna null, altrimenti torna la
 	// versione pre-modifica della risorsa stessa
 	public Risorsa modificaRisorsa(int idRisorsa, int livello) {
 		Risorsa r = dataBaseRisorse.get(idRisorsa);
@@ -73,6 +73,6 @@ public class GestoreRisorse {
 		RisorsaLanciaDado rD = (RisorsaLanciaDado) rDado;
 		System.out.println("La faccia del dado vale: " + rD.getFacciaDado());
 		rD.lanciaDado();
-		System.out.println("Lancio il dado...la nuova faccia è: " + rD.getFacciaDado());
+		System.out.println("Lancio il dado...la nuova faccia ï¿½: " + rD.getFacciaDado());
 	}
 }
