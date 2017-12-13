@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Batch { //public solo per test
     private ArrayList<Request> reqs;
     private ArrayList<Response> resps;
+    private boolean onlyNotifies;
 
     public Batch(JSONArray requestArray) { //public solo per test
         setup(requestArray);
@@ -26,7 +27,7 @@ public class Batch { //public solo per test
         if (requestArray.length() == 0) {throw new InvalidParameterException("Empty array of requests");}
         reqs = new ArrayList<>();
         resps = new ArrayList<>();
-
+        onlyNotifies = true;
         for (int i=0; i<requestArray.length(); i++) {
             Request req = null;
             Response resp = null;
@@ -36,11 +37,13 @@ public class Batch { //public solo per test
                 stringReq = o.toString();
                 req = new Request(stringReq);
                 //resp = null;
+                if (!req.isNotify()) {onlyNotifies = false;}
             } catch (InvalidParameterException | JSONException e) {
                 Id id = stringReq != null ? Id.getIdFromRequest(stringReq) : new Id(); //tenta di recuperarne l'id, altrimenti id null
                 Error err = new Error(Error.Errors.INVALID_REQUEST);
                 //req = null;
                 resp = new Response(id, err);
+                onlyNotifies = false;
             } finally {
                 reqs.add(req);
                 resps.add(resp);
@@ -128,5 +131,9 @@ public class Batch { //public solo per test
             arr.put(r.getObj());
         }
         return arr.toString();
+    }
+
+    public boolean isOnlyNotifies() {
+        return onlyNotifies;
     }
 }

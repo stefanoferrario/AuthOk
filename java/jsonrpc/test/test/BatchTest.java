@@ -165,4 +165,56 @@ public class BatchTest {
         assertEquals(reqJ.toString(), b.getRequestJSON());
 
     }
+
+    @Test
+    public void testIsOnlyNotifies() throws JSONException {
+        Request r1 = new Request("foo",null, new Id(1));
+        Request r2 = new Request("foo",null, new Id(2));
+        Request n1 = new Request("foo",null);
+        Request n2 = new Request("foo",null);
+
+        ArrayList<Request> reqs = new ArrayList<>();
+        reqs.add(r1);
+        assertFalse(new Batch(reqs).isOnlyNotifies());
+
+        reqs.add(r2);
+        assertFalse(new Batch(reqs).isOnlyNotifies());
+
+        reqs.add(n1);
+        assertFalse(new Batch(reqs).isOnlyNotifies());
+
+        reqs.clear();
+
+        reqs.add(n1);
+        assertTrue(new Batch(reqs).isOnlyNotifies());
+
+        reqs.add(n2);
+        assertTrue(new Batch(reqs).isOnlyNotifies());
+
+        reqs.add(r1);
+        assertFalse(new Batch(reqs).isOnlyNotifies());
+
+        reqs.clear();
+
+        reqs.add(n1);
+        reqs.add(null);
+        assertFalse(new Batch(reqs).isOnlyNotifies());
+
+        JSONArray arr = new JSONArray();
+
+        arr.put(r1.getObj());
+        assertFalse(new Batch(arr).isOnlyNotifies());
+
+        arr.put(n1.getObj());
+        assertFalse(new Batch(arr).isOnlyNotifies());
+
+        arr = new JSONArray();
+
+        arr.put(n2.getObj());
+        assertTrue(new Batch(arr).isOnlyNotifies());
+
+        arr.put(r2.getObj().put("not", "a valid request"));
+        assertFalse(new Batch(arr).isOnlyNotifies());
+
+    }
 }
