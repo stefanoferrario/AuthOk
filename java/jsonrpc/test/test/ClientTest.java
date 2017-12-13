@@ -1,21 +1,17 @@
 package test;
 
 import jsonrpc.*;
-import jsonrpc.Error;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-public class ClientServerTest {
-    private static final String PARSEERR = "parse_error";
+public class ClientTest {
     private static int port = 5001;
     private Client client;
-    //private boolean exception; //usata per verificare eccezione nel thread server. trovare un modo migliore
     private Member validResult = new Member(true);
 
     @Before
@@ -23,7 +19,6 @@ public class ClientServerTest {
         client = new Client(port);
         (new Thread(new RunServer(new Server(port)))).start();
         port++;
-        //exception = false;
     }
 
     @After
@@ -50,7 +45,6 @@ public class ClientServerTest {
             try {
                 s.reply(resps);
             } catch (JSONRPCException e) {
-                //exception = true;
                 fail(e.getMessage());
             }
             //}
@@ -65,7 +59,6 @@ public class ClientServerTest {
         assertFalse(resp.hasError());
         assertEquals(validResult, resp.getResult());
         assertEquals(req.getId(), resp.getId());
-        //assertFalse(exception);
     }
 
     @Test
@@ -73,8 +66,6 @@ public class ClientServerTest {
         Request notify = new Request("method", null);
         client.sendNotify(notify);
         //no exception thrown
-
-        //assertFalse(exception);
     }
 
     @Test(expected = JSONRPCException.class)
