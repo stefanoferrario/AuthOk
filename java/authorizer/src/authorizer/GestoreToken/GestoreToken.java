@@ -1,13 +1,11 @@
 package authorizer.GestoreToken;
 
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.*;
 
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
-
-import static java.time.temporal.ChronoUnit.MILLIS;
+import authorizer.GestoreRisorse.Risorsa;
 
 
 public class GestoreToken {
@@ -28,40 +26,41 @@ public class GestoreToken {
     }
 
     //Metodo per la creazione di un nuovo token
-    public String creaToken (String chiave, int idRisorsa){
-        String stringaToken=null;
-        boolean chiaveValida=false;
-        boolean livelloSufficiente=false;
+    public String creaToken (String chiave, int idRisorsa) {
+        String stringaToken = null;
+        boolean chiaveValida = false;
+        int livelloRisorsa = 0;
 
-        int livelloChiave=0;
+        int livelloChiave = 0;
         //verifica della Chiave
-        try{ //L'eccezione viene catturata quando la chiave non è valida e quindi non è presente l'autorizzazione
-            chiaveValida=GestoreAutorizzazioni.getInstance().verificaValiditaAutorizzazione(chiave,idRisorsa);
-            livelloChiave=GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
-        }catch(Exception e){
-            System.out.println("Autorizzazione non trovata...");
-        }
-
-        //verifica del livello della risorsa
-
-        try{ //L'eccezione viene catturata quando la chiave non è valida e quindi non è presente l'autorizzazione
-            int livelloRisorsa=GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
-            if (livelloRisorsa<=livelloChiave){
-                livelloSufficiente=true;
+        try {
+            chiaveValida = GestoreAutorizzazioni.getInstance().verificaValiditaAutorizzazione(chiave, idRisorsa);
+            if (chiaveValida == false) {
+                throw new TokenException("La chiave fornita non è valida");
+            } else {
+                //Se la chiave è valida estrae il livello dell'autorizzazione
+                livelloChiave = GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
             }
-        }catch(Exception e){
-            System.out.println("Impossibile verificare la risorsa inserita");
-        }
+            //Analisi della Risorsa
+            if (GestoreRisorse.getInstance().contieneRisorsa(idRisorsa)) {
+                livelloRisorsa = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
+            } else {
+                throw new TokenException("ID Risorsa fornito non valido");
+            }
 
-
-        if (chiaveValida && livelloSufficiente){
-            stringaToken=instance.generaCodice(20,true);
-            Token newToken= new Token(chiave,idRisorsa, (System.currentTimeMillis()));
+            if (livelloRisorsa > livelloChiave) {
+                throw new TokenException("Livello autorizzazione insufficiente");
+            }
+            stringaToken = instance.generaCodice(20, true);
+            Token newToken = new Token(chiave, idRisorsa, (System.currentTimeMillis()));
             System.out.println("Token generato: " + stringaToken);
-            tokens.put(stringaToken,newToken);
-        }
+            tokens.put(stringaToken, newToken);
 
-        return stringaToken;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        } finally {
+            return stringaToken;
+        }
     }
 
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
@@ -169,10 +168,10 @@ public class GestoreToken {
     }
 
 
-    public static void main(String [] args){
+    public static void main(String [] args) {
 
         GestoreToken gestoreToken=instance.getInstance();
-        System.out.println(instance.creaToken("apple.StefanoTestClea",23492));
+        gestoreToken.creaToken(GestoreAutorizzazioni.getInstance().creaAutorizzazione("Stefano",9 ,new Date()),23492);
 
 
     }
