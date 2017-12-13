@@ -5,7 +5,6 @@ import java.util.*;
 
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
-import authorizer.GestoreRisorse.Risorsa;
 
 
 public class GestoreToken {
@@ -35,7 +34,7 @@ public class GestoreToken {
         //verifica della Chiave
         try {
             chiaveValida = GestoreAutorizzazioni.getInstance().verificaValiditaAutorizzazione(chiave, idRisorsa);
-            if (chiaveValida == false) {
+            if (!chiaveValida) {
                 throw new TokenException("La chiave fornita non è valida");
             } else {
                 //Se la chiave è valida estrae il livello dell'autorizzazione
