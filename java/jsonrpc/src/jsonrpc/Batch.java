@@ -5,7 +5,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import static jsonrpc.Server.getIdFromRequest;
 
 public class Batch { //public solo per test
     private ArrayList<Request> reqs;
@@ -38,7 +37,7 @@ public class Batch { //public solo per test
                 req = new Request(stringReq);
                 //resp = null;
             } catch (InvalidParameterException | JSONException e) {
-                Id id = stringReq != null ? getIdFromRequest(stringReq) : new Id(); //tenta di recuperarne l'id, altrimenti id null
+                Id id = stringReq != null ? Id.getIdFromRequest(stringReq) : new Id(); //tenta di recuperarne l'id, altrimenti id null
                 Error err = new Error(Error.Errors.INVALID_REQUEST);
                 //req = null;
                 resp = new Response(id, err);
