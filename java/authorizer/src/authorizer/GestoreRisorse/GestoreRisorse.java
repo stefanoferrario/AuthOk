@@ -1,72 +1,78 @@
 package authorizer.GestoreRisorse;
-import java.util.HashMap;
 
-import authorizer.GestoreRisorse.FactoryRisorsa;
+import java.util.HashMap;
 
 public class GestoreRisorse {
 	private static GestoreRisorse gestoreRisorse = null;
-	private HashMap<Integer, IRisorsa> dataBaseRisorse = null; 
-	
-	//singleton:
+	private HashMap<Integer, Risorsa> dataBaseRisorse = null;
+
+	// singleton:
 	private GestoreRisorse() {
+		gestoreRisorse = new GestoreRisorse();
 		dataBaseRisorse = new HashMap<>();
 	}
-	
+
 	public static GestoreRisorse getInstance() {
-        if (gestoreRisorse == null) {
-        	gestoreRisorse = new GestoreRisorse();
-        }
-        return gestoreRisorse;
+		if (gestoreRisorse == null)
+			gestoreRisorse = new GestoreRisorse();
+		return gestoreRisorse;
 	}
-	
-	//in realt� aggiunge una risorsa al "database", infatti non ritorna niente...il nome � ok?
-	public void creaRisorsa(int idRisorsa, FactoryRisorsa fact) {
-		if(!dataBaseRisorse.containsKey(idRisorsa))
-			dataBaseRisorse.put(idRisorsa, fact.creaRisorsa()); 
+
+	// serve a verificare se un idRisorsa � gi� associato ad una risorsa nella
+	// HashMap
+	public boolean contieneRisorsa(int idRisorsa) {
+		if (dataBaseRisorse.containsKey(idRisorsa))
+			return true;
 		else
-			System.out.println("Errore: idRisorsa gi� presente nel database");
+			return false;
 	}
-	
-	//la modifica � solo un rimpiazzo di una risorsa con una nuova che la sovrascrive
-	public void modificaRisorsa(int idRisorsa, FactoryRisorsa fact) {
-		if(dataBaseRisorse.containsKey(idRisorsa))
-			dataBaseRisorse.put(idRisorsa, fact.creaRisorsa()); 
-		else
-			System.out.println("Errore: idRisorsa non presente nel database");
+
+	// ho deciso di "ricalcare" il comportamento della classe HashMap per quanto
+	// riguarda il tipo di dato ritornato
+	public Risorsa addRisorsa(int idRisorsa, int livello, FactoryRisorsa fact) {
+		return dataBaseRisorse.put(idRisorsa, fact.creaRisorsa(idRisorsa, livello));
 	}
-	
-	public void cancellaRisorsa(int idRisorsa) { dataBaseRisorse.remove(idRisorsa);}
-	
+
+	// overload per aggiungere una risorsa (generica) direttamente alla HashMap
+	public Risorsa addRisorsa(int idRisorsa, Risorsa risorsa) {
+		return dataBaseRisorse.put(idRisorsa, risorsa);
+	}
+
+	// se non � presente una risorsa da modificare torna null, altrimenti torna la
+	// versione pre-modifica della risorsa stessa
+	public Risorsa modificaRisorsa(int idRisorsa, int livello) {
+		Risorsa r = dataBaseRisorse.get(idRisorsa);
+		if (r == null) { // non sono presenti risorse con l' idRisorsa passato come parametro
+			return null;
+		} else {
+			r.setId(idRisorsa);
+			r.setLivello(livello);
+			return addRisorsa(idRisorsa, r);
+		}
+	}
+
+	// viene ritornata la risorsa cancellata o null se non era presente una risorsa
+	// per il parametro idRisorsa
+	public Risorsa cancellaRisorsa(int idRisorsa) {
+		return dataBaseRisorse.remove(idRisorsa);
+	}
+
 	public int getLivelloRisorsa(int idRisorsa) {
 		return (dataBaseRisorse.get(idRisorsa)).getLivello();
 	}
-		
+
 	public static void main(String[] args) {
-		
-		//PDF:
-		FactoryRisorsa factPdf = new FactoryPdf();
-		IRisorsa rPdf =  factPdf.creaRisorsa();
-		System.out.println(rPdf.getId());
-		System.out.println(rPdf.getLivello());
-		rPdf.setLivello(7);
-		System.out.println(rPdf.getLivello());
-		
-		//EXCEL:
-		FactoryRisorsa factExcel = new FactoryExcel();
-		IRisorsa rExcel =  factExcel.creaRisorsa();
-		System.out.println(rExcel.getId());
-		System.out.println(rExcel.getLivello());
-		rExcel.setLivello(9);
-		System.out.println(rExcel.getLivello());
+		FactoryRisorsa factFibo = new FactoryFibonacci();
+		FactoryRisorsa factDado = new FactoryLanciaDado();
+		Risorsa rDado = factDado.creaRisorsa(0, 5);
+		Risorsa rFibo = factFibo.creaRisorsa(1, 7);
+		System.out.println("ID RISORSA: " + rDado.getId() + ", LIVELLO RISORSA: " + rDado.getLivello());
+		System.out.println("ID RISORSA: " + rFibo.getId() + ", LIVELLO RISORSA: " + rFibo.getLivello());
+		RisorsaFibonacci rF = (RisorsaFibonacci) rFibo;
+		System.out.println("I primi 10 termini della serie di Fibonacci sono: " + rF.serieDiFibonacci(10).toString()); 
+		RisorsaLanciaDado rD = (RisorsaLanciaDado) rDado;
+		System.out.println("La faccia del dado vale: " + rD.getFacciaDado());
+		rD.lanciaDado();
+		System.out.println("Lancio il dado...la nuova faccia �: " + rD.getFacciaDado());
 	}
 }
-
-//IMPORTANTE: per adesso la factory permette solo la costruzione di risorse che non sono niente in pratica, bisogna capire come gestirle
-//1)aggiungere l' overload del metodo creaRisorsa nell' interfaccia (IFactoryRisorsa) e implementarlo (FactoryRisorse specializzati) 
-//2)apportare le conseguenti modifiche al metodo di creazione risorse :
-//		cosa � una risorsa?
-//		quali sono i parametri che devono essere passati per istanziare una risorsa complessa?
-//		cosa vuol dire modificare una risorsa?
-//		ma soprattutto...tutte queste cose devono essere fatte o devono solo essere presenti i metodi nell' interfaccia e poi non implementati?
-//3)I metodi delle risorse concrete quale livello di visibilit� devono avere?
-//4)Altri eventuali metodi ausiliari dovranno essere obbligatoriamente privati, ma per adesso non ce ne sono
