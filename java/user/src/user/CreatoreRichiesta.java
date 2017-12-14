@@ -13,7 +13,7 @@ import jsonrpc.Member;
 import jsonrpc.Request;
 import jsonrpc.Response;
 import jsonrpc.StructuredMember;
-import sistemacentrale.MethodsUtils.Methods;
+import authorizer.MethodsUtils.Methods;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,21 +27,21 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 	private static int contatoreID = 0;
 
 	public void creaRisorsa() {
-		System.out.println("la risorsa è stata creata");
+		System.out.println("la risorsa ï¿½ stata creata");
 	}
 
 	public void modificaRisorsa() {
-		System.out.println("la risorsa è stata modificata");
+		System.out.println("la risorsa ï¿½ stata modificata");
 	}
 
 	public void cancellaRisorsa() {
-		System.out.println("la risorsa è stata cancellata");
+		System.out.println("la risorsa ï¿½ stata cancellata");
 	}
 
 	private static int getId() {return contatoreID++;}
 	
 	// ritorna la stringa di autorizzazione, viene ritornato null se si sceglie di
-	// non sovrascrivere un' autorizzazione già esistente
+	// non sovrascrivere un' autorizzazione giï¿½ esistente
 	public String creaAutorizzazione(String idUtente, int livello, Date scadenza) throws JSONRPCException, IOException {
 		boolean inputCorretto = false;
 		if (verificaEsistenzaAutorizzazione(idUtente)) {
@@ -50,10 +50,10 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 			String temp = null;
 			Matcher matcher =  null;
 			while (!inputCorretto) {
-				System.out.println("Autorizzazione già esistente: sovrascrivere l' autorizzazione attuale? (s/n)");
+				System.out.println("Autorizzazione giï¿½ esistente: sovrascrivere l' autorizzazione attuale? (s/n)");
 				temp = scanner.nextLine();
 				matcher = pattern.matcher(temp);
-				// è fondamentale usare nextLine() e non next() perchè il pattern deve verificare l' intero input.
+				// ï¿½ fondamentale usare nextLine() e non next() perchï¿½ il pattern deve verificare l' intero input.
 				// per esempio: con next() un input tipo "s s " sarebbe accettato, con nextLine() no
 				if (matcher.matches()) {
 					// input senza errori
@@ -70,11 +70,11 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 			}
 			scanner.close();
 		}
-		// il caso particolare di un' autorizzazione già presente è stato gestito, eseguire semplice autorizzazione
+		// il caso particolare di un' autorizzazione giï¿½ presente ï¿½ stato gestito, eseguire semplice autorizzazione
 		members.clear();
 		members.add(new Member(idUtente));
 		members.add(new Member(livello));
-		members.add(new Member(scadenza.toString())); // questo è giusto???
+		members.add(new Member(scadenza.toString())); // questo ï¿½ giusto???
 
 		Request req = new Request("creaautorizzazione", new StructuredMember(members), new Id(getId()));
 		Response rep = clientUtente.sendRequest(req);
@@ -85,7 +85,7 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 		}
 	}
 
-	// aspettare che è pronto il metodo sul server e poi modificare il getNome
+	// aspettare che ï¿½ pronto il metodo sul server e poi modificare il getNome
 	public boolean revocaAutorizzazione(String idUtente) throws JSONRPCException {
 		members.clear();
 		members.add(new Member(idUtente));
