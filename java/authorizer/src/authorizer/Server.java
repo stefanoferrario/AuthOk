@@ -3,6 +3,7 @@ package authorizer;
 import authorizer.GestoreRisorse.GestoreRisorse;
 import authorizer.GestoreToken.GestoreToken;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
+import authorizer.GestoreToken.TokenException;
 import jsonrpc.*;
 import jsonrpc.IServer;
 import jsonrpc.Error;
@@ -47,18 +48,25 @@ public class Server {
         ArrayList<Response> resps = new ArrayList<>();
 
         for (Request req : reqs) {
+            Member result = null;
+            Error error = null;
             try {
-                Member result = selectMethod(MethodsUtils.Methods.valueOf(req.getMethod()), req.getParams());
-                if (!req.isNotify()) {resps.add(new Response(req.getId(), result));}
+                result = selectMethod(MethodsUtils.Methods.valueOf(req.getMethod()), req.getParams());
             } catch (InvalidParameterException e) {
-                Error error = new Error(Error.Errors.INVALID_PARAMS, new Member(e.getMessage()));
-                if (!req.isNotify()) {resps.add(new Response(req.getId(), error));}
+                error = new Error(Error.Errors.INVALID_PARAMS, new Member(e.getMessage()));
             } catch (IllegalArgumentException e) {
                 //lanciata dal Methods.valueOf() se la stringa non corrisponde a un metodo
-                Error error = new Error(Error.Errors.METHOD_NOT_FOUND);
-                if (!req.isNotify()) {resps.add(new Response(req.getId(), error));}
-            } catch (UnsupportedOperationException e) {
-                //errore
+                error = new Error(Error.Errors.METHOD_NOT_FOUND);
+            } catch (TokenException e) {
+                error = new Error("Server error", -32001, new Member(e.getMessage()));
+            } finally {
+                if (!req.isNotify()) {
+                    if (result != null) {
+                        resps.add(new Response(req.getId(), result));
+                    } else {
+                        resps.add(new Response(req.getId(), error));
+                    }
+                }
             }
         }
 
@@ -70,7 +78,7 @@ public class Server {
         }
     }
 
-    private Member selectMethod(MethodsUtils.Methods method, StructuredMember params) {
+    private Member selectMethod(MethodsUtils.Methods method, StructuredMember params) throws TokenException {
         ArrayList<Member> p = new ArrayList<>();
         try {
             if (params!=null) //i parametri sono opzionali
