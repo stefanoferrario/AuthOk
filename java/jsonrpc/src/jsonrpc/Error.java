@@ -90,12 +90,13 @@ public class Error extends JsonRpcObj {
         try {
             object.put(ErrMembers.CODE.toString(), code);
             object.put(ErrMembers.MESSAGE.toString(), message);
+
+            if (data != null) { //opzionale
+                putMember(object, ErrMembers.DATA.toString(), data);
+            }
         } catch (JSONException e) {
             System.out.println(e.getMessage());
             return null;
-        }
-        if (data != null) { //opzionale
-            putMember(object, ErrMembers.DATA.toString(), data);
         }
 
         return object;

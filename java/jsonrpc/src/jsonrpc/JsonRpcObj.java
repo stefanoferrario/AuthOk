@@ -34,36 +34,28 @@ public abstract class JsonRpcObj { //public solo per test
         return true;
     }
 
-    public static void putMember(JSONObject obj, String key, Member value) { //public solo per test
-        try {
-            switch (value.getType()) {
-                case ARRAY:
-                case OBJ:
-                    putStructuredMember(obj, key, value.getStructuredMember()); break;
-                case BOOL:
-                    obj.put(key, value.getBool()); break;
-                case NUMBER:
-                    obj.put(key, value.getNumber()); break;
-                case STRING:
-                    obj.put(key, value.getString()); break;
-                case NULL:
-                    obj.put(key, JSONObject.NULL); break;
-                default: throw new InvalidParameterException("Invalid member type");
-            }
-        } catch (JSONException e) {
-            System.out.println(e.getMessage());
+    public static void putMember(JSONObject obj, String key, Member value) throws JSONException { //public solo per test
+        switch (value.getType()) {
+            case ARRAY:
+            case OBJ:
+                putStructuredMember(obj, key, value.getStructuredMember()); break;
+            case BOOL:
+                obj.put(key, value.getBool()); break;
+            case NUMBER:
+                obj.put(key, value.getNumber()); break;
+            case STRING:
+                obj.put(key, value.getString()); break;
+            case NULL:
+                obj.put(key, JSONObject.NULL); break;
+            default: throw new InvalidParameterException("Invalid member type");
         }
     }
 
-    static void putStructuredMember(JSONObject obj, String key, StructuredMember member) {
-        try {
-            if (member.isArray()) {
-                obj.put(key, member.getJSONArray());
-            } else {
-                obj.put(key, member.getJSONObject());
-            }
-        } catch (JSONException e) {
-            System.out.println(e.getMessage());
+    static void putStructuredMember(JSONObject obj, String key, StructuredMember member) throws JSONException {
+        if (member.isArray()) {
+            obj.put(key, member.getJSONArray());
+        } else {
+            obj.put(key, member.getJSONObject());
         }
     }
 

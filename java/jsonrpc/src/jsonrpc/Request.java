@@ -56,12 +56,13 @@ public class Request extends AbstractRequest{
                 throw new JSONRPCException("Method member not defined");
             }
             object.put(Members.METHOD.toString(), method);
+
+            if (params != null) { putStructuredMember(object, Members.PARAMS.toString(), params);} //opzionale
+            if (!notify) {
+                putId(object, Members.ID.toString(), id);
+            }
         } catch (JSONException e) {
             System.out.println(e.getMessage());
-        }
-        if (params != null) { putStructuredMember(object, Members.PARAMS.toString(), params);} //opzionale
-        if (!notify) {
-            putId(object, Members.ID.toString(), id);
         }
         return object;
     }

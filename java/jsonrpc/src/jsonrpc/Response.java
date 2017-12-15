@@ -61,10 +61,10 @@ public class Response extends AbstractResponse {
             } else {
                 object.put(Members.ERROR.toString(), error.getJsonObj());
             }
+            putId(object, Members.ID.toString(), id);
         } catch (JSONException e) {
             System.out.println(e.getMessage());
         }
-        putId(object, Members.ID.toString(), id);
 
         return object;
     }
