@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.security.InvalidParameterException;
 
 public class Error extends JsonRpcObj {
-    enum ErrMembers {
+    public enum ErrMembers { //public solo per test
         CODE("code"), MESSAGE("message"), DATA("data");
 
         private final String text;
@@ -73,7 +73,7 @@ public class Error extends JsonRpcObj {
     public int getErrorCode() {
         return code;
     }
-    public Member getErrorData() throws JSONRPCException {
+    public Member getErrorData() {
         if (data == null) {throw new NullPointerException("No error data defined");}
         return data;
     }
@@ -101,7 +101,7 @@ public class Error extends JsonRpcObj {
         return object;
     }
 
-    Error(JSONObject error) {
+    public Error(JSONObject error) { //public solo per test
         this.obj = error;
 
         try {
@@ -112,6 +112,7 @@ public class Error extends JsonRpcObj {
             }
             if (obj.has(ErrMembers.MESSAGE.toString())) {
                 message = error.getString(ErrMembers.MESSAGE.toString());
+                if (message.isEmpty()) {throw new InvalidParameterException("Empty error message");}
             } else {
                 throw new InvalidParameterException("Error message not found");
             }
@@ -122,7 +123,7 @@ public class Error extends JsonRpcObj {
                 data = null;
             }
         } catch (JSONException e) {
-            System.out.println(e.getMessage());
+            //System.out.println(e.getMessage());
             throw new InvalidParameterException(e.getMessage());
         }
 

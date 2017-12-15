@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
-abstract class JsonRpcObj {
+public abstract class JsonRpcObj { //public solo per test
     JSONObject obj;
     //private boolean valid;
     String jsonRpcString;
@@ -34,13 +34,12 @@ abstract class JsonRpcObj {
         return true;
     }
 
-    static void putMember(JSONObject obj, String key, Member value) {
+    public static void putMember(JSONObject obj, String key, Member value) { //public solo per test
         try {
             switch (value.getType()) {
                 case ARRAY:
-                    obj.put(key, value.getJSONArray()); break;
                 case OBJ:
-                    obj.put(key, value.getJSONObj()); break;
+                    putStructuredMember(obj, key, value.getStructuredMember()); break;
                 case BOOL:
                     obj.put(key, value.getBool()); break;
                 case NUMBER:
