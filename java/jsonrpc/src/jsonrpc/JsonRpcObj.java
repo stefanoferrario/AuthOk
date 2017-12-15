@@ -10,9 +10,9 @@ abstract class JsonRpcObj {
     //private boolean valid;
     String jsonRpcString;
 
-    String getJsonString() {
+    public String getJsonString() {
         return jsonRpcString;
-    }
+    } //public solo per tesy
 
     /*public boolean isValid() {
         return valid;

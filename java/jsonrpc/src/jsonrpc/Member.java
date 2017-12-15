@@ -98,7 +98,7 @@ public class Member {
     }
 
     private static Member parse(Object value) {
-        if (value == null) {
+        if (value == null || value.equals(JSONObject.NULL)) {
             return new Member();
         } else if(value instanceof JSONArray) {
             return new Member((JSONArray)value);

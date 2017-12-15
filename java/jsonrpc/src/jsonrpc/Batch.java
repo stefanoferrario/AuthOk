@@ -75,7 +75,7 @@ public class Batch { //public solo per test
         }
     }
 
-    void put(JSONArray responses) {
+    public void put(JSONArray responses) { //public solo per test
         ArrayList<Response> resps = new ArrayList<>();
         for (int i = 0; i<responses.length(); i++) {
             try {

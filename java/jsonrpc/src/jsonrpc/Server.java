@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Server implements IServer {
     private IZmqServer server;
     private Batch currBatch;
+    private boolean notify;
 
     public Server(int port) {
         this.server = new ZmqServer(port);
@@ -32,6 +33,7 @@ public class Server implements IServer {
                 Request req = new Request(receivedString);
                 ArrayList<Request> requests = new ArrayList<>();
                 requests.add(req);
+                notify = req.isNotify();
                 return requests;
             } else {
                 throw new JSONRPCException("Invalid json received");
@@ -44,6 +46,7 @@ public class Server implements IServer {
             Response errorResp = new Response(id, err);
             server.reply(errorResp.getJsonString());
             currBatch = null;
+            notify = false;
         }
         return new ArrayList<>(); //se ci sono errori la lista di richieste da eseguire è vuota
     }
@@ -59,6 +62,8 @@ public class Server implements IServer {
             throw new JSONRPCException("Single response needed");
         }
         if (responses.size() == 0) {
+            if (currBatch == null && !notify) {throw new JSONRPCException("Response not found");}
+            if (currBatch != null && !currBatch.isOnlyNotifies()) {throw new JSONRPCException("Responses not found");}
             //nessuna risposta a batch di sole notifiche
             currBatch = null;
         } else if (responses.size() == 1 && currBatch == null) {
