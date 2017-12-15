@@ -51,7 +51,6 @@ public class ClientTest {
         }
     }
 
-
     @Test
     public void sendRequest() throws JSONRPCException {
         Request req = new Request("method", null, new Id(1));
@@ -59,6 +58,12 @@ public class ClientTest {
         assertFalse(resp.hasError());
         assertEquals(validResult, resp.getResult());
         assertEquals(req.getId(), resp.getId());
+    }
+
+    @Test (expected = NullPointerException.class)
+    public void sendNull() throws JSONRPCException {
+        client.sendNotify(null);
+        fail("Expected Null ptr exception");
     }
 
     @Test
