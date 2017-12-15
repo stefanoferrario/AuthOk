@@ -8,11 +8,14 @@ public class ZmqServer implements IZmqServer{
     private ZMQ.Socket socket;
     private ZFrame identity;
     private ZFrame empty;
+    private String addr;
+    private ZMQ.Context ctx;
 
     public ZmqServer(int port) {
-        ZMQ.Context ctx = ZMQ.context(1);
+        ctx = ZMQ.context(1);
         socket = ctx.socket(ZMQ.ROUTER);
-        socket.bind("tcp://*:" + String.valueOf(port));
+        addr = "tcp://*:" + String.valueOf(port);
+        socket.bind(addr);
         identity = null;
         empty = null;
     }
@@ -20,7 +23,7 @@ public class ZmqServer implements IZmqServer{
     @Override
     public String receive() {
         ZMsg msg = ZMsg.recvMsg(socket);
-        identity = msg.pop();
+        identity = msg.pop(); //i messaggi in arrivo dal dealer hanno una identity ed è quindi possibile rispondere
         empty = msg.size() == 2 ? msg.pop() : null; //i messaggi inviati dal dealer non hanno frame vuoto
         return msg.pop().toString();
     }

@@ -39,6 +39,18 @@ public class ZmqTest {
         //
     }
 
+    @Test (expected = NullPointerException.class)
+    public void testSendNull() {
+        c.send(null);
+        fail("Expected null ptr exception");
+    }
+
+    @Test
+    public void testSendEmpty() {
+        c.send("");
+        //no exception thrown
+    }
+
     @Test
     public void testReceive() throws Exception {
         c.send(MSG);
