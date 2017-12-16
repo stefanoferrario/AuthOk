@@ -11,7 +11,8 @@ import org.junit.runners.Suite;
                 BatchTest.class,
                 ClientTest.class,
                 ServerTest.class,
-                ErrorTest.class
+                ErrorTest.class,
+                MemberTest.class
         })
 public class AllTest {
 }

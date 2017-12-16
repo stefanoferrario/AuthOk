@@ -55,9 +55,9 @@ public class Member {
     /*public boolean isStructured() {
         return (type == Types.OBJ || type == Types.ARRAY);
     }*/
-    /*public boolean isNull() {
+    public boolean isNull() {
         return type == Types.NULL;
-    }*/
+    }
     public boolean getBool() {
         if (type != Types.BOOL) {throw new ClassCastException("Not a boolean");}
         return (boolean)value;
@@ -79,23 +79,23 @@ public class Member {
         if (type != Types.OBJ && type != Types.ARRAY) {throw new ClassCastException("Not a structured member");}
         return (StructuredMember)value;
     }
-    public ArrayList<Member> getList() {
+    /*public ArrayList<Member> getList() {
         if (type != Types.ARRAY) {throw new ClassCastException("Not a json array");}
         return ((StructuredMember)value).getList();
     }
     public HashMap<String, Member> getMap() {
         if (type != Types.OBJ) {throw new ClassCastException("Not a json object");}
         return ((StructuredMember)value).getMap();
-    }
+    }*/
 
-    JSONObject getJSONObj() {
+    /*JSONObject getJSONObj() {
         if (type != Types.OBJ) {throw new ClassCastException("Not a json object");}
         return ((StructuredMember)value).getJSONObject();
     }
     JSONArray getJSONArray() {
         if (type != Types.ARRAY) {throw new ClassCastException("Not a json array");}
         return ((StructuredMember)value).getJSONArray();
-    }
+    }*/
 
     private static Member parse(Object value) {
         if (value == null || value.equals(JSONObject.NULL)) {
@@ -103,7 +103,9 @@ public class Member {
         } else if(value instanceof JSONArray) {
             return new Member((JSONArray)value);
         } else if(value instanceof JSONObject) {
-            return new Member((JSONObject)value);
+            return new Member((JSONObject) value);
+        } else if(value instanceof StructuredMember) {
+            return new Member((StructuredMember)value);
         } else if(value instanceof Number) {
             return new Member((Number) value);
         } else if(value instanceof String) {
@@ -115,7 +117,7 @@ public class Member {
         }
     }
 
-    static Member toMember(Object obj) {
+    public static Member toMember(Object obj) { //public solo per test
         return parse(obj);
     }
 
@@ -132,7 +134,10 @@ public class Member {
             case STRING: return getString().equals(o.getString());
             case NUMBER: return getNumber().equals(o.getNumber());
             case BOOL: return getBool()==o.getBool();
-            default: return getStructuredMember().equals(o.getStructuredMember());
+            case ARRAY:
+            case OBJ:
+                return getStructuredMember().equals(o.getStructuredMember());
+            default: return false;
         }
     }
 }
