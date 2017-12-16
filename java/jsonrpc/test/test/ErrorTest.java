@@ -143,4 +143,21 @@ public class ErrorTest {
         new Error(obj);
         fail("Expected invalid parameter exception");
     }
+
+    @Test
+    public void testEquals() {
+        Member data = new Member("error data");
+        Error parse = new Error(Error.Errors.PARSE);
+        Error parseData = new Error(Error.Errors.PARSE, data);
+
+        assertNotEquals(parse,null);
+        assertNotEquals(parse, "test");
+        assertNotEquals(parse, new Error(Error.Errors.METHOD_NOT_FOUND));
+        assertNotEquals(parse, parseData);
+        assertNotEquals(parseData, new Error(Error.Errors.METHOD_NOT_FOUND, data));
+        assertEquals(parse, new Error(Error.Errors.PARSE));
+        assertEquals(parseData, new Error(Error.Errors.PARSE, data));
+        assertNotEquals(parseData, new Error(Error.Errors.PARSE, new Member(false)));
+        assertEquals(parse, new Error(Error.Errors.PARSE.getMessage(), Error.Errors.PARSE.getCode()));
+    }
 }

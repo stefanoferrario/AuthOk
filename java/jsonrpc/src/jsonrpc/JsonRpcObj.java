@@ -1,5 +1,6 @@
 package jsonrpc;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.security.InvalidParameterException;
@@ -39,18 +40,34 @@ public abstract class JsonRpcObj { //public solo per test
             case ARRAY:
             case OBJ:
                 putStructuredMember(obj, key, value.getStructuredMember()); break;
-            case BOOL:
-                obj.put(key, value.getBool()); break;
-            case NUMBER:
-                obj.put(key, value.getNumber()); break;
-            case STRING:
-                obj.put(key, value.getString()); break;
-            case NULL:
-                obj.put(key, JSONObject.NULL); break;
+            case BOOL: obj.put(key, value.getBool()); break;
+            case NUMBER: obj.put(key, value.getNumber()); break;
+            case STRING: obj.put(key, value.getString()); break;
+            case NULL: obj.put(key, JSONObject.NULL); break;
             default: throw new InvalidParameterException("Invalid member type");
         }
     }
 
+    public static void putMember(JSONArray array, Member value) {
+        switch (value.getType()) {
+            case ARRAY:
+            case OBJ:
+                putStructuredMember(array, value.getStructuredMember()); break;
+            case BOOL: array.put(value.getBool()); break;
+            case NUMBER: array.put(value.getNumber()); break;
+            case STRING: array.put(value.getString()); break;
+            case NULL: array.put(JSONObject.NULL); break;
+            default: throw new InvalidParameterException("Invalid member type");
+        }
+    }
+
+    static void putStructuredMember(JSONArray array, StructuredMember value) {
+        if (value.isArray()) {
+            array.put(value.getJSONArray());
+        } else {
+            array.put(value.getJSONObject());
+        }
+    }
     static void putStructuredMember(JSONObject obj, String key, StructuredMember member) throws JSONException {
         if (member.isArray()) {
             obj.put(key, member.getJSONArray());

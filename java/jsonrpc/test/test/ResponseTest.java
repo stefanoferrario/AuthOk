@@ -1,8 +1,6 @@
 package test;
 
-import jsonrpc.Id;
-import jsonrpc.Member;
-import jsonrpc.Response;
+import jsonrpc.*;
 import jsonrpc.Error;
 import org.junit.Rule;
 import org.junit.Test;
@@ -132,5 +130,29 @@ public class ResponseTest {
         e = new Error(Error.Errors.PARSE);
         assertEquals(e, r.getError());
 
+    }
+
+    @Test
+    public void testEquals() {
+        Response resp = new Response(new Id(100), new Member(false));
+
+        assertEquals(resp, resp);
+        assertNotEquals(resp, null);
+        assertNotEquals(resp, "test");
+
+        assertNotEquals(resp, new Response(new Id(100), new Member(true)));
+        assertNotEquals(resp, new Response(new Id("100"),new Member(false)));
+        assertNotEquals(resp, new Response(new Id(100), new Error(Error.Errors.PARSE)));
+        assertEquals(resp, new Response(new Id(100), new Member(false)));
+
+        Response err = new Response(new Id(1), new Error(Error.Errors.METHOD_NOT_FOUND));
+        assertNotEquals(err, resp);
+        assertNotEquals(err, new Response(new Id(1), new Error(Error.Errors.INVALID_REQUEST)));
+        assertNotEquals(err, new Response(new Id("id"), new Error(Error.Errors.METHOD_NOT_FOUND)));
+        assertEquals(err, new Response(new Id(1), new Error(Error.Errors.METHOD_NOT_FOUND)));
+
+        assertEquals(resp, new Response("{\"jsonrpc\": \"2.0\", \"result\": false, \"id\": 100}"));
+        assertEquals(new Response("{\"jsonrpc\": \"2.0\", \"result\": 15.4, \"id\": -12}"),
+                new Response("{\"result\":15.4,    \"id\" :-12, \"jsonrpc\":\"2.0\"}"));
     }
 }

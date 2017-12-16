@@ -191,4 +191,28 @@ public class RequestTest {
 
         assertEquals(new StructuredMember(par), r.getParams());
     }
+
+    @Test
+    public void testEquals() {
+        Request r1 = new Request("method", paramsList, new Id(1));
+        assertEquals(r1,r1);
+        assertNotEquals(r1, null);
+        assertNotEquals(r1, "test");
+        assertNotEquals(r1, new Request("method", paramsList));
+        assertNotEquals(r1, new Request("method",paramsList, null));
+        assertNotEquals(r1, new Request("method",paramsList, new Id("1")));
+        assertNotEquals(r1, new Request("method",paramsMap, new Id(1)));
+        assertNotEquals(r1, new Request("different method",paramsList, new Id(1)));
+        assertEquals(r1, new Request("method",paramsList, new Id(1)));
+
+        assertNotEquals(r1, new Request("method",null, new Id(1)));
+        ArrayList<Member> list2 = paramsList.getList();
+        list2.add(new Member());
+        StructuredMember paramList2 = new StructuredMember(list2);
+        Request r2 = new Request("method", paramList2, new Id(1));
+        assertNotEquals(r1,r2);
+
+        assertEquals(new Request("method", null, new Id(100)),
+                new Request("{\"jsonrpc\": \"2.0\", \"method\": \"method\", \"id\": 100}"));
+    }
 }

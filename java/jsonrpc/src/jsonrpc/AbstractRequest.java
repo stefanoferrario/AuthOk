@@ -64,17 +64,19 @@ public abstract class AbstractRequest  extends JsonRpcMessage {
         if (!(other instanceof AbstractRequest))return false;
         AbstractRequest o = (AbstractRequest) other;
 
-        //jsonobj, jsonRpcString
-
         if (this.id != null) {
             if (!this.id.equals(o.id)) {return false;}
         } else {
             if (o.id != null) {return false;}
         }
 
-        if (this.params==null)
-            return this.notify == o.notify && this.method.equals(o.method) && o.params==null;
-        else
-            return this.notify == o.notify && this.method.equals(o.method) && this.params.equals(o.params);
+        if (this.params != null) {
+            if (!this.params.equals(o.params)) {return false;}
+        } else {
+            if (o.params != null) {return false;}
+        }
+
+        //le strighe non devono essere confrontate perché l'ordine dei membri non è determinante
+        return this.notify == o.notify && this.method.equals(o.method);
     }
 }
