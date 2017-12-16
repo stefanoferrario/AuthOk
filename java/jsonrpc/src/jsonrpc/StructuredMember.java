@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import static jsonrpc.JsonRpcObj.putMember;
+
 public class StructuredMember {
     private JSONArray list;
     private JSONObject map;
@@ -78,12 +80,12 @@ public class StructuredMember {
         return arraylist;
     }
 
-    JSONObject getJSONObject() {
+    public JSONObject getJSONObject() { //public solo per test
         if (isArray) {throw new ClassCastException("Not a json object");}
         return map;
     }
 
-    JSONArray getJSONArray() {
+    public JSONArray getJSONArray() { //public solo per test
         if (!isArray) {throw new ClassCastException("Not a json array");}
         return list;
     }
@@ -92,14 +94,7 @@ public class StructuredMember {
         JSONObject o = new JSONObject();
         for (HashMap.Entry<String, Member> entry : members.entrySet()) {
             try {
-                switch (entry.getValue().getType()) {
-                    case ARRAY: o.put(entry.getKey(), StructuredMember.toStructuredMember(entry.getValue().getJSONArray()).getJSONArray()); break;
-                    case OBJ: o.put(entry.getKey(), StructuredMember.toStructuredMember(entry.getValue().getJSONObj()).getJSONObject()); break;
-                    case BOOL: o.put(entry.getKey(), entry.getValue().getBool()); break;
-                    case NUMBER: o.put(entry.getKey(), entry.getValue().getNumber()); break;
-                    case STRING: o.put(entry.getKey(), entry.getValue().getString()); break;
-                    case NULL: o.put(entry.getKey(), JSONObject.NULL); break;
-                }
+                putMember(o, entry.getKey(), entry.getValue());
             } catch (JSONException e) {
                 System.out.println(e.getMessage());
             }
@@ -110,23 +105,12 @@ public class StructuredMember {
     private JSONArray toList(ArrayList<Member> array) {
         JSONArray a = new JSONArray();
         for (Member value : array) {
-            try {
-                switch (value.getType()) {
-                    case ARRAY: a.put(StructuredMember.toStructuredMember(value.getJSONArray()).getJSONArray()); break;
-                    case OBJ: a.put(StructuredMember.toStructuredMember(value.getJSONObj()).getJSONObject()); break;
-                    case BOOL: a.put(value.getBool()); break;
-                    case NUMBER: a.put(value.getNumber()); break;
-                    case STRING: a.put(value.getString()); break;
-                    case NULL: a.put(JSONObject.NULL); break;
-                }
-            } catch (InvalidParameterException | NullPointerException e) {
-                System.out.println(e.getMessage());
-            }
+            putMember(a, value);
         }
         return a;
     }
 
-    static StructuredMember toStructuredMember(Object obj) {
+    public static StructuredMember toStructuredMember(Object obj) { //public solo per test
         if (obj == null) {throw new NullPointerException("Null structured member");}
 
         if (obj instanceof JSONArray) {

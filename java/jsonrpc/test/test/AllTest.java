@@ -12,7 +12,8 @@ import org.junit.runners.Suite;
                 ClientTest.class,
                 ServerTest.class,
                 ErrorTest.class,
-                MemberTest.class
+                MemberTest.class,
+                StructuredMemberTest.class
         })
 public class AllTest {
 }
