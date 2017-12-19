@@ -2,13 +2,12 @@ package authorizer.GestoreToken;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
 
 
 public class GestoreToken {
-
+    private static final long TOKEN_DURATION = 82800000;
     private static GestoreToken instance = null;
     private HashMap<String, Token> tokens = null;
 
@@ -51,7 +50,7 @@ public class GestoreToken {
             throw new TokenException("Livello autorizzazione insufficiente");
         }
         stringaToken = instance.generaCodice(20, true);
-        Token newToken = new Token(chiave, idRisorsa, (System.currentTimeMillis()));
+        Token newToken = new Token(chiave, idRisorsa, System.currentTimeMillis());
         System.out.println("Token generato: " + stringaToken);
         tokens.put(stringaToken, newToken);
 
@@ -61,13 +60,13 @@ public class GestoreToken {
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
 
     public long verificaToken(String aString, int idRisorsa) {
-        long tempoRestante=0;
         Token temp= tokens.get(aString);
-        if (idRisorsa == temp.getIdRisorsa()) {
-            if (System.currentTimeMillis() - temp.getData().getTime() > 82800000) {
+        if (temp != null) {
+            if (System.currentTimeMillis() - temp.getData().getTime() > TOKEN_DURATION) {
                 System.out.println("Il token relativo alla risorsa " + temp.getIdRisorsa() + " è scaduto");
+                return 0; //token scaduto
             } else {
-                tempoRestante = 82800000 - (System.currentTimeMillis() - temp.getData().getTime());
+                long tempoRestante = TOKEN_DURATION - (System.currentTimeMillis() - temp.getData().getTime());
                 Date _tempoRestante = new Date(tempoRestante);
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                 String risultato = sdf.format(_tempoRestante);
@@ -75,14 +74,14 @@ public class GestoreToken {
                 return tempoRestante;
             }
         }
-        return tempoRestante;
+        return 0; //token inesistente
     }
 
     public void cancellaTokenScaduti(){
         Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
-            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>82800000) {
+            if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>TOKEN_DURATION) {
                 iterator.remove();
             }
         }
