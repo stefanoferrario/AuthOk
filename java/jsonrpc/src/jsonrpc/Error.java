@@ -150,4 +150,21 @@ public class Error extends JsonRpcObj {
         else
             return this.code == o.code && this.message.equals(o.message) && this.data.equals(o.data);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Code: ");
+        sb.append(code);
+        sb.append(System.lineSeparator());
+        sb.append("Message: ");
+        sb.append(message);
+        if (hasErrorData()) {
+            sb.append("Error data: ");
+            Member eData = data;
+            sb.append(eData.getString()); //TODO
+            //da finire
+        }
+        return sb.toString();
+    }
 }
