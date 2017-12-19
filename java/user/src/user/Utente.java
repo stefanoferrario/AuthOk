@@ -6,7 +6,7 @@ class Utente {
 
     private String nome;
     private String chiave = null;
-    private HashMap<Integer, String> tokens; //lista dei token posseduti dall' utente
+    private HashMap<Integer, String> tokens = new HashMap<>(); //lista dei token posseduti dall' utente
 
     //si ASSUME che l' identificativo dell' utente sia UNIVOCO
     Utente(String idUtente) {nome = idUtente;}
@@ -20,5 +20,11 @@ class Utente {
 
     void putToken(int resource, String token) {
         tokens.put(resource, token);
+    }
+
+    HashMap<Integer, String> getTokens() {return tokens;}
+
+    boolean hasTokens() {
+        return tokens.size()>0;
     }
 }

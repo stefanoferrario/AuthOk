@@ -1,10 +1,18 @@
 package authorizer.GestoreAutorizzazioni;
 
+import authorizer.GestoreRisorse.ResourceException;
 import authorizer.GestoreToken.GestoreToken;
 import authorizer.GestoreRisorse.GestoreRisorse;
+import authorizer.MethodsUtils;
+import jsonrpc.Member;
+import jsonrpc.StructuredMember;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
+
+import static authorizer.MethodsUtils.DATE_FORMAT;
 
 public class GestoreAutorizzazioni {
 
@@ -56,8 +64,8 @@ public class GestoreAutorizzazioni {
         }
     }
 
+    //restituisce se era presente un'autorizzazione con quella chiave
     public boolean revocaAutorizzazione(String chiave){
-
         GestoreToken.getInstance().cancellaTokenChiave(chiave);
         return autorizzazioni.remove(chiave) != null; //String key = autorizzazioni.keySet().iterator().next(); --> Questo per testare la cancellazione
     }
@@ -82,8 +90,13 @@ public class GestoreAutorizzazioni {
             return false;
         }else{
             Date today = new Date();
-            int level = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
-            return (today.before(value.getScadenza()) && level <= value.getLivello());
+            try {
+                int level = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
+                return (today.before(value.getScadenza()) && level <= value.getLivello());
+            } catch (ResourceException e) {
+                //idRisorsa non esistente: autorizzazione non valida
+                return false;
+            }
         }
     }
 
@@ -91,6 +104,22 @@ public class GestoreAutorizzazioni {
     public int getLivelloAutorizzazione(String chiave){
 
         return autorizzazioni.get(chiave).getLivello();
+    }
+
+    public Member getState() {
+        ArrayList<Member> auths = new ArrayList<>();
+        for (HashMap.Entry<String, Autorizzazione> a : autorizzazioni.entrySet()) {
+            HashMap<String, Member> autValues = new HashMap<>();
+            autValues.put("Key", new Member(a.getKey()));
+            autValues.put("Utente", new Member(a.getValue().getUtente()));
+            autValues.put("Livello", new Member(a.getValue().getLivello()));
+            autValues.put("Scadenza", new Member(DATE_FORMAT.format(a.getValue().getScadenza())));
+            auths.add(new Member(new StructuredMember(autValues)));
+        }
+        if (auths.size()==0)
+            return new Member();
+        else
+            return new Member(new StructuredMember(auths));
     }
 
     public static void main(String args[]) {

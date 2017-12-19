@@ -2,9 +2,12 @@ package authorizer;
 
 import authorizer.GestoreAutorizzazioni.AuthorizationException;
 import authorizer.GestoreRisorse.GestoreRisorse;
+import authorizer.GestoreRisorse.ResourceException;
+import authorizer.GestoreRisorse.ResourceTypes;
 import authorizer.GestoreToken.GestoreToken;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreToken.TokenException;
+import authorizer.MethodsUtils.Methods;
 import jsonrpc.*;
 import jsonrpc.IServer;
 import jsonrpc.Error;
@@ -12,12 +15,8 @@ import jsonrpc.Member;
 import jsonrpc.StructuredMember;
 import jsonrpc.Request;
 import jsonrpc.Response;
-import org.json.JSONObject;
-
 import java.security.InvalidParameterException;
 import java.text.ParseException;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
@@ -25,7 +24,7 @@ import java.util.TimerTask;
 
 
 public class Server {
-    private Server instance = null;
+    private static Server instance = null;
     private GestoreToken tokenManager;
     private GestoreRisorse resourceManager;
     private GestoreAutorizzazioni authManager;
@@ -38,7 +37,7 @@ public class Server {
         serverJsonRpc = new jsonrpc.Server(MethodsUtils.PORT);
     }
 
-    public Server getInstance() {
+    public static Server getInstance() {
         if (instance == null) {
             instance = new Server();
         }
@@ -53,14 +52,18 @@ public class Server {
             Member result = null;
             Error error = null;
             try {
-                result = selectMethod(MethodsUtils.Methods.valueOf(req.getMethod()), req.getParams());
+                result = selectMethod(Methods.valueOf(req.getMethod()), req.getParams());
             } catch (InvalidParameterException e) {
                 error = new Error(Error.Errors.INVALID_PARAMS, new Member(e.getMessage()));
             } catch (IllegalArgumentException e) {
                 //lanciata dal Methods.valueOf() se la stringa non corrisponde a un metodo
                 error = new Error(Error.Errors.METHOD_NOT_FOUND);
-            } catch (TokenException | AuthorizationException e) {
+            } catch (TokenException e) {
                 error = new Error("Server error", -32001, new Member(e.getMessage()));
+            } catch (AuthorizationException e) {
+                error = new Error("Server error", -32002, new Member(e.getMessage()));
+            } catch (ResourceException e) {
+                error = new Error("Server error", -32003, new Member(e.getMessage()));
             } finally {
                 if (!req.isNotify()) {
                     if (result != null) {
@@ -80,13 +83,14 @@ public class Server {
         }
     }
 
-    private Member selectMethod(MethodsUtils.Methods method, StructuredMember params) throws TokenException, AuthorizationException {
+    private Member selectMethod(Methods method, StructuredMember params) throws TokenException, AuthorizationException, ResourceException {
         ArrayList<Member> p = new ArrayList<>();
-        try {
-            if (params!=null) //i parametri sono opzionali
+        if (params!=null) {//i parametri sono opzionali
+            try {
                 p = params.getList();
-        } catch (ClassCastException c) {
-            throw new InvalidParameterException("Not a parameters list");
+            } catch (ClassCastException c) {
+                throw new InvalidParameterException("Not a parameters list");
+            }
         }
 
         if (p.size() != method.getParamsNum()) {throw new InvalidParameterException("Wrong parameters number");}
@@ -97,7 +101,6 @@ public class Server {
                     String token = tokenManager.creaToken(p.get(0).getString(), p.get(1).getInt());
                     return new Member(token);
                 case VERIFICA_TOKEN:
-                    //far restituire un tipo data
                     long time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
                     return new Member(time);
                 case CREA_AUTORIZZAZIONE:
@@ -107,37 +110,53 @@ public class Server {
                     String key = authManager.verificaEsistenzaAutorizzazione(p.get(0).getString());
                     ArrayList<Member> result = new ArrayList<>();
                     result.add(new Member(key != null));
-                    if (key != null)
+                    if (key != null) {
                         result.add(new Member(key));
-                    else
+                    } else {
                         result.add(new Member());
+                    }
                     return new Member(new StructuredMember(result));
                 case REVOCA_AUTORIZZAZIONE:
                     return new Member(authManager.revocaAutorizzazione(p.get(0).getString()));
                 case CREA_RISORSA:
-                    //resourceManager.creaRisorsa(...);
-                    return new Member(); //TODO
-                case MODIFICA_RISORSA:
-                    //resourceManager.modificaRisorsa(...);
-                    return new Member(); //TODO
+                    resourceManager.addRisorsa(p.get(0).getInt(), p.get(1).getInt(), ResourceTypes.valueOf(p.get(2).getString()));
+                    return new Member(true); //risultato a buon fine
+                case MODIFICA_ID_RISORSA:
+                    resourceManager.modificaIDRisorsa(p.get(0).getInt(), p.get(1).getInt());
+                    return new Member(true);
+                case MODIFICA_LIV_RISORSA:
+                    resourceManager.modificaLivRisorsa(p.get(0).getInt(), p.get(1).getInt());
+                    return new Member(true);
                 case CANCELLA_RISORSA:
-                    //resourceManager.cancellaRisorsa(...);
-                    return new Member(); //TODO
-                default:
-                    throw new IllegalArgumentException(); //non viene mai chiamata ma deve esserci un ritorno per ogni ramo dello switch
+                    return new Member(resourceManager.cancellaRisorsa(p.get(0).getInt()));
+                case SERVER_STATE:
+                    return getServerState(); //non richiesta da specifica. server a controllare il funzionamento del progetto
             }
         } catch (ClassCastException e) {
             throw new InvalidParameterException("Wrong parameter type: " + e.getMessage());
         } catch (ParseException e) {
             throw new InvalidParameterException("Invalid date format: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            // chiamata dalla ResourceTypes.valueOf() se stringa non valida
+            throw new InvalidParameterException(e.getMessage());
         }
+
+        throw new IllegalArgumentException(); //non viene mai chiamata ma deve esserci un ritorno per ogni ramo di esecuzione
+    }
+
+    private Member getServerState() {
+        ArrayList<Member> states = new ArrayList<>();
+        states.add(resourceManager.getState());
+        states.add(authManager.getState());
+        states.add(tokenManager.getState());
+        return new Member(new StructuredMember(states));
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String args[]) {
-        Server s = new Server();
+        Server s = Server.getInstance();
 
-        Date date=new Date();
+        Date date= new Date();
         Timer timer = new Timer();
 
         timer.schedule(new TimerTask(){
@@ -146,6 +165,20 @@ public class Server {
             }
         },date, 24*60*60*1000);//24 ore in millisecondi
 
+        ///Per permettere di testare il progetto vengono inserite risorse di prova//
+        try {
+            s.resourceManager.addRisorsa(1, 4, ResourceTypes.LINK);
+            s.resourceManager.addRisorsa(2, 6, ResourceTypes.LINK);
+            s.resourceManager.addRisorsa(3, 1, ResourceTypes.FIBO);
+            s.resourceManager.addRisorsa(4, 3, ResourceTypes.DICE);
+            System.out.println("Caricate risorse di prova");
+        } catch (ResourceException e) {
+            e.printStackTrace();
+            return;
+        }
+        //////
+
+        System.out.println("In ascolto...");
         while (true) {
             s.receive();
         }

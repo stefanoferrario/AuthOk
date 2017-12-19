@@ -6,6 +6,9 @@ import java.util.*;
 import authorizer.GestoreAutorizzazioni.AuthorizationException;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
+import authorizer.GestoreRisorse.ResourceException;
+import jsonrpc.Member;
+import jsonrpc.StructuredMember;
 
 
 public class GestoreToken {
@@ -42,10 +45,10 @@ public class GestoreToken {
             livelloChiave = GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
         }
         //Analisi della Risorsa
-        if (GestoreRisorse.getInstance().contieneRisorsa(idRisorsa)) {
+        try {
             livelloRisorsa = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
-        } else {
-            throw new TokenException("ID Risorsa fornito non valido");
+        } catch (ResourceException e) {
+            throw new TokenException(e.getMessage());
         }
 
         if (livelloRisorsa > livelloChiave) {
@@ -96,6 +99,23 @@ public class GestoreToken {
                 iterator.remove();
             }
         }
+    }
+
+
+    public Member getState() {
+        ArrayList<Member> tokensList = new ArrayList<>();
+        for (HashMap.Entry<String, Token> t : tokens.entrySet()) {
+            HashMap<String, Member> tokValues = new HashMap<>();
+            tokValues.put("Token", new Member(t.getKey()));
+            tokValues.put("Chiave", new Member(t.getValue().getChiave()));
+            tokValues.put("ID Risorsa", new Member(t.getValue().getIdRisorsa()));
+            tokValues.put("Data ora concessione", new Member(t.getValue().getData().toString()));
+            tokensList.add(new Member(new StructuredMember(tokValues)));
+        }
+        if (tokensList.size()==0)
+            return new Member();
+        else
+            return new Member(new StructuredMember(tokensList));
     }
 
     public static void main(String [] args) throws TokenException, AuthorizationException {
