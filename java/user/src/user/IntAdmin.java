@@ -11,7 +11,7 @@ public interface IntAdmin {
 
 	void cancellaRisorsa();
 
-	public String creaAutorizzazione(String nomeUtente, int livello, Date scadenza) throws JSONRPCException, IOException;
+	public String creaAutorizzazione(String nomeUtente, int livello, Date scadenza) throws AuthorizerException;
 	
-	boolean revocaAutorizzazione(String nomeUtente) throws JSONRPCException;
+	boolean revocaAutorizzazione(String nomeUtente) throws AuthorizerException;
 }

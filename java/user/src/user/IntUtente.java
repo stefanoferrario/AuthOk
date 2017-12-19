@@ -5,11 +5,11 @@ import java.util.Date;
 import jsonrpc.JSONRPCException;
 
 public interface IntUtente {
-	public String creaAutorizzazione(String nomeUtente, int livello, Date scadenza) throws JSONRPCException, IOException;
+	String creaAutorizzazione(String nomeUtente, int livello, Date scadenza) throws AuthorizerException;
 
-	public boolean revocaAutorizzazione(String nomeUtente) throws JSONRPCException;
+	boolean revocaAutorizzazione(String nomeUtente) throws AuthorizerException;
 
-	boolean verificaEsistenzaAutorizzazione(String nomeUtente) throws JSONRPCException;
+	String verificaEsistenzaAutorizzazione(String nomeUtente) throws AuthorizerException;
 
-	String creaToken(String chiave, String idRisorsa) throws JSONRPCException;
+	String creaToken(String chiave, int idRisorsa) throws AuthorizerException;
 }

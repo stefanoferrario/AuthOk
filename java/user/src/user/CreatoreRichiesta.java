@@ -1,10 +1,7 @@
 package user;
 
 import java.util.Date;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import authorizer.MethodsUtils;
 import jsonrpc.Client;
 import jsonrpc.IClient;
 import jsonrpc.Id;
@@ -14,15 +11,12 @@ import jsonrpc.Request;
 import jsonrpc.Response;
 import jsonrpc.StructuredMember;
 import authorizer.MethodsUtils.Methods;
-
 import java.io.*;
 import java.util.ArrayList;
 
-//bisogna capire cosa fare per l' ID della connessione
-
 public class CreatoreRichiesta implements IntUtente, IntAdmin {
 
-	private IClient clientUtente = new Client(5001); // meglio mettere una costante per le porte da usare
+	private static IClient clientUtente = new Client(MethodsUtils.PORT);
 	private ArrayList<Member> members = new ArrayList<>();
 	private static int contatoreID = 0;
 
@@ -40,90 +34,82 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 
 	private static int getId() {return contatoreID++;}
 	
-	// ritorna la stringa di autorizzazione, viene ritornato null se si sceglie di
-	// non sovrascrivere un' autorizzazione gi� esistente
-	public String creaAutorizzazione(String idUtente, int livello, Date scadenza) throws JSONRPCException, IOException {
-		boolean inputCorretto = false;
-		if (verificaEsistenzaAutorizzazione(idUtente)) {
-			Scanner scanner = new Scanner(System.in);
-			Pattern pattern = Pattern.compile("s|n");
-			String temp = null;
-			Matcher matcher =  null;
-			while (!inputCorretto) {
-				System.out.println("Autorizzazione gi� esistente: sovrascrivere l' autorizzazione attuale? (s/n)");
-				temp = scanner.nextLine();
-				matcher = pattern.matcher(temp);
-				// � fondamentale usare nextLine() e non next() perch� il pattern deve verificare l' intero input.
-				// per esempio: con next() un input tipo "s s " sarebbe accettato, con nextLine() no
-				if (matcher.matches()) {
-					// input senza errori
-					if (temp.equals("s")) {
-						revocaAutorizzazione(idUtente);
-					} else {
-						scanner.close();
-						return null;
-					}
-					inputCorretto = true;
-				} else { // input con errori
-					System.out.println("FORMATO INPUT NON CORRETTO: eseguire nuovamente l' operazione");
-				}
-			}
-			scanner.close();
-		}
-		// il caso particolare di un' autorizzazione gi� presente � stato gestito, eseguire semplice autorizzazione
+	// ritorna la stringa di autorizzazione
+	public String creaAutorizzazione(String idUtente, int livello, Date scadenza) throws AuthorizerException {
 		members.clear();
 		members.add(new Member(idUtente));
 		members.add(new Member(livello));
-		members.add(new Member(scadenza.toString())); // questo � giusto???
+		members.add(new Member(MethodsUtils.DATE_FORMAT.format(scadenza)));
 
-		Request req = new Request("creaautorizzazione", new StructuredMember(members), new Id(getId()));
-		Response rep = clientUtente.sendRequest(req);
-		if (!rep.hasError()) {
-			return rep.getResult().getString();
-		} else {
-			throw new JSONRPCException(rep.getError().toString());
-		}
+		Request req = new Request(Methods.CREA_AUTORIZZAZIONE.getName(), new StructuredMember(members), new Id(getId()));
+		try {
+            Response rep = clientUtente.sendRequest(req);
+            if (!rep.hasError()) {
+                return rep.getResult().getString();
+            } else {
+                throw new AuthorizerException(rep.getError());
+            }
+        } catch (JSONRPCException e) {
+		    throw new AuthorizerException(e.getMessage());
+        }
 	}
 
 	// aspettare che � pronto il metodo sul server e poi modificare il getNome
-	public boolean revocaAutorizzazione(String idUtente) throws JSONRPCException {
+	public boolean revocaAutorizzazione(String key) throws AuthorizerException {
 		members.clear();
-		members.add(new Member(idUtente));
-		Request req = new Request("revocaautorizzazione", new StructuredMember(members), new Id(getId()));
-		Response rep = clientUtente.sendRequest(req);
-		if (!rep.hasError()) {
-			return rep.getResult().getBool();
-		} else {
-			throw new JSONRPCException(rep.getError().toString());
-		}
+		members.add(new Member(key));
+		Request req = new Request(Methods.REVOCA_AUTORIZZAZIONE.getName(), new StructuredMember(members), new Id(getId()));
+		try {
+            Response rep = clientUtente.sendRequest(req);
+            if (!rep.hasError()) {
+                return rep.getResult().getBool();
+            } else {
+                throw new AuthorizerException(rep.getError());
+            }
+        } catch (JSONRPCException e) {
+		    throw new AuthorizerException(e.getMessage());
+        }
 	}
 
-	public boolean verificaEsistenzaAutorizzazione(String idUtente) throws JSONRPCException {
+	public String verificaEsistenzaAutorizzazione(String idUtente) throws AuthorizerException {
 		members.clear();
 		members.add(new Member(idUtente));
 		Request req = new Request(Methods.VERIFICA_ESISTENZA_AUTORIZZAZIONE.getName(), new StructuredMember(members), new Id(getId()));
-		Response rep = clientUtente.sendRequest(req);
-		if (!rep.hasError()) {
-			return rep.getResult().getBool();
-		} else {
-			throw new JSONRPCException(rep.getError().toString());
-		}
+		try {
+            Response rep = clientUtente.sendRequest(req);
+            if (!rep.hasError()) {
+                ArrayList<Member> result = rep.getResult().getStructuredMember().getList();
+                if (!result.get(0).getBool())
+                    return null;
+                else
+                    return result.get(1).getString();
+            } else {
+                throw new AuthorizerException(rep.getError());
+            }
+        } catch (JSONRPCException e) {
+		    throw new AuthorizerException(e.getMessage());
+        }
 	}
 
-	public String creaToken(String chiave, String idRisorsa) throws JSONRPCException {
+	public String creaToken(String chiave, int idRisorsa) throws AuthorizerException {
 		members.clear();
 		members.add(new Member(chiave));
 		members.add(new Member(idRisorsa));
 		Request req = new Request(Methods.CREA_TOKEN.getName(), new StructuredMember(members), new Id(getId()));
-		Response rep = clientUtente.sendRequest(req);
-		if (!rep.hasError()) {
-			return rep.getResult().getString();
-		} else {
-			throw new JSONRPCException(rep.getError().toString());
-		}
+
+		try {
+            Response rep = clientUtente.sendRequest(req);
+            if (!rep.hasError()) {
+                return rep.getResult().getString();
+            } else {
+                throw new AuthorizerException(rep.getError());
+            }
+        } catch (JSONRPCException e) {
+		    throw new AuthorizerException(e.getMessage());
+        }
 	}
 
 	public static void main(String[] args) throws JSONRPCException, IOException {
-
+		clientUtente.sendNotify(new Request("prova", null));
 	}
 }
