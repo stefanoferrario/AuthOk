@@ -32,4 +32,6 @@ public class MethodsUtils {
     }
 
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+
+    public static final short PORT = 5001;
 }

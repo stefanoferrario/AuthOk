@@ -27,13 +27,12 @@ public class Server {
     private GestoreRisorse resourceManager;
     private GestoreAutorizzazioni authManager;
     private IServer serverJsonRpc;
-    private static final int PORT = 5001;
 
     private Server() {
         tokenManager = GestoreToken.getInstance();
         resourceManager = GestoreRisorse.getInstance();
         authManager = GestoreAutorizzazioni.getInstance();
-        serverJsonRpc = new jsonrpc.Server(PORT);
+        serverJsonRpc = new jsonrpc.Server(MethodsUtils.PORT);
     }
 
     public Server getInstance() {
