@@ -2,13 +2,14 @@ package authorizer.GestoreToken;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 import authorizer.GestoreAutorizzazioni.AuthorizationException;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
 import authorizer.GestoreRisorse.ResourceException;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
+
+import static authorizer.MethodsUtils.DATE_HOUR_FORMAT;
 
 
 public class GestoreToken {
@@ -109,7 +110,7 @@ public class GestoreToken {
             tokValues.put("Token", new Member(t.getKey()));
             tokValues.put("Chiave", new Member(t.getValue().getChiave()));
             tokValues.put("ID Risorsa", new Member(t.getValue().getIdRisorsa()));
-            tokValues.put("Data ora concessione", new Member(t.getValue().getData().toString()));
+            tokValues.put("Data ora concessione", new Member(DATE_HOUR_FORMAT.format(t.getValue().getData())));
             tokensList.add(new Member(new StructuredMember(tokValues)));
         }
         if (tokensList.size()==0)

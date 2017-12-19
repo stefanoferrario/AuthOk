@@ -17,11 +17,10 @@ import static authorizer.MethodsUtils.DATE_FORMAT;
 public class GestoreAutorizzazioni {
 
     private static GestoreAutorizzazioni instance = null;
-    private HashMap<String,Autorizzazione> autorizzazioni = null;
+    private static HashMap<String,Autorizzazione> autorizzazioni = new HashMap<>();
 
     //Singleton Design pattern
     private GestoreAutorizzazioni(){
-        autorizzazioni = new HashMap<String, Autorizzazione>();
     }
 
     public static GestoreAutorizzazioni getInstance(){

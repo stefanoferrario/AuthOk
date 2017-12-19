@@ -35,6 +35,6 @@ public class MethodsUtils {
     }
 
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-
+    public static final DateFormat DATE_HOUR_FORMAT = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
     public static final short PORT = 5001;
 }

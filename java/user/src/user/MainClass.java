@@ -55,7 +55,7 @@ public class MainClass {
                     case 7: flag = false; break;
                 }
             } catch (AuthorizerException e) {
-                System.out.println("Errore nell'esecuzione delle richiesta: " + e.getMessage());
+                System.out.println("Errore nell'esecuzione delle richiesta: " + System.lineSeparator() + e.getMessage());
             }
         }
         scanner.close();
@@ -124,8 +124,8 @@ public class MainClass {
         }
     }
     private static void createToken() throws AuthorizerException {
-        int resource = Integer.parseInt(getInput("ID risorsa", LEVEL));
         if (u.hasKey()) {
+            int resource = Integer.parseInt(getInput("ID risorsa", LEVEL));
             String token = cr.creaToken(u.getChiave(), resource);
             u.putToken(resource, token);
             System.out.println("Token ottenuto: " + token);
@@ -148,12 +148,12 @@ public class MainClass {
         b.append(System.lineSeparator());
         if (u.hasTokens()) {
             b.append("Token assegnati:");
+            b.append(System.lineSeparator());
             for (HashMap.Entry<Integer,String> token : u.getTokens().entrySet()) {
-                b.append("TOKEN: ");
+                b.append("Token: ");
                 b.append(token.getValue());
-                b.append(" - RISORSA: ");
+                b.append(" - Risorsa: ");
                 b.append(token.getKey());
-                b.append(System.lineSeparator());
             }
         } else {
             b.append("Nessun token assegnato");

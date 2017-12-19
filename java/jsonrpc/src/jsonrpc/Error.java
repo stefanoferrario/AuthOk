@@ -160,6 +160,7 @@ public class Error extends JsonRpcObj {
         sb.append("Message: ");
         sb.append(message);
         if (hasErrorData()) {
+            sb.append(System.lineSeparator());
             sb.append("Error data: ");
             Member eData = data;
             sb.append(eData.getString()); //TODO
