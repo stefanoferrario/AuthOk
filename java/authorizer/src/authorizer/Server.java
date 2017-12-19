@@ -99,7 +99,7 @@ public class Server {
                     //far restituire un tipo data
                     long time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
                     return new Member(time);
-                case CREA_AUTORIZAZIONE:
+                case CREA_AUTORIZZAZIONE:
                     Date date = MethodsUtils.DATE_FORMAT.parse(p.get(2).getString());
                     return new Member(authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), date));
                 case VERIFICA_ESISTENZA_AUTORIZZAZIONE:
