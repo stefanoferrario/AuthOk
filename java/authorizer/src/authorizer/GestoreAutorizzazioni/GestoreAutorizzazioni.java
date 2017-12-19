@@ -17,7 +17,7 @@ public class GestoreAutorizzazioni {
     }
 
     public static GestoreAutorizzazioni getInstance(){
-       return (instance==null) ? new GestoreAutorizzazioni() : instance;
+        return (instance==null) ? new GestoreAutorizzazioni() : instance;
     }
 
     private String genera_chiave_unica(int min_length,int max_length) throws Exception{
@@ -40,26 +40,26 @@ public class GestoreAutorizzazioni {
         }
     }
 
-    public String creaAutorizzazione(String nomeUtente,int livello,Date scadenza){
+    public String creaAutorizzazione(String nomeUtente,int livello,Date scadenza) throws AuthorizationException {
+        if (verificaEsistenzaAutorizzazione(nomeUtente) != null) {throw new AuthorizationException("Utente già autorizzato");}
+        try{
+            String key = genera_chiave_unica(5,15);
 
-       try{
-           String key = genera_chiave_unica(5,15);
+            Autorizzazione auth = new Autorizzazione(nomeUtente,livello,scadenza);
+            autorizzazioni.put(key,auth);
 
-           Autorizzazione auth = new Autorizzazione(nomeUtente,livello,scadenza);
-           autorizzazioni.put(key,auth);
+            return key;
 
-           return key;
-
-       }catch (Exception ex){
-           System.out.println("Minima e massima lunghezza non corretti...");
-           return "";
-       }
+        }catch (Exception ex){
+            System.out.println("Minima e massima lunghezza non corretti...");
+            return "";
+        }
     }
 
-    public void revocaAutorizzazione(String chiave){
+    public boolean revocaAutorizzazione(String chiave){
 
         GestoreToken.getInstance().cancellaTokenChiave(chiave);
-        autorizzazioni.remove(chiave); //String key = autorizzazioni.keySet().iterator().next(); --> Questo per testare la cancellazione
+        return autorizzazioni.remove(chiave) != null; //String key = autorizzazioni.keySet().iterator().next(); --> Questo per testare la cancellazione
     }
 
     public String verificaEsistenzaAutorizzazione(String nomeUtente){
@@ -97,19 +97,20 @@ public class GestoreAutorizzazioni {
 
         GestoreAutorizzazioni auth =  GestoreAutorizzazioni.getInstance();
 
-        auth.creaAutorizzazione("Tay",2,new Date());
-        auth.creaAutorizzazione("Anna",4,new Date());
-        auth.creaAutorizzazione("Corti",4,new Date());
+        try {
+            auth.creaAutorizzazione("Tay",2,new Date());
+            auth.creaAutorizzazione("Anna",4,new Date());
+            auth.creaAutorizzazione("Corti",4,new Date());
 
-        String chiave = auth.verificaEsistenzaAutorizzazione("Anna");
-        auth.revocaAutorizzazione("");
+            String chiave = auth.verificaEsistenzaAutorizzazione("Anna");
+            auth.revocaAutorizzazione("");
 
-        try{
+
             boolean valid = auth.verificaValiditaAutorizzazione(" ",2);
 
         }catch (Exception e){
             System.out.println("Autorizzazione non trovata..");
         }
 
-     }
+    }
 }

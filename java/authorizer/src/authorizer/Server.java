@@ -1,5 +1,6 @@
 package authorizer;
 
+import authorizer.GestoreAutorizzazioni.AuthorizationException;
 import authorizer.GestoreRisorse.GestoreRisorse;
 import authorizer.GestoreToken.GestoreToken;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
@@ -58,7 +59,7 @@ public class Server {
             } catch (IllegalArgumentException e) {
                 //lanciata dal Methods.valueOf() se la stringa non corrisponde a un metodo
                 error = new Error(Error.Errors.METHOD_NOT_FOUND);
-            } catch (TokenException e) {
+            } catch (TokenException | AuthorizationException e) {
                 error = new Error("Server error", -32001, new Member(e.getMessage()));
             } finally {
                 if (!req.isNotify()) {
@@ -79,7 +80,7 @@ public class Server {
         }
     }
 
-    private Member selectMethod(MethodsUtils.Methods method, StructuredMember params) throws TokenException {
+    private Member selectMethod(MethodsUtils.Methods method, StructuredMember params) throws TokenException, AuthorizationException {
         ArrayList<Member> p = new ArrayList<>();
         try {
             if (params!=null) //i parametri sono opzionali
@@ -111,6 +112,8 @@ public class Server {
                     else
                         result.add(new Member());
                     return new Member(new StructuredMember(result));
+                case REVOCA_AUTORIZZAZIONE:
+                    return new Member(authManager.revocaAutorizzazione(p.get(0).getString()));
                 case CREA_RISORSA:
                     //resourceManager.creaRisorsa(...);
                     return new Member(); //TODO

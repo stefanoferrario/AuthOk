@@ -2,6 +2,8 @@ package authorizer.GestoreToken;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import authorizer.GestoreAutorizzazioni.AuthorizationException;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
 
@@ -162,7 +164,7 @@ public class GestoreToken {
     }
 
 
-    public static void main(String [] args) throws TokenException {
+    public static void main(String [] args) throws TokenException, AuthorizationException {
 
         GestoreToken gestoreToken=instance.getInstance();
         gestoreToken.creaToken(GestoreAutorizzazioni.getInstance().creaAutorizzazione("Stefano",9 ,new Date()),23492);
