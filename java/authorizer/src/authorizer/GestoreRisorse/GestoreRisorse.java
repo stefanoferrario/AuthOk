@@ -8,7 +8,6 @@ public class GestoreRisorse {
 
 	// singleton:
 	private GestoreRisorse() {
-		gestoreRisorse = new GestoreRisorse();
 		dataBaseRisorse = new HashMap<>();
 	}
 
