@@ -11,7 +11,8 @@ public class MethodsUtils {
         VERIFICA_ESISTENZA_AUTORIZZAZIONE("VERIFICA_ESISTENZA_AUTORIZZAZIONE", 1),
         CREA_RISORSA("CREA_RISORSA", 2),
         MODIFICA_RISORSA("MODIFICA_RISORSA", 2),
-        CANCELLA_RISORSA("CANCELLA_RISORSA", 1);
+        CANCELLA_RISORSA("CANCELLA_RISORSA", 1),
+        REVOCA_AUTORIZZAZIONE("REVOCA_AUTORIZZAZIONE", 1);
 
         private final String name;
         private final int params_num;
