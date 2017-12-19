@@ -62,15 +62,15 @@ public class GestoreAutorizzazioni {
         autorizzazioni.remove(chiave); //String key = autorizzazioni.keySet().iterator().next(); --> Questo per testare la cancellazione
     }
 
-    public boolean verificaEsistenzaAutorizzazione(String nomeUtente){
+    public String verificaEsistenzaAutorizzazione(String nomeUtente){
 
-        for (Autorizzazione value : autorizzazioni.values()) {
+        for (HashMap.Entry<String, Autorizzazione> entry : autorizzazioni.entrySet()) {
 
-            if(value.getUtente().equals(nomeUtente)){
-                return true;
+            if(entry.getValue().getUtente().equals(nomeUtente)){
+                return entry.getKey();
             }
         }
-        return false;
+        return null;
     }
 
     public boolean verificaValiditaAutorizzazione(String chiave,int idRisorsa) {
@@ -101,7 +101,7 @@ public class GestoreAutorizzazioni {
         auth.creaAutorizzazione("Anna",4,new Date());
         auth.creaAutorizzazione("Corti",4,new Date());
 
-        boolean esistenza = auth.verificaEsistenzaAutorizzazione("Anna");
+        String chiave = auth.verificaEsistenzaAutorizzazione("Anna");
         auth.revocaAutorizzazione("");
 
         try{

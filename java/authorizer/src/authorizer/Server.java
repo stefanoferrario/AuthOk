@@ -11,6 +11,8 @@ import jsonrpc.Member;
 import jsonrpc.StructuredMember;
 import jsonrpc.Request;
 import jsonrpc.Response;
+import org.json.JSONObject;
+
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.time.Duration;
@@ -99,11 +101,16 @@ public class Server {
                     return new Member(time);
                 case CREA_AUTORIZAZIONE:
                     Date date = MethodsUtils.DATE_FORMAT.parse(p.get(2).getString());
-                    String key = authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), date);
-                    return new Member(key);
+                    return new Member(authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), date));
                 case VERIFICA_ESISTENZA_AUTORIZZAZIONE:
-                    boolean existence = authManager.verificaEsistenzaAutorizzazione(p.get(0).getString());
-                    return new Member(existence);
+                    String key = authManager.verificaEsistenzaAutorizzazione(p.get(0).getString());
+                    ArrayList<Member> result = new ArrayList<>();
+                    result.add(new Member(key != null));
+                    if (key != null)
+                        result.add(new Member(key));
+                    else
+                        result.add(new Member());
+                    return new Member(new StructuredMember(result));
                 case CREA_RISORSA:
                     //resourceManager.creaRisorsa(...);
                     return new Member(); //TODO
