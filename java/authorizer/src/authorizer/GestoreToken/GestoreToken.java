@@ -4,13 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import authorizer.GestoreAutorizzazioni.AuthorizationException;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
-import authorizer.GestoreRisorse.GestoreRisorse;
-import authorizer.GestoreRisorse.ResourceException;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
-
 import static authorizer.MethodsUtils.DATE_HOUR_FORMAT;
-
 
 public class GestoreToken {
     private static final long TOKEN_DURATION = 82800000;
@@ -31,40 +27,26 @@ public class GestoreToken {
 
     //Metodo per la creazione di un nuovo token
     public String creaToken (String chiave, int idRisorsa) throws TokenException {
-        String stringaToken = null;
-        boolean chiaveValida = false;
-        int livelloRisorsa = 0;
-
-        int livelloChiave = 0;
-        //verifica della Chiave
-
-        chiaveValida = GestoreAutorizzazioni.getInstance().verificaValiditaAutorizzazione(chiave, idRisorsa);
-        if (!chiaveValida) {
-            throw new TokenException("La chiave fornita non è valida");
-        } else {
-            //Se la chiave è valida estrae il livello dell'autorizzazione
-            livelloChiave = GestoreAutorizzazioni.getInstance().getLivelloAutorizzazione(chiave);
+        switch (GestoreAutorizzazioni.getInstance().verificaValiditaAutorizzazione(chiave, idRisorsa)) {
+            case EXPIRED:
+                throw new TokenException("Chiave scaduta");
+            case KEY_NON_EXISTENT:
+                throw new TokenException("Chiave inesistente");
+            case INSUFFICIENT_LEVEL:
+                throw new TokenException("Livello di autorizzazione non sufficiente");
+            case RESOURCE_NON_EXISTENT:
+                throw new TokenException("Risorsa non trovata");
+            case VALID:
+                String token = UUID.randomUUID().toString(); //generazione codice random
+                Token newToken = new Token(chiave, idRisorsa, System.currentTimeMillis());
+                System.out.println("Token generato: " + token);
+                tokens.put(token, newToken);
+                return token;
+            default: throw new TokenException();
         }
-        //Analisi della Risorsa
-        try {
-            livelloRisorsa = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
-        } catch (ResourceException e) {
-            throw new TokenException(e.getMessage());
-        }
-
-        if (livelloRisorsa > livelloChiave) {
-            throw new TokenException("Livello autorizzazione insufficiente");
-        }
-        UUID token= UUID.randomUUID(); //generazione codice random
-        Token newToken = new Token(chiave, idRisorsa, System.currentTimeMillis());
-        System.out.println("Token generato: " + token.toString());
-        tokens.put(token.toString(), newToken);
-
-        return token.toString();
     }
 
     //Verifica validità del token da parte della risorsa che ritorna il tempo di validità restante.
-
     public long verificaToken(String aString, int idRisorsa) {
         Token temp= tokens.get(aString);
         if (temp != null) {
@@ -84,22 +66,25 @@ public class GestoreToken {
     }
 
     public void cancellaTokenScaduti(){
-        Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
+        /*Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
             if ((System.currentTimeMillis()-entry.getValue().getData().getTime())>TOKEN_DURATION) {
                 iterator.remove();
             }
-        }
+        }*/
+        tokens.entrySet().removeIf((HashMap.Entry<String, Token> p) -> System.currentTimeMillis() - p.getValue().getData().getTime() > TOKEN_DURATION);
+
     }
     public void cancellaTokenChiave(String chiave){
-        Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
+        /*Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
         while (iterator.hasNext()) {
             HashMap.Entry<String, Token> entry = iterator.next();
-            if (chiave==entry.getValue().getChiave()) {
+            if (chiave.equals(entry.getValue().getChiave())) {
                 iterator.remove();
             }
-        }
+        }*/
+        tokens.entrySet().removeIf((HashMap.Entry<String, Token> p) -> p.getValue().getChiave().equals(chiave));
     }
 
 
@@ -113,7 +98,7 @@ public class GestoreToken {
             tokValues.put("Data ora concessione", new Member(DATE_HOUR_FORMAT.format(t.getValue().getData())));
             tokensList.add(new Member(new StructuredMember(tokValues)));
         }
-        if (tokensList.size()==0)
+        if (tokensList.size() == 0)
             return new Member();
         else
             return new Member(new StructuredMember(tokensList));

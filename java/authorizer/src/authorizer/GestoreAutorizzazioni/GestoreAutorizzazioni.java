@@ -3,15 +3,12 @@ package authorizer.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.ResourceException;
 import authorizer.GestoreToken.GestoreToken;
 import authorizer.GestoreRisorse.GestoreRisorse;
-import authorizer.MethodsUtils;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
-
 import static authorizer.MethodsUtils.DATE_FORMAT;
 
 public class GestoreAutorizzazioni {
@@ -47,7 +44,7 @@ public class GestoreAutorizzazioni {
         }
     }
 
-    public String creaAutorizzazione(String nomeUtente,int livello,Date scadenza) throws AuthorizationException {
+    public String creaAutorizzazione(String nomeUtente,int livello, Date scadenza) throws AuthorizationException {
         if (verificaEsistenzaAutorizzazione(nomeUtente) != null) {throw new AuthorizationException("Utente già autorizzato");}
         try{
             String key = genera_chiave_unica(5,15);
@@ -80,28 +77,33 @@ public class GestoreAutorizzazioni {
         return null;
     }
 
-    public boolean verificaValiditaAutorizzazione(String chiave,int idRisorsa) {
-        // String key = autorizzazioni.keySet().iterator().next(); chiave = key;
+    public enum Validity {VALID, KEY_NON_EXISTENT, EXPIRED, INSUFFICIENT_LEVEL, RESOURCE_NON_EXISTENT};
 
+    public Validity verificaValiditaAutorizzazione(String chiave, int idRisorsa) {
         Autorizzazione value = autorizzazioni.get(chiave);
 
-        if (value == null){ //Se non è presente nessuna autorizzazione non è valida
-            return false;
+        if (value == null){ //Se non è presente nessuna autorizzazione corrispondente la chiave non è valida
+            return Validity.KEY_NON_EXISTENT;
         }else{
-            Date today = new Date();
             try {
                 int level = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
-                return (today.before(value.getScadenza()) && level <= value.getLivello());
+                Date today = new Date();
+                if (today.after(value.getScadenza()))
+                    return Validity.EXPIRED;
+                if (level <= value.getLivello())
+                    return Validity.VALID;
+                else
+                    return Validity.INSUFFICIENT_LEVEL;
+
             } catch (ResourceException e) {
                 //idRisorsa non esistente: autorizzazione non valida
-                return false;
+                return Validity.RESOURCE_NON_EXISTENT;
             }
         }
     }
 
     //Necessario al gestore token per poter verificare il livello a cui è possibile accedere.
     public int getLivelloAutorizzazione(String chiave){
-
         return autorizzazioni.get(chiave).getLivello();
     }
 
@@ -134,7 +136,7 @@ public class GestoreAutorizzazioni {
             auth.revocaAutorizzazione("");
 
 
-            boolean valid = auth.verificaValiditaAutorizzazione(" ",2);
+            //boolean valid = auth.verificaValiditaAutorizzazione(" ",2);
 
         }catch (Exception e){
             System.out.println("Autorizzazione non trovata..");
