@@ -8,7 +8,7 @@ import jsonrpc.StructuredMember;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.UUID;
 import static authorizer.MethodsUtils.DATE_FORMAT;
 
 public class GestoreAutorizzazioni {
@@ -24,40 +24,26 @@ public class GestoreAutorizzazioni {
         return (instance==null) ? new GestoreAutorizzazioni() : instance;
     }
 
-    private String genera_chiave_unica(int min_length,int max_length) throws Exception{
+    private String genera_chiave_unica(){
 
-        if (min_length > max_length)
-            throw new Exception();
-        else{
-            Random rand = new Random();
-            //Genera un numero tra min_length e max_length
-            int  n = rand.nextInt(max_length - min_length + 1) + min_length;
-
-            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-            StringBuilder strBuild = new StringBuilder();
-            Random rnd = new Random();
-            while (strBuild.length() < n) {
-                int index = (int) (rnd.nextFloat() * chars.length());
-                strBuild.append(chars.charAt(index));
-            }
-            return strBuild.toString();
-        }
+        return UUID.randomUUID().toString().replace("-", "");
+        
     }
 
     public String creaAutorizzazione(String nomeUtente,int livello, Date scadenza) throws AuthorizationException {
-        if (verificaEsistenzaAutorizzazione(nomeUtente) != null) {throw new AuthorizationException("Utente già autorizzato");}
-        try{
-            String key = genera_chiave_unica(5,15);
 
-            Autorizzazione auth = new Autorizzazione(nomeUtente,livello,scadenza);
-            autorizzazioni.put(key,auth);
-
-            return key;
-
-        }catch (Exception ex){
-            System.out.println("Minima e massima lunghezza non corretti...");
-            return "";
+        if (verificaEsistenzaAutorizzazione(nomeUtente) != null) {
+            throw new AuthorizationException("Utente già autorizzato");
         }
+
+        String key = genera_chiave_unica();
+
+        Autorizzazione auth = new Autorizzazione(nomeUtente,livello,scadenza);
+        autorizzazioni.put(key,auth);
+
+        return key;
+
+
     }
 
     //restituisce se era presente un'autorizzazione con quella chiave
