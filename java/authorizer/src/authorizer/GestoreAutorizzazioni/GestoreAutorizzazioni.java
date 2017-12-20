@@ -37,7 +37,7 @@ public class GestoreAutorizzazioni {
             StringBuilder strBuild = new StringBuilder();
             Random rnd = new Random();
             while (strBuild.length() < n) {
-                int index = (int) (rnd.nextFloat() * chars.length()); // Prodotto tra i Float(range tra 0 e 1) e la lunghezza della stringa di caratteri
+                int index = (int) (rnd.nextFloat() * chars.length());
                 strBuild.append(chars.charAt(index));
             }
             return strBuild.toString();
@@ -63,7 +63,7 @@ public class GestoreAutorizzazioni {
     //restituisce se era presente un'autorizzazione con quella chiave
     public boolean revocaAutorizzazione(String chiave){
         GestoreToken.getInstance().cancellaTokenChiave(chiave);
-        return autorizzazioni.remove(chiave) != null; //String key = autorizzazioni.keySet().iterator().next(); --> Questo per testare la cancellazione
+        return autorizzazioni.remove(chiave) != null;
     }
 
     public String verificaEsistenzaAutorizzazione(String nomeUtente){
@@ -121,26 +121,5 @@ public class GestoreAutorizzazioni {
             return new Member();
         else
             return new Member(new StructuredMember(auths));
-    }
-
-    public static void main(String args[]) {
-
-        GestoreAutorizzazioni auth =  GestoreAutorizzazioni.getInstance();
-
-        try {
-            auth.creaAutorizzazione("Tay",2,new Date());
-            auth.creaAutorizzazione("Anna",4,new Date());
-            auth.creaAutorizzazione("Corti",4,new Date());
-
-            String chiave = auth.verificaEsistenzaAutorizzazione("Anna");
-            auth.revocaAutorizzazione("");
-
-
-            //boolean valid = auth.verificaValiditaAutorizzazione(" ",2);
-
-        }catch (Exception e){
-            System.out.println("Autorizzazione non trovata..");
-        }
-
     }
 }
