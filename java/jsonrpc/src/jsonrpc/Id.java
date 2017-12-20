@@ -3,6 +3,7 @@ package jsonrpc;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.security.InvalidParameterException;
+import java.util.Objects;
 
 public class Id {
     //id = string o int o null
@@ -74,7 +75,11 @@ public class Id {
             case INT: return o.type == Types.INT && ((Integer)getInt()).equals(o.getInt());
             default: return false;
         }
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, value);
     }
 
     public static Id getIdFromRequest(String request) {

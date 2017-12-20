@@ -51,6 +51,7 @@ public class Batch { //public solo per test
         }
     }
     private void put(Request req, Response resp) {
+        //if (!req.getId().equals(resp.getId())) {throw new InvalidParameterException("Response ID does not match request ID");}
         int i = reqs.indexOf(req);
         resps.set(i, resp);
     }

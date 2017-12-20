@@ -110,6 +110,30 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
         }
     }
 
+    public HashMap<Integer, Boolean> checkToken(HashMap<Integer, String> tokens) throws AuthorizerException {
+        ArrayList<Request> reqs = new ArrayList<>();
+        HashMap<Id, Integer> idToResource = new HashMap<>(); //mappa l'id di una richiesta con l'id della risorsa che identifica il token
+        for (HashMap.Entry<Integer, String> token : tokens.entrySet()) {
+            members.clear();
+            members.add(new Member(token.getValue()));
+            members.add(new Member(token.getKey()));
+            Request req = new Request(Methods.VERIFICA_TOKEN.getName(), new StructuredMember(members), new Id(getId()));
+            reqs.add(req);
+            idToResource.put(req.getId(), token.getKey());
+        }
+
+        ArrayList<Response> resps = clientUtente.sendBatch(reqs);
+        HashMap<Integer, Boolean> checked = new HashMap<>();
+        for (Response resp : resps) {
+            if (resp.hasError()) {throw new AuthorizerException(resp.getError());}
+            //i token sono identificati tramite l'id della risorsa a cui si riferiscono
+            //id risorsa ricavato dalla mappa che lo associa all'id richiesta
+            //salva la validità del token (tempo restante > 0) associandola al token (identificato tramite id risorsa)
+            checked.put(idToResource.get(resp.getId()), resp.getResult().getInt() > 0);
+        }
+        return checked;
+    }
+
     public String checkServer() {
         Request req = new Request(Methods.SERVER_STATE.getName(), null, new Id(getId()));
         try {
