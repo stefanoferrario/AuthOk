@@ -66,7 +66,7 @@ public class GestoreAutorizzazioni {
     //restituisce se era presente un'autorizzazione con quella chiave
     public boolean revocaAutorizzazione(String chiave){
         GestoreToken.getInstance().cancellaTokenChiave(chiave);
-        return autorizzazioni.remove(chiave) != null; //String key = autorizzazioni.keySet().iterator().next(); --> Questo per testare la cancellazione
+        return autorizzazioni.remove(chiave) != null;
     }
 
     public String verificaEsistenzaAutorizzazione(String nomeUtente){
@@ -81,7 +81,6 @@ public class GestoreAutorizzazioni {
     }
 
     public boolean verificaValiditaAutorizzazione(String chiave,int idRisorsa) {
-        // String key = autorizzazioni.keySet().iterator().next(); chiave = key;
 
         Autorizzazione value = autorizzazioni.get(chiave);
 
@@ -120,25 +119,5 @@ public class GestoreAutorizzazioni {
         else
             return new Member(new StructuredMember(auths));
     }
-
-    public static void main(String args[]) {
-
-        GestoreAutorizzazioni auth =  GestoreAutorizzazioni.getInstance();
-
-        try {
-            auth.creaAutorizzazione("Tay",2,new Date());
-            auth.creaAutorizzazione("Anna",4,new Date());
-            auth.creaAutorizzazione("Corti",4,new Date());
-
-            String chiave = auth.verificaEsistenzaAutorizzazione("Anna");
-            auth.revocaAutorizzazione("");
-
-
-            boolean valid = auth.verificaValiditaAutorizzazione(" ",2);
-
-        }catch (Exception e){
-            System.out.println("Autorizzazione non trovata..");
-        }
-
-    }
+    
 }
