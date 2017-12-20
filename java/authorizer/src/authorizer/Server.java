@@ -17,10 +17,9 @@ import jsonrpc.Request;
 import jsonrpc.Response;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Server {
@@ -29,12 +28,27 @@ public class Server {
     private GestoreRisorse resourceManager;
     private GestoreAutorizzazioni authManager;
     private IServer serverJsonRpc;
+    private static boolean testEnabled = false;
 
     private Server() {
         tokenManager = GestoreToken.getInstance();
         resourceManager = GestoreRisorse.getInstance();
         authManager = GestoreAutorizzazioni.getInstance();
         serverJsonRpc = new jsonrpc.Server(MethodsUtils.PORT);
+
+        if (testEnabled) {
+            System.out.println("Impostazioni di test abilitate");
+            try {
+                resourceManager.addRisorsa(1, 4, ResourceTypes.LINK);
+                resourceManager.addRisorsa(2, 6, ResourceTypes.LINK);
+                resourceManager.addRisorsa(3, 1, ResourceTypes.FIBO);
+                resourceManager.addRisorsa(4, 3, ResourceTypes.DICE);
+                System.out.println("Caricate risorse di prova");
+            } catch (ResourceException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public static Server getInstance() {
@@ -43,6 +57,9 @@ public class Server {
         }
         return instance;
     }
+
+    private static void setTest(boolean isTest) {testEnabled = isTest;}
+    public static boolean isTest() {return testEnabled;}
 
     private void receive() {
         ArrayList<Request> reqs = serverJsonRpc.receive();
@@ -154,6 +171,20 @@ public class Server {
 
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String args[]) {
+        Pattern pattern = Pattern.compile("s|n");
+        String input = "";
+        Matcher matcher = pattern.matcher(input);
+        Scanner scanner = new Scanner(System.in);
+        while (!matcher.matches()) {
+            System.out.println("Abilitare test? [s|n]");
+            input = scanner.nextLine();
+            matcher = pattern.matcher(input);
+            if (!matcher.matches()) {
+                System.out.println("Input non valido");
+            }
+        }
+        setTest(input.equals("s"));
+
         Server s = Server.getInstance();
 
         Date date= new Date();
@@ -163,20 +194,8 @@ public class Server {
             public void run(){
                 GestoreToken.getInstance().cancellaTokenScaduti();
             }
-        },date, 24*60*60*1000);//24 ore in millisecondi
-
-        ///Per permettere di testare il progetto vengono inserite risorse di prova//
-        try {
-            s.resourceManager.addRisorsa(1, 4, ResourceTypes.LINK);
-            s.resourceManager.addRisorsa(2, 6, ResourceTypes.LINK);
-            s.resourceManager.addRisorsa(3, 1, ResourceTypes.FIBO);
-            s.resourceManager.addRisorsa(4, 3, ResourceTypes.DICE);
-            System.out.println("Caricate risorse di prova");
-        } catch (ResourceException e) {
-            e.printStackTrace();
-            return;
-        }
-        //////
+        },date, 24*60*60*1000);//ogni 24 ore cancella i token per non occupare inutilmente la memoria
+        // non è necessario cancellare i token nell'esatto momento in cui scadono perché sono comunque invalidi
 
         System.out.println("In ascolto...");
         while (true) {

@@ -1,15 +1,17 @@
 package authorizer.GestoreToken;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import authorizer.GestoreAutorizzazioni.AuthorizationException;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
+import authorizer.Server;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
 import static authorizer.MethodsUtils.DATE_HOUR_FORMAT;
 
 public class GestoreToken {
-    private static final long TOKEN_DURATION = 82800000;
+    private static final long TOKEN_DURATION = 24*60*60*1000; //24 ore in millisecs
+    private static final long TEST_TOKEN_DURATION = 3*60*1000; //3 minuti in millisecs
     private static GestoreToken instance = null;
     private HashMap<String, Token> tokens = null;
 
@@ -39,8 +41,12 @@ public class GestoreToken {
             case VALID:
                 String token = UUID.randomUUID().toString(); //generazione codice random
                 Token newToken = new Token(chiave, idRisorsa, System.currentTimeMillis());
-                System.out.println("Token generato: " + token);
                 tokens.put(token, newToken);
+
+                if (Server.isTest()) {
+                    System.out.println("Token generato: " + token);
+                }
+
                 return token;
             default: throw new TokenException();
         }
@@ -50,15 +56,20 @@ public class GestoreToken {
     public long verificaToken(String aString, int idRisorsa) {
         Token temp= tokens.get(aString);
         if (temp != null) {
-            if (System.currentTimeMillis() - temp.getData().getTime() > TOKEN_DURATION) {
+            long tokenDuration = Server.isTest() ? TEST_TOKEN_DURATION : TOKEN_DURATION;
+            long tempoRestante = tokenDuration - (System.currentTimeMillis() - temp.getData().getTime());
+            if (tempoRestante < 0) {
                 System.out.println("Il token relativo alla risorsa " + temp.getIdRisorsa() + " è scaduto");
                 return 0; //token scaduto
             } else {
-                long tempoRestante = TOKEN_DURATION - (System.currentTimeMillis() - temp.getData().getTime());
-                Date _tempoRestante = new Date(tempoRestante);
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                String risultato = sdf.format(_tempoRestante);
-                System.out.println("Tempo di validità restante del token relativo alla risorsa " + temp.getIdRisorsa() + ": " + risultato);
+                String t = String.format("%02d : %02d : %02d",
+                        TimeUnit.MILLISECONDS.toHours(tempoRestante),
+                        TimeUnit.MILLISECONDS.toMinutes(tempoRestante) -
+                                TimeUnit.MILLISECONDS.toMinutes(TimeUnit.MILLISECONDS.toHours(tempoRestante)),
+                        TimeUnit.MILLISECONDS.toSeconds(tempoRestante) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(tempoRestante))
+                );
+                System.out.println("Tempo di validità restante del token relativo alla risorsa " + temp.getIdRisorsa() + ": " + t);
                 return tempoRestante;
             }
         }
