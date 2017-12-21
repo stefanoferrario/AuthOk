@@ -1,7 +1,6 @@
 package authorizer;
-import jsonrpc.*;
-import org.json.JSONException;
 
+import org.json.JSONException;
 import java.util.HashMap;
 
 public class Test {

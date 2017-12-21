@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import zeromq.IZmqClient;
 import zeromq.ZmqClient;
-import zmq.socket.reqrep.Req;
 
 import java.util.ArrayList;
 

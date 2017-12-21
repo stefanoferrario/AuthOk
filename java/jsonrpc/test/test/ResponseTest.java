@@ -1,10 +1,13 @@
 package test;
 
-import jsonrpc.*;
 import jsonrpc.Error;
+import jsonrpc.Id;
+import jsonrpc.Member;
+import jsonrpc.Response;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import java.security.InvalidParameterException;
 
 import static org.junit.Assert.*;

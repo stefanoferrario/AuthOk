@@ -1,12 +1,12 @@
 package test;
 
+import jsonrpc.Error;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
-import jsonrpc.Error;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;

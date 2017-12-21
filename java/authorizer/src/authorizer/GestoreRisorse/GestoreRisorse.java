@@ -2,7 +2,6 @@ package authorizer.GestoreRisorse;
 
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 

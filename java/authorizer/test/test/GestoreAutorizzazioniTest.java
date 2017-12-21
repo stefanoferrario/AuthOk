@@ -1,16 +1,20 @@
 package test;
 
-import org.junit.Test;
-import org.junit.Before;
-import static org.junit.Assert.*;
-import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreAutorizzazioni.AuthorizationException;
-import authorizer.GestoreRisorse.*;
+import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
+import authorizer.GestoreRisorse.GestoreRisorse;
+import authorizer.GestoreRisorse.ResourceException;
+import authorizer.GestoreRisorse.ResourceTypes;
+import org.junit.Before;
+import org.junit.Test;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
+
+import static org.junit.Assert.*;
 
 public class GestoreAutorizzazioniTest {
 
@@ -78,17 +82,18 @@ public class GestoreAutorizzazioniTest {
     private HashMap<String,String> nome_chiave = null;
 
     @Before
-    public void getInstance(){
+    public void getInstance() throws ParseException {
 
         try{
             auth =  GestoreAutorizzazioni.getInstance();
             nome_chiave = new HashMap<>();
 
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             //Autorizzazioni di esempio
-            nome_chiave.put(Utente.ANNA.getNome(),auth.creaAutorizzazione(Utente.ANNA.getNome(),Utente.ANNA.getLivello(),Utente.ANNA.getScadenza()));
-            nome_chiave.put(Utente.MARCO.getNome(),auth.creaAutorizzazione(Utente.MARCO.getNome(),Utente.MARCO.getLivello(),Utente.MARCO.getScadenza()));
-            nome_chiave.put(Utente.LUIGI.getNome(),auth.creaAutorizzazione(Utente.LUIGI.getNome(),Utente.LUIGI.getLivello(),Utente.LUIGI.getScadenza()));
-            nome_chiave.put(Utente.PIPPO.getNome(),auth.creaAutorizzazione(Utente.PIPPO.getNome(),Utente.PIPPO.getLivello(),Utente.PIPPO.getScadenza()));
+            nome_chiave.put(Utente.ANNA.getNome(),auth.creaAutorizzazione(Utente.ANNA.getNome(),Utente.ANNA.getLivello(),dateFormat.format(Utente.ANNA.getScadenza())));
+            nome_chiave.put(Utente.MARCO.getNome(),auth.creaAutorizzazione(Utente.MARCO.getNome(),Utente.MARCO.getLivello(),dateFormat.format(Utente.MARCO.getScadenza())));
+            nome_chiave.put(Utente.LUIGI.getNome(),auth.creaAutorizzazione(Utente.LUIGI.getNome(),Utente.LUIGI.getLivello(),dateFormat.format(Utente.LUIGI.getScadenza())));
+            nome_chiave.put(Utente.PIPPO.getNome(),auth.creaAutorizzazione(Utente.PIPPO.getNome(),Utente.PIPPO.getLivello(),dateFormat.format(Utente.PIPPO.getScadenza())));
 
             GestoreRisorse resource = GestoreRisorse.getInstance();
 

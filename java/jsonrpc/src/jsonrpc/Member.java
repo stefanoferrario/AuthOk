@@ -3,8 +3,6 @@ package jsonrpc;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Member {
     public enum Types {NULL, STRING, NUMBER, BOOL, OBJ, ARRAY}

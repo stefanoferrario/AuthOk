@@ -1,9 +1,9 @@
 package user;
 
-import authorizer.MethodsUtils;
 import jsonrpc.JSONRPCException;
-import java.text.ParseException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +18,7 @@ public class MainClass {
     //obbligare 4 cifre per l'anno
 
     private static final String KEY = "^[^\\s]+$";
-    private static CreatoreRichiesta  cr = new CreatoreRichiesta();
+    private static IntUtente  cr = new CreatoreRichiesta();
     private static Utente u;
 
     public static void main(String[] args) throws JSONRPCException {
@@ -68,19 +68,9 @@ public class MainClass {
         System.out.println("Creazione autorizzazione");
         String name = getInput("Nome utente", USERNAME);
         int level = Integer.parseInt(getInput("Livello", LEVEL));
-        Date s = null;
-        boolean flag = true;
-        while (flag) {
-            try {
-                String date = getInput("Scadenza", DATE);
-                //crea un'autorizzazione valida fino alle 00:00 della data specificata
-                s = MethodsUtils.DATE_FORMAT.parse(date.replace('/', '-'));
-                flag = false;
-            } catch (ParseException e) {
-                System.out.println("Formato data invalida");
-            }
-        }
 
+        String date = getInput("Scadenza", DATE);
+        //crea un'autorizzazione valida fino alle 00:00 della data specificata
 
         String existingKey = cr.verificaEsistenzaAutorizzazione(name);
         if (existingKey != null) {
@@ -94,14 +84,13 @@ public class MainClass {
             }
         }
 
-        String key = cr.creaAutorizzazione(name, level, s);
+        String key = cr.creaAutorizzazione(name, level, date);
         System.out.println("Autorizzazione creata. Chiave assegnata all'utente " + name + ": " + key);
         if (u.getNome().equals(name)) {
             u.setChiave(key);
         }
-
-
     }
+
     private static void deleteAuth() throws AuthorizerException {
         System.out.println("Cancellazione autorizzazione");
         String key = getInput("Chiave", KEY);
@@ -115,6 +104,7 @@ public class MainClass {
             System.out.println("Chiave cancellata dall'utente corrente");
         }
     }
+
     private static void checkAuth() throws AuthorizerException {
         System.out.println("Controllo esistenza autorizzazione");
         String user = getInput("Nome utente", USERNAME);

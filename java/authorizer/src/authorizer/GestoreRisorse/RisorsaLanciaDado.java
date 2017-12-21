@@ -1,8 +1,9 @@
 package authorizer.GestoreRisorse;
-import java.time.Duration;
+
+import authorizer.GestoreToken.GestoreToken;
+import authorizer.GestoreToken.Token;
+
 import java.util.Random;
-import java.util.Date;
-import authorizer.GestoreToken.*;
 
 public class RisorsaLanciaDado extends Risorsa {
 	private int facciaDado = 0;

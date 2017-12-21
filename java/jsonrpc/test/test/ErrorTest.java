@@ -1,13 +1,14 @@
 package test;
 
+import jsonrpc.Error;
+import jsonrpc.JsonRpcObj;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import jsonrpc.Error;
-import jsonrpc.JsonRpcObj;
+
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 

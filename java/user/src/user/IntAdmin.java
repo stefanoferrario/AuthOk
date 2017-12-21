@@ -1,9 +1,5 @@
 package user;
 
-import java.io.IOException;
-import java.util.Date;
-import jsonrpc.JSONRPCException;
-
 public interface IntAdmin {
 	void creaRisorsa();
 
@@ -11,7 +7,7 @@ public interface IntAdmin {
 
 	void cancellaRisorsa();
 
-	public String creaAutorizzazione(String nomeUtente, int livello, Date scadenza) throws AuthorizerException;
+	String creaAutorizzazione(String nomeUtente, int livello, String scadenza) throws AuthorizerException;
 	
 	boolean revocaAutorizzazione(String nomeUtente) throws AuthorizerException;
 }

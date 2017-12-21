@@ -1,25 +1,27 @@
 package authorizer.GestoreToken;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 import authorizer.GestoreAutorizzazioni.AuthorizationException;
 import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.Server;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
-import static authorizer.MethodsUtils.DATE_HOUR_FORMAT;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class GestoreToken {
     private static final long TOKEN_DURATION = 24*60*60*1000; //24 ore in millisecs
     private static final long TEST_TOKEN_DURATION = 3*60*1000; //3 minuti in millisecs
+    private static final DateFormat DATE_HOUR = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
     private static GestoreToken instance = null;
-    private HashMap<String, Token> tokens = null;
-
+    private HashMap<String, Token> tokens = new HashMap<>();
 
     //Singleton design pattern
-    private GestoreToken() {
-        tokens= new HashMap<String,Token>();
-    }
+    private GestoreToken() {}
+
     public static GestoreToken getInstance() {
         if(instance == null) {
             instance = new GestoreToken();
@@ -106,7 +108,7 @@ public class GestoreToken {
             tokValues.put("Token", new Member(t.getKey()));
             tokValues.put("Chiave", new Member(t.getValue().getChiave()));
             tokValues.put("ID Risorsa", new Member(t.getValue().getIdRisorsa()));
-            tokValues.put("Data ora concessione", new Member(DATE_HOUR_FORMAT.format(t.getValue().getData())));
+            tokValues.put("Data ora concessione", new Member(DATE_HOUR.format(t.getValue().getData())));
             tokensList.add(new Member(new StructuredMember(tokValues)));
         }
         if (tokensList.size() == 0)
@@ -115,10 +117,14 @@ public class GestoreToken {
             return new Member(new StructuredMember(tokensList));
     }
 
+    public long getTokenDuration() {
+        return Server.isTest() ? TEST_TOKEN_DURATION : TOKEN_DURATION;
+    }
+
     public static void main(String [] args) throws TokenException, AuthorizationException {
 
-        GestoreToken gestoreToken=instance.getInstance();
-        gestoreToken.creaToken(GestoreAutorizzazioni.getInstance().creaAutorizzazione("Stefano",9 ,new Date()),23492);
+        //GestoreToken gestoreToken=instance.getInstance();
+        //gestoreToken.creaToken(GestoreAutorizzazioni.getInstance().creaAutorizzazione("Stefano",9 ,new Date()),23492);
 
 
     }

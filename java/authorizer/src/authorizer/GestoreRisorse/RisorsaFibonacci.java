@@ -1,10 +1,9 @@
 package authorizer.GestoreRisorse;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Date;
 import authorizer.GestoreToken.GestoreToken;
-import authorizer.GestoreToken.*;
+import authorizer.GestoreToken.Token;
+
+import java.util.ArrayList;
 
 public class RisorsaFibonacci extends Risorsa {
 

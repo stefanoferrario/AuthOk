@@ -1,4 +1,5 @@
 package jsonrpc;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import zeromq.IZmqClient;

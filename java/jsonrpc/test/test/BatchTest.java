@@ -7,8 +7,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class BatchTest {

@@ -1,15 +1,17 @@
 package authorizer.GestoreAutorizzazioni;
 
+import authorizer.GestoreRisorse.GestoreRisorse;
 import authorizer.GestoreRisorse.ResourceException;
 import authorizer.GestoreToken.GestoreToken;
-import authorizer.GestoreRisorse.GestoreRisorse;
+import authorizer.Server;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
+import java.security.InvalidParameterException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
-import static authorizer.MethodsUtils.DATE_FORMAT;
 
 public class GestoreAutorizzazioni {
 
@@ -30,7 +32,11 @@ public class GestoreAutorizzazioni {
         
     }
 
-    public String creaAutorizzazione(String nomeUtente,int livello, Date scadenza) throws AuthorizationException {
+    public String creaAutorizzazione(String nomeUtente,int livello, String scadenza) throws ParseException, AuthorizationException {
+        Date date = Server.DATE.parse(scadenza);
+        if (date.before(new Date())) {
+            throw new InvalidParameterException("Data scadenza già passata");
+        }
 
         if (verificaEsistenzaAutorizzazione(nomeUtente) != null) {
             throw new AuthorizationException("Utente già autorizzato");
@@ -38,7 +44,7 @@ public class GestoreAutorizzazioni {
 
         String key = genera_chiave_unica();
 
-        Autorizzazione auth = new Autorizzazione(nomeUtente,livello,scadenza);
+        Autorizzazione auth = new Autorizzazione(nomeUtente,livello,date);
         autorizzazioni.put(key,auth);
 
         return key;
@@ -100,7 +106,7 @@ public class GestoreAutorizzazioni {
             autValues.put("Key", new Member(a.getKey()));
             autValues.put("Utente", new Member(a.getValue().getUtente()));
             autValues.put("Livello", new Member(a.getValue().getLivello()));
-            autValues.put("Scadenza", new Member(DATE_FORMAT.format(a.getValue().getScadenza())));
+            autValues.put("Scadenza", new Member(Server.DATE.format(a.getValue().getScadenza())));
             auths.add(new Member(new StructuredMember(autValues)));
         }
         if (auths.size()==0)

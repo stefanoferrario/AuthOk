@@ -1,23 +1,22 @@
 package authorizer;
 
 import authorizer.GestoreAutorizzazioni.AuthorizationException;
+import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreRisorse.GestoreRisorse;
 import authorizer.GestoreRisorse.ResourceException;
 import authorizer.GestoreRisorse.ResourceTypes;
 import authorizer.GestoreToken.GestoreToken;
-import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.GestoreToken.TokenException;
-import authorizer.MethodsUtils.Methods;
-import jsonrpc.*;
-import jsonrpc.IServer;
 import jsonrpc.Error;
-import jsonrpc.Member;
-import jsonrpc.StructuredMember;
-import jsonrpc.Request;
-import jsonrpc.Response;
+import jsonrpc.*;
 import java.security.InvalidParameterException;
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
@@ -28,12 +27,14 @@ public class Server {
     private IServer serverJsonRpc;
     private static boolean testEnabled = false;
     private static ReentrantLock lock = new ReentrantLock();
+    public static final short PORT = 5001;
+    public static final DateFormat DATE = new SimpleDateFormat("dd-MM-yyyy");
 
     private Server() {
         tokenManager = GestoreToken.getInstance();
         resourceManager = GestoreRisorse.getInstance();
         authManager = GestoreAutorizzazioni.getInstance();
-        serverJsonRpc = new jsonrpc.Server(MethodsUtils.PORT);
+        serverJsonRpc = new jsonrpc.Server(PORT);
 
         if (testEnabled) {
             System.out.println("Impostazioni di test abilitate");
@@ -123,9 +124,7 @@ public class Server {
                     long time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
                     return new Member(time);
                 case CREA_AUTORIZZAZIONE:
-                    Date date = MethodsUtils.DATE_FORMAT.parse(p.get(2).getString());
-                    if (date.before(new Date())) {throw new InvalidParameterException("Data scadenza già passata");}
-                    return new Member(authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), date));
+                    return new Member(authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), p.get(2).getString()));
                 case VERIFICA_ESISTENZA_AUTORIZZAZIONE:
                     String key = authManager.verificaEsistenzaAutorizzazione(p.get(0).getString());
                     ArrayList<Member> result = new ArrayList<>();
@@ -203,7 +202,7 @@ public class Server {
                 GestoreToken.getInstance().cancellaTokenScaduti();
                 lock.unlock();
             }
-        },new Date(), isTest() ? 3*60*1000 : 24*60*60*1000);//ogni 3m/24h cancella i token per non occupare inutilmente la memoria
+        }, new Date(), s.tokenManager.getTokenDuration());//ogni 3m/24h cancella i token per non occupare inutilmente la memoria
         // non è necessario cancellare i token nell'esatto momento in cui scadono perché sono comunque invalidi
 
         System.out.println("In ascolto...");
