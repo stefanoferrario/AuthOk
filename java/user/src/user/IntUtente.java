@@ -1,9 +1,10 @@
 package user;
 
+import java.util.Date;
 import java.util.HashMap;
 
 public interface IntUtente {
-	String creaAutorizzazione(String nomeUtente, int livello, String scadenza) throws AuthorizerException;
+	String creaAutorizzazione(String nomeUtente, int livello, Date scadenza) throws AuthorizerException;
 
 	boolean revocaAutorizzazione(String nomeUtente) throws AuthorizerException;
 
@@ -14,4 +15,5 @@ public interface IntUtente {
 	HashMap<Integer, Boolean> checkToken(HashMap<Integer, String> tokens) throws AuthorizerException;
 
     String checkServer();
+
 }

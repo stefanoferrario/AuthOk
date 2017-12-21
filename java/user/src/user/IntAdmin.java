@@ -1,5 +1,7 @@
 package user;
 
+import java.util.Date;
+
 public interface IntAdmin {
 	void creaRisorsa();
 
@@ -7,7 +9,7 @@ public interface IntAdmin {
 
 	void cancellaRisorsa();
 
-	String creaAutorizzazione(String nomeUtente, int livello, String scadenza) throws AuthorizerException;
+	String creaAutorizzazione(String nomeUtente, int livello, Date scadenza) throws AuthorizerException;
 	
 	boolean revocaAutorizzazione(String nomeUtente) throws AuthorizerException;
 }

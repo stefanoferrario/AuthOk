@@ -4,11 +4,14 @@ import authorizer.Methods;
 import authorizer.Server;
 import jsonrpc.*;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class CreatoreRichiesta implements IntUtente, IntAdmin {
-
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
     private static IClient clientUtente = new Client(Server.PORT);
     private ArrayList<Member> members = new ArrayList<>();
     private static int contatoreID = 0;
@@ -28,11 +31,11 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
     private static int getId() {return contatoreID++;}
 
     // ritorna la stringa di autorizzazione
-    public String creaAutorizzazione(String idUtente, int livello, String scadenza) throws AuthorizerException {
+    public String creaAutorizzazione(String idUtente, int livello, Date scadenza) throws AuthorizerException {
         members.clear();
         members.add(new Member(idUtente));
         members.add(new Member(livello));
-        members.add(new Member(scadenza));
+        members.add(new Member(DATE_FORMAT.format(scadenza)));
 
         Request req = new Request(Methods.CREA_AUTORIZZAZIONE.getName(), new StructuredMember(members), new Id(getId()));
         try {

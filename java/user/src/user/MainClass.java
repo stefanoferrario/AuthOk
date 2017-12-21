@@ -1,9 +1,11 @@
 package user;
 
 import jsonrpc.JSONRPCException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Scanner;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +16,7 @@ public class MainClass {
     private static final String LEVEL = "[1-9]";
     private static final String INT = "^-?\\d+$";
     private static final String YES_NO = "s|n";
-    private static final String DATE = "^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]|(?:Jan|Mar|May|Jul|Aug|Oct|Dec)))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2]|(?:Jan|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)(?:0?2|(?:Feb))\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9]|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep))|(?:1[0-2]|(?:Oct|Nov|Dec)))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
+    //private static final String DATE = "^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]|(?:Jan|Mar|May|Jul|Aug|Oct|Dec)))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2]|(?:Jan|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)(?:0?2|(?:Feb))\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9]|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep))|(?:1[0-2]|(?:Oct|Nov|Dec)))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
     //obbligare 4 cifre per l'anno
 
     private static final String KEY = "^[^\\s]+$";
@@ -69,8 +71,22 @@ public class MainClass {
         String name = getInput("Nome utente", USERNAME);
         int level = Integer.parseInt(getInput("Livello", LEVEL));
 
-        String date = getInput("Scadenza", DATE);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
+        Calendar start = Calendar.getInstance();
+        start.set(2000,1,1,0,0,0);
+        dateFormat.set2DigitYearStart(start.getTime());
+
         //crea un'autorizzazione valida fino alle 00:00 della data specificata
+        System.out.println("Inserire scadenza [dd/MM/yy]");
+        Date date = null;
+        while(date == null) {
+            try {
+                date = dateFormat.parse(scanner.nextLine());
+            } catch (ParseException e) {
+                System.out.println("Formato data invalido");
+                date = null;
+            }
+        }
 
         String existingKey = cr.verificaEsistenzaAutorizzazione(name);
         if (existingKey != null) {
