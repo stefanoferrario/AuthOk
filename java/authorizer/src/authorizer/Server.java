@@ -14,7 +14,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,7 +27,7 @@ public class Server {
     private static boolean testEnabled = false;
     private static ReentrantLock lock = new ReentrantLock();
     public static final short PORT = 5001;
-    public static final DateFormat DATE = new SimpleDateFormat("dd-MM-yyyy");
+    public static final DateFormat DATE = new SimpleDateFormat("dd/MM/yyyy");
 
     private Server() {
         tokenManager = GestoreToken.getInstance();
@@ -192,7 +191,6 @@ public class Server {
         }
 
         Timer timer = new Timer();
-
         timer.schedule(new TimerTask(){
             public void run(){
                 lock.lock();
@@ -202,7 +200,7 @@ public class Server {
                 GestoreToken.getInstance().cancellaTokenScaduti();
                 lock.unlock();
             }
-        }, new Date(), s.tokenManager.getTokenDuration());//ogni 3m/24h cancella i token per non occupare inutilmente la memoria
+        }, s.tokenManager.getTokenDuration(), s.tokenManager.getTokenDuration());//ogni 3m/24h cancella i token per non occupare inutilmente la memoria
         // non è necessario cancellare i token nell'esatto momento in cui scadono perché sono comunque invalidi
 
         System.out.println("In ascolto...");
