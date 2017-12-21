@@ -27,6 +27,7 @@ public class Server {
     private GestoreAutorizzazioni authManager;
     private IServer serverJsonRpc;
     private static boolean testEnabled = false;
+    private static ReentrantLock lock = new ReentrantLock();
 
     private Server() {
         tokenManager = GestoreToken.getInstance();
@@ -62,7 +63,7 @@ public class Server {
     private void receive() {
         ArrayList<Request> reqs = serverJsonRpc.receive();
         ArrayList<Response> resps = new ArrayList<>();
-
+        lock.lock();
         for (Request req : reqs) {
             Member result = null;
             Error error = null;
@@ -92,7 +93,7 @@ public class Server {
                 }
             }
         }
-
+        lock.unlock();
         try {
             //una richiesta singola può essere inviata come un arraylist di dimensione 1
             serverJsonRpc.reply(resps);
@@ -123,6 +124,7 @@ public class Server {
                     return new Member(time);
                 case CREA_AUTORIZZAZIONE:
                     Date date = MethodsUtils.DATE_FORMAT.parse(p.get(2).getString());
+                    if (date.before(new Date())) {throw new InvalidParameterException("Data scadenza già passata");}
                     return new Member(authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), date));
                 case VERIFICA_ESISTENZA_AUTORIZZAZIONE:
                     String key = authManager.verificaEsistenzaAutorizzazione(p.get(0).getString());
@@ -190,8 +192,6 @@ public class Server {
             return;
         }
 
-        ReentrantLock lock = new ReentrantLock();
-
         Timer timer = new Timer();
 
         timer.schedule(new TimerTask(){
@@ -208,9 +208,7 @@ public class Server {
 
         System.out.println("In ascolto...");
         while (true) {
-            lock.lock();
             s.receive();
-            lock.unlock();
             if (isTest()) {
                 //se modalità test stampa dopo ogni richiesta eseguita, altrimenti solo la prima volta
                 System.out.println("In ascolto...");
