@@ -18,6 +18,7 @@ import jsonrpc.Response;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
     private static Server instance = null;
@@ -46,7 +47,6 @@ public class Server {
                 e.printStackTrace();
             }
         }
-
     }
 
     public static Server getInstance() {
@@ -86,6 +86,9 @@ public class Server {
                     } else {
                         resps.add(new Response(req.getId(), error));
                     }
+                }
+                if (isTest()) {
+                    System.out.println(System.lineSeparator()); //per separare le azioni fatte dal server ad ogni richiesta
                 }
             }
         }
@@ -172,6 +175,7 @@ public class Server {
         if (args.length > 0) {
             if (args.length > 1 || !args[0].equals("test")) {
                 System.out.println("Invalid arguments");
+                return;
             } else {
                 setTest(true);
             }
@@ -185,19 +189,32 @@ public class Server {
             System.out.println(e.getMessage());
             return;
         }
-        Date date= new Date();
+
+        ReentrantLock lock = new ReentrantLock();
+
         Timer timer = new Timer();
 
         timer.schedule(new TimerTask(){
             public void run(){
+                lock.lock();
+                if (isTest()) {
+                    System.out.println("Cancellazione automatica token scaduti");
+                }
                 GestoreToken.getInstance().cancellaTokenScaduti();
+                lock.unlock();
             }
-        },date, 24*60*60*1000);//ogni 24 ore cancella i token per non occupare inutilmente la memoria
+        },new Date(), isTest() ? 3*60*1000 : 24*60*60*1000);//ogni 3m/24h cancella i token per non occupare inutilmente la memoria
         // non è necessario cancellare i token nell'esatto momento in cui scadono perché sono comunque invalidi
 
         System.out.println("In ascolto...");
         while (true) {
+            lock.lock();
             s.receive();
+            lock.unlock();
+            if (isTest()) {
+                //se modalità test stampa dopo ogni richiesta eseguita, altrimenti solo la prima volta
+                System.out.println("In ascolto...");
+            }
         }
     }
 }
