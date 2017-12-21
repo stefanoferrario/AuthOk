@@ -3,6 +3,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.zeromq.ZMQException;
 import zeromq.IZmqServer;
 import zeromq.ZmqServer;
 import java.util.ArrayList;
@@ -13,7 +14,11 @@ public class Server implements IServer {
     private boolean notify;
 
     public Server(int port) {
-        this.server = new ZmqServer(port);
+        try {
+            this.server = new ZmqServer(port);
+        } catch (ZMQException z) {
+            throw new UnsupportedOperationException("Impossibile utilizzare la porta " + port);
+        }
         this.currBatch = null;
     }
 

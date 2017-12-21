@@ -18,9 +18,6 @@ import jsonrpc.Response;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 public class Server {
     private static Server instance = null;
@@ -38,6 +35,7 @@ public class Server {
 
         if (testEnabled) {
             System.out.println("Impostazioni di test abilitate");
+            System.out.println("Impostata durata token di 3 minuti");
             try {
                 resourceManager.addRisorsa(1, 4, ResourceTypes.LINK);
                 resourceManager.addRisorsa(2, 6, ResourceTypes.LINK);
@@ -171,22 +169,22 @@ public class Server {
 
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String args[]) {
-        Pattern pattern = Pattern.compile("s|n");
-        String input = "";
-        Matcher matcher = pattern.matcher(input);
-        Scanner scanner = new Scanner(System.in);
-        while (!matcher.matches()) {
-            System.out.println("Abilitare test? [s|n]");
-            input = scanner.nextLine();
-            matcher = pattern.matcher(input);
-            if (!matcher.matches()) {
-                System.out.println("Input non valido");
+        if (args.length > 0) {
+            if (args.length > 1 || !args[0].equals("test")) {
+                System.out.println("Invalid arguments");
+            } else {
+                setTest(true);
             }
         }
-        setTest(input.equals("s"));
 
-        Server s = Server.getInstance();
-
+        Server s;
+        try {
+            s = Server.getInstance();
+        } catch (UnsupportedOperationException e) {
+            //porta occupata
+            System.out.println(e.getMessage());
+            return;
+        }
         Date date= new Date();
         Timer timer = new Timer();
 
