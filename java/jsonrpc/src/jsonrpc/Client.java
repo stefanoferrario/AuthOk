@@ -19,6 +19,7 @@ public class Client implements IClient {
         if (request.isNotify()) {throw new JSONRPCException("Not a request");}
 
         String returnedString = zmqClient.request(request.getJsonString());
+        if (returnedString == null) {throw new JSONRPCException("Unreachable server");}
 
         try {
             return new Response(returnedString);
@@ -37,7 +38,7 @@ public class Client implements IClient {
         zmqClient.send(notify.getJsonString());
     }
 
-    public ArrayList<Response> sendBatch(ArrayList<Request> requests) {
+    public ArrayList<Response> sendBatch(ArrayList<Request> requests) throws JSONRPCException {
         Batch batch = new Batch(requests);
 
         if (batch.isOnlyNotifies()) {
@@ -45,6 +46,7 @@ public class Client implements IClient {
             return null;
         } else {
             String returnedString = zmqClient.request(batch.getRequestJSON());
+            if (returnedString == null) {throw new JSONRPCException("Unreachable server");}
 
             try {
                 JSONArray arr = new JSONArray(returnedString);

@@ -6,8 +6,7 @@ import zeromq.IZmqServer;
 import zeromq.ZmqClient;
 import zeromq.ZmqServer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class ZmqTest {
     private static int port = 5001;
@@ -92,9 +91,24 @@ public class ZmqTest {
 
     @Test
     public void testSendToNoServer() {
-        c = new ZmqClient(5123);
+        c = new ZmqClient(4999);
         c.send(MSG);
         //no exception thrown
+    }
+
+    @Test
+    public void testRequestToNoServer() {
+        c = new ZmqClient(4998);
+        //verifica che il client non si blocchi per un tempo indefinito in attesa di una risposta
+        long time = System.currentTimeMillis();
+        String ret = c.request(REQ);
+        time = System.currentTimeMillis() - time;
+
+        //server non esistente, deve restituire null come risposta
+        assertNull(ret);
+
+        //il tempo passato è inferiore al doppio del timeout impostato (il doppio è per avere un margine)
+        assertTrue(time < 2*ZmqClient.TIMEOUT);
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
@@ -108,6 +122,5 @@ public class ZmqTest {
             }
         }
     }
-
 
 }

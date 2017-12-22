@@ -3,6 +3,7 @@ package zeromq;
 import org.zeromq.ZMQ;
 
 public class ZmqClient implements IZmqClient {
+    public static final int TIMEOUT = 3000;
     private ZMQ.Context ctx;
     private ZMQ.Socket socket;
     private int port;
@@ -18,6 +19,7 @@ public class ZmqClient implements IZmqClient {
         socket = ctx.socket(ZMQ.REQ);
         socket.connect("tcp://localhost:" + String.valueOf(port));
         socket.send(req.getBytes());
+        socket.setReceiveTimeOut(TIMEOUT);
         String s = socket.recvStr();
         socket.close();
         return s;

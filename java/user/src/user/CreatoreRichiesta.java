@@ -107,7 +107,13 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
             idToResource.put(req.getId(), token.getKey());
         }
 
-        ArrayList<Response> resps = clientUtente.sendBatch(reqs);
+        ArrayList<Response> resps;
+        try {
+            resps = clientUtente.sendBatch(reqs);
+        } catch (JSONRPCException e) {
+            throw new AuthorizerException(e.getMessage());
+        }
+
         HashMap<Integer, Boolean> checked = new HashMap<>();
         for (Response resp : resps) {
             if (resp.hasError()) {throw new AuthorizerException(resp.getError());}

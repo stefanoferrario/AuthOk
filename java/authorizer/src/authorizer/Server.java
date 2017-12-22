@@ -135,7 +135,7 @@ public class Server {
                     return new Member(resourceManager.addRisorsa(p.get(0).getInt(), ResourceTypes.valueOf(p.get(1).getString())));
                 case MODIFICA_ID_RISORSA:
                     resourceManager.modificaIDRisorsa(p.get(0).getInt(), p.get(1).getInt());
-                    return new Member(); //TODO
+                    return new Member();
                 case MODIFICA_LIV_RISORSA:
                     return new Member(resourceManager.modificaLivRisorsa(p.get(0).getInt(), p.get(1).getInt()));
                 case CANCELLA_RISORSA:

@@ -88,7 +88,7 @@ public class ClientTest {
     }
 
     @Test
-    public void sendAllRequestBatch() {
+    public void sendAllRequestBatch() throws JSONRPCException {
         ArrayList<Request> reqs = new ArrayList<>();
         reqs.add(new Request("method", null, new Id(1)));
         reqs.add(new Request("method", null, new Id(2)));
@@ -104,7 +104,7 @@ public class ClientTest {
     }
 
     @Test
-    public void sendAllNotifiesBatch() {
+    public void sendAllNotifiesBatch() throws JSONRPCException {
         ArrayList<Request> reqs = new ArrayList<>();
         reqs.add(new Request("method", null));
         reqs.add(new Request("method", null));
@@ -116,7 +116,7 @@ public class ClientTest {
     }
 
     @Test
-    public void sendMixedBatch() {
+    public void sendMixedBatch() throws JSONRPCException {
         ArrayList<Request> reqs = new ArrayList<>();
         Id id1 = new Id(1);
         Id id2 = new Id(2);
