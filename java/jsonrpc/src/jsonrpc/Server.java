@@ -59,6 +59,7 @@ public class Server implements IServer {
 
     public void reply(Response response) throws JSONRPCException {
         if (currBatch != null) { throw new JSONRPCException("Batch responses needed");}
+        if (notify) {throw new JSONRPCException("Can't respond to a notify");}
         server.reply(response.getJsonString());
     }
 

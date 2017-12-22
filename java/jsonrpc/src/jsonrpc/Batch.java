@@ -50,7 +50,7 @@ public class Batch { //public solo per test
             }
         }
     }
-    private void put(Request req, Response resp) {
+    private void setResp(Request req, Response resp) {
         //if (!req.getId().equals(resp.getId())) {throw new InvalidParameterException("Response ID does not match request ID");}
         int i = reqs.indexOf(req);
         resps.set(i, resp);
@@ -66,7 +66,7 @@ public class Batch { //public solo per test
                 //la risposta ad una richiesta non valida o notifica non deve esserci
                 c++;
             } else {
-                this.put(req, responses.get(i-c));
+                this.setResp(req, responses.get(i-c));
             }
         }
         for (; i < reqs.size(); i++) {

@@ -1,12 +1,12 @@
 package authorizer;
 
-import authorizer.GestoreAutorizzazioni.AuthorizationException;
-import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
-import authorizer.GestoreRisorse.GestoreRisorse;
-import authorizer.GestoreRisorse.ResourceException;
-import authorizer.GestoreRisorse.ResourceTypes;
-import authorizer.GestoreToken.GestoreToken;
-import authorizer.GestoreToken.TokenException;
+import authorizer.gestoreAutorizzazioni.AuthorizationException;
+import authorizer.gestoreAutorizzazioni.GestoreAutorizzazioni;
+import authorizer.gestoreRisorse.GestoreRisorse;
+import authorizer.gestoreRisorse.ResourceException;
+import authorizer.gestoreRisorse.ResourceTypes;
+import authorizer.gestoreToken.GestoreToken;
+import authorizer.gestoreToken.TokenException;
 import jsonrpc.Error;
 import jsonrpc.*;
 import java.security.InvalidParameterException;

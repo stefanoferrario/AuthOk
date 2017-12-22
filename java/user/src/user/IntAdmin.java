@@ -1,6 +1,6 @@
 package user;
 
-import authorizer.GestoreRisorse.ResourceTypes;
+import authorizer.gestoreRisorse.ResourceTypes;
 import java.util.Date;
 
 public interface IntAdmin {

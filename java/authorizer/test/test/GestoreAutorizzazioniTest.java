@@ -3,7 +3,7 @@ package test;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
+import authorizer.gestoreAutorizzazioni.GestoreAutorizzazioni;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

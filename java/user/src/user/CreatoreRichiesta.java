@@ -1,9 +1,9 @@
 package user;
 
-import authorizer.GestoreRisorse.ResourceTypes;
+import authorizer.gestoreRisorse.ResourceTypes;
 import authorizer.Methods;
 import jsonrpc.*;
-import java.io.IOException;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

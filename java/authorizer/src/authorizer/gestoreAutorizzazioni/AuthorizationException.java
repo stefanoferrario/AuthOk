@@ -1,5 +1,5 @@
 package authorizer.gestoreAutorizzazioni;
 
 public class AuthorizationException extends Exception {
-    public AuthorizationException(String message) {super(message);}
+    AuthorizationException(String message) {super(message);}
 }

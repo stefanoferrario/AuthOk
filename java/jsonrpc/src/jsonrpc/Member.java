@@ -95,7 +95,7 @@ public class Member {
         return ((StructuredMember)value).getJSONArray();
     }*/
 
-    private static Member parse(Object value) {
+    public static Member toMember(Object value) { //public solo per test
         if (value == null || value.equals(JSONObject.NULL)) {
             return new Member();
         } else if(value instanceof JSONArray) {
@@ -113,10 +113,6 @@ public class Member {
         } else {
             throw new InvalidParameterException("Not a valid parameter type");
         }
-    }
-
-    public static Member toMember(Object obj) { //public solo per test
-        return parse(obj);
     }
 
     @Override
