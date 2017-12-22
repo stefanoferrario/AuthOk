@@ -34,7 +34,17 @@ public class GestoreRisorseTest extends PreTest {
 
     }
 
-    /*@Test
-    public void testModi*/
+    @Test
+    public void testContieneRisorsa(){
+        //Risorsa esistente
+        boolean exist = resource.contieneRisorsa(nome_idRisorsa.get(Risorsa.R1.getNomeRisorsa()));
+        assertTrue(exist);
+    }
+
+    @Test
+    public void testcancellaRisorsa(){
+        boolean exist = resource.cancellaRisorsa(nome_idRisorsa.get(Risorsa.R1.getNomeRisorsa()));
+        assertTrue(exist); //Torna true se esisteva una risorsa con quell'ID
+    }
 
 }

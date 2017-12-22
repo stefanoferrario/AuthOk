@@ -1,6 +1,6 @@
 package test;
 
-import authorizer.gestoreToken.TokenException;
+import authorizer.GestoreToken.TokenException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
