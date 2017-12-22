@@ -1,4 +1,4 @@
-package authorizer.gestoreAutorizzazioni;
+package authorizer.GestoreAutorizzazioni;
 
 import java.security.InvalidParameterException;
 import java.util.Date;

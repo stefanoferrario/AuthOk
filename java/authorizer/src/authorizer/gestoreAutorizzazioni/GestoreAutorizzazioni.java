@@ -1,8 +1,8 @@
-package authorizer.gestoreAutorizzazioni;
+package authorizer.GestoreAutorizzazioni;
 
-import authorizer.gestoreRisorse.GestoreRisorse;
-import authorizer.gestoreRisorse.ResourceException;
-import authorizer.gestoreToken.GestoreToken;
+import authorizer.GestoreRisorse.GestoreRisorse;
+import authorizer.GestoreRisorse.ResourceException;
+import authorizer.GestoreToken.GestoreToken;
 import authorizer.Server;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;

@@ -1,4 +1,4 @@
-package authorizer.gestoreToken;
+package authorizer.GestoreToken;
 
 import java.util.Date;
 

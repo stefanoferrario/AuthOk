@@ -1,4 +1,4 @@
-package authorizer.gestoreRisorse;
+package authorizer.GestoreRisorse;
 
 class FactoryLanciaDado implements FactoryRisorsa {
 	@Override

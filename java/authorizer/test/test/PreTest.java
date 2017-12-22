@@ -1,12 +1,12 @@
 package test;
 
-import authorizer.gestoreAutorizzazioni.AuthorizationException;
-import authorizer.gestoreAutorizzazioni.GestoreAutorizzazioni;
-import authorizer.gestoreRisorse.GestoreRisorse;
-import authorizer.gestoreToken.GestoreToken;
-import authorizer.gestoreRisorse.ResourceException;
-import authorizer.gestoreRisorse.ResourceTypes;
-import authorizer.gestoreToken.TokenException;
+import authorizer.GestoreAutorizzazioni.AuthorizationException;
+import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
+import authorizer.GestoreRisorse.GestoreRisorse;
+import authorizer.GestoreToken.GestoreToken;
+import authorizer.GestoreRisorse.ResourceException;
+import authorizer.GestoreRisorse.ResourceTypes;
+import authorizer.GestoreToken.TokenException;
 
 import org.junit.BeforeClass;
 import static org.junit.Assert.fail;
@@ -111,8 +111,7 @@ public class PreTest {
 
             token = GestoreToken.getInstance();
             nome_token = new HashMap<>();
-
-            //Tokens di esempio
+            //Tokens di esempio -> Verificato
             nome_token.put(Utente.LUIGI.getNome(),token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), nome_idRisorsa.get(Risorsa.R3.getNomeRisorsa())));
             nome_token.put(Utente.PIPPO.getNome(),token.creaToken(nome_chiave.get(Utente.PIPPO.getNome()), nome_idRisorsa.get(Risorsa.R1.getNomeRisorsa())));
 

@@ -1,4 +1,4 @@
-package authorizer.gestoreRisorse;
+package authorizer.GestoreRisorse;
 
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;

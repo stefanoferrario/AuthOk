@@ -1,13 +1,13 @@
-package authorizer.gestoreRisorse;
+package authorizer.GestoreRisorse;
 
 import java.security.InvalidParameterException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class RisorsaLink extends Risorsa {
+public class RisorsaLink extends Risorsa {
     private static final String URL = "(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)";
     private String link;
-    RisorsaLink(int livello) {
+    public RisorsaLink(int livello) {
         super(livello);
     }
 

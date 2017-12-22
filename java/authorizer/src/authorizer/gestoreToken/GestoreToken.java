@@ -1,6 +1,7 @@
-package authorizer.gestoreToken;
+package authorizer.GestoreToken;
 
-import authorizer.gestoreAutorizzazioni.GestoreAutorizzazioni;
+import authorizer.GestoreAutorizzazioni.AuthorizationException;
+import authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni;
 import authorizer.Server;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import static authorizer.gestoreAutorizzazioni.GestoreAutorizzazioni.Validity.VALID;
+import static authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni.Validity.VALID;
 
 public class GestoreToken {
     private static final long TOKEN_DURATION = 24*60*60*1000; //24 ore in millisecs

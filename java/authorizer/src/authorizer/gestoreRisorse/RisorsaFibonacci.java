@@ -1,7 +1,7 @@
-package authorizer.gestoreRisorse;
+package authorizer.GestoreRisorse;
 
-import authorizer.gestoreToken.GestoreToken;
-import authorizer.gestoreToken.Token;
+import authorizer.GestoreToken.GestoreToken;
+import authorizer.GestoreToken.Token;
 
 import java.util.ArrayList;
 

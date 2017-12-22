@@ -1,8 +1,8 @@
-package authorizer.gestoreToken;
+package authorizer.GestoreToken;
 
 public class TokenException extends Exception {
-    TokenException(String message) {
+    public TokenException(String message) {
         super(message);
     }
-    TokenException() {super();}
+    public TokenException() {super();}
 }

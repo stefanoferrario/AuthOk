@@ -1,5 +1,5 @@
-package authorizer.gestoreRisorse;
+package authorizer.GestoreRisorse;
 
 public class ResourceException extends Exception {
-    ResourceException(String message) {super(message);}
+    public ResourceException(String message) {super(message);}
 }

@@ -1,4 +1,4 @@
-package authorizer.gestoreRisorse;
+package authorizer.GestoreRisorse;
 
 public class FactoryLink implements FactoryRisorsa {
     @Override

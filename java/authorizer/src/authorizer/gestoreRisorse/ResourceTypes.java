@@ -1,4 +1,4 @@
-package authorizer.gestoreRisorse;
+package authorizer.GestoreRisorse;
 
 public enum ResourceTypes {
     FIBO("FIBO"), DICE("DICE"), LINK("LINK");
