@@ -143,14 +143,4 @@ public class GestoreToken {
     public long getTokenDuration() {
         return Server.isTest() ? TEST_TOKEN_DURATION : TOKEN_DURATION;
     }
-
-    public static void main(String [] args) throws TokenException, AuthorizationException {
-
-        //GestoreToken gestoreToken=instance.getInstance();
-        //gestoreToken.creaToken(GestoreAutorizzazioni.getInstance().creaAutorizzazione("Stefano",9 ,new Date()),23492);
-
-
-    }
-
-
 }

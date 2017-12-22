@@ -239,8 +239,4 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
             throw new AuthorizerException(e.getMessage());
         }
     }
-
-    public static void main(String[] args) throws JSONRPCException, IOException {
-        clientUtente.sendNotify(new Request("prova", null));
-    }
 }
