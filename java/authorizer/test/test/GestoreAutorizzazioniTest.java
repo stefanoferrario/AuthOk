@@ -9,7 +9,7 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GestoreAutorizzazioniTest extends PreTest {
 
-    @Test //Verifica Verifica esistenza autorizzazione
+    @Test //Verifica esistenza autorizzazione
     public void test1(){
 
         //Caso autorizzazione non esistente
@@ -26,17 +26,17 @@ public class GestoreAutorizzazioniTest extends PreTest {
 
         // Utente-> Luigi; LivelloAuth-> 5
         // idRisorsa-> 3 LivelloRisorsa-> 4
-        GestoreAutorizzazioni.Validity valid = auth.verificaValiditaAutorizzazione(nome_chiave.get(Utente.LUIGI.getNome()),Risorsa.R3.getIdRisorsa());
+        GestoreAutorizzazioni.Validity valid = auth.verificaValiditaAutorizzazione(nome_chiave.get(Utente.LUIGI.getNome()),nome_idRisorsa.get(Risorsa.R3.getNomeRisorsa()));
         assertEquals(GestoreAutorizzazioni.Validity.VALID,valid); // Livello OK, data OK, chiave OK, idRisorsa OK
 
         // Utente-> Marco; LivelloAuth-> 4
         // idRisorsa-> 3 LivelloRisorsa-> 4
-        valid = auth.verificaValiditaAutorizzazione(nome_chiave.get(Utente.MARCO.getNome()),Risorsa.R3.getIdRisorsa());
-        assertEquals(GestoreAutorizzazioni.Validity.EXPIRED,valid); // data NO, Livello OK, chiave OK, idRisorsa OK
+        valid = auth.verificaValiditaAutorizzazione(nome_chiave.get(Utente.MARCO.getNome()),nome_idRisorsa.get(Risorsa.R3.getNomeRisorsa()));
+        assertFalse(GestoreAutorizzazioni.Validity.EXPIRED == valid);// data NO, Livello OK, chiave OK, idRisorsa OK
 
         // Utente-> Anna; LivelloAuth-> 2
         // idRisorsa-> 1  LivelloRisorsa-> 9
-        valid = auth.verificaValiditaAutorizzazione(nome_chiave.get(Utente.ANNA.getNome()),Risorsa.R1.getIdRisorsa());
+        valid = auth.verificaValiditaAutorizzazione(nome_chiave.get(Utente.ANNA.getNome()),nome_idRisorsa.get(Risorsa.R1.getNomeRisorsa()));
         assertEquals(GestoreAutorizzazioni.Validity.INSUFFICIENT_LEVEL,valid); // Livello NO, data OK, chiave OK, idRisorsa OK
 
         // Utente-> Pippo; LivelloAuth-> 9
@@ -47,7 +47,7 @@ public class GestoreAutorizzazioniTest extends PreTest {
         // Utente-> NON ESISTE  -> chiave null
         // Utente-> Esiste      -> chiave null
         // idRisorsa->2  LivelloRisorsa->6
-        valid = auth.verificaValiditaAutorizzazione(null,1);
+        valid = auth.verificaValiditaAutorizzazione(null,nome_idRisorsa.get(Risorsa.R2.getNomeRisorsa()));
         assertEquals(GestoreAutorizzazioni.Validity.KEY_NON_EXISTENT,valid); // chiave NO
     }
 
@@ -65,5 +65,4 @@ public class GestoreAutorizzazioniTest extends PreTest {
         String key = auth.verificaEsistenzaAutorizzazione(nome_chiave.get(Utente.MARCO.getNome()));
         assertEquals(null,key);
     }
-
 }

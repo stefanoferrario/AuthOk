@@ -20,23 +20,11 @@ public class GestoreTokenTest extends PreTest {
         public String getMsg() {return msg;}
     }
 
-    //Chiave scaduta quindi TokenException
-    @Test
-    public void testCreaTokenChiaveScaduta(){
-        try {
-            token.creaToken(nome_chiave.get(Utente.MARCO.getNome()), Risorsa.R3.getIdRisorsa());
-            fail("Expected Token exception");
-        }catch(TokenException e){
-            System.out.println(e.getMessage());
-            assertTrue(e.getMessage().equals(Messaggio.EXPIRED.getMsg()));
-        }
-    }
-
     //Chiave non esistente quindi TokenException
     @Test
     public void testCreaTokenChiaveNonEsistente(){
         try {
-            token.creaToken(null, Risorsa.R3.getIdRisorsa());
+            token.creaToken(null, nome_idRisorsa.get(Risorsa.R3.getNomeRisorsa()));
             fail("Expected Token exception");
         }catch(TokenException e){
             System.out.println(e.getMessage());
@@ -48,7 +36,7 @@ public class GestoreTokenTest extends PreTest {
     @Test
     public void testCreaTokenLivelloIns(){
         try {
-            token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), Risorsa.R1.getIdRisorsa());
+            token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), nome_idRisorsa.get(Risorsa.R1.getNomeRisorsa()));
             fail("Expected Token exception");
         }catch(TokenException e){
             System.out.println(e.getMessage());
@@ -60,7 +48,7 @@ public class GestoreTokenTest extends PreTest {
     @Test
     public void testCreaTokenRisorsaNonEsistente(){
         try {
-            token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), 0);
+            token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), 4);
             fail("Expected Token exception");
         }catch(TokenException e){
             System.out.println(e.getMessage());
@@ -72,14 +60,14 @@ public class GestoreTokenTest extends PreTest {
     @Test
     public void testCreaToken(){
         try{
-            String key = token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), Risorsa.R3.getIdRisorsa());
+            String key = token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), nome_idRisorsa.get(Risorsa.R3.getNomeRisorsa()));
             assertFalse(key == null);
         }catch(TokenException e){
             fail(e.getMessage());
         }
     }
 
-    @Test //Da rivedere
+   /*@Test //Da rivedere
     public void testVerificaToken(){
         //Token validi
         long durata = token.verificaToken(nome_token.get(Utente.LUIGI.getNome()), Risorsa.R3.getIdRisorsa());
@@ -93,12 +81,12 @@ public class GestoreTokenTest extends PreTest {
         assertTrue(durata == 0);
     }
 
-    @Test //Da rivedere
+  /*  @Test //Da rivedere
     public void testCancellaTokenChiave(){
 
         token.cancellaTokenChiave(nome_token.get(Utente.LUIGI.getNome()));
 
         long exist = token.verificaToken(nome_token.get(Utente.LUIGI.getNome()), Risorsa.R3.getIdRisorsa());
         assertTrue(exist == 0);
-    }
+    }*/
 }

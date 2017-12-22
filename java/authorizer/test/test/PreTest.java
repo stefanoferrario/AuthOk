@@ -42,7 +42,7 @@ public class PreTest {
     enum Utente{
 
         ANNA("Anna",2,Scadenza.DATA_UNO.getData()),
-        MARCO("Marco",4,Scadenza.DATA_OGGI.getData()),
+        MARCO("Marco",4,Scadenza.DATA_UNO.getData()),
         LUIGI("Luigi",5,Scadenza.DATA_UNO.getData()),
         PIPPO("Pippo",9,Scadenza.DATA_UNO.getData());
 
@@ -62,19 +62,19 @@ public class PreTest {
 
     enum Risorsa{
 
-        R1(1,9, ResourceTypes.DICE),
-        R2(2,6,ResourceTypes.FIBO),
-        R3(3,4,ResourceTypes.LINK);
+        R1("R1",9, ResourceTypes.DICE),
+        R2("R2",6,ResourceTypes.FIBO),
+        R3("R3",4,ResourceTypes.LINK);
 
-        private final int idRisorsa;
+        private final String nomeRisorsa;
         private final int livello;
         private final ResourceTypes tipo;
-        Risorsa(int idRisorsa, int livello, ResourceTypes tipo){
-            this.idRisorsa = idRisorsa;
+        Risorsa(String nome, int livello, ResourceTypes tipo){
+            this.nomeRisorsa = nome;
             this.livello = livello;
             this.tipo = tipo;
         }
-        public int getIdRisorsa(){return this.idRisorsa;}
+        public String getNomeRisorsa(){return this.nomeRisorsa;}
         public int getLivello(){return this.livello;}
         public ResourceTypes getTipo() {return this.tipo;}
     }
@@ -86,6 +86,7 @@ public class PreTest {
     //HashMap da usare per i test
     static HashMap<String,String> nome_chiave = null;
     static HashMap<String,String> nome_token = null;
+    static HashMap<String,Integer> nome_idRisorsa = null;
 
     @BeforeClass
     public static void inizializzazione(){
@@ -101,24 +102,25 @@ public class PreTest {
             nome_chiave.put(Utente.PIPPO.getNome(),auth.creaAutorizzazione(Utente.PIPPO.getNome(),Utente.PIPPO.getLivello(),Utente.PIPPO.getScadenza()));
 
             resource = GestoreRisorse.getInstance();
+            nome_idRisorsa = new HashMap<>();
+
             //Risorse di esempio
-            resource.addRisorsa(Risorsa.R1.getLivello(),Risorsa.R1.getTipo());
-            resource.addRisorsa(Risorsa.R2.getLivello(),Risorsa.R2.getTipo());
-            resource.addRisorsa(Risorsa.R3.getLivello(),Risorsa.R3.getTipo());
+            nome_idRisorsa.put(Risorsa.R1.getNomeRisorsa(),resource.addRisorsa(Risorsa.R1.getLivello(),Risorsa.R1.getTipo()));
+            nome_idRisorsa.put(Risorsa.R2.getNomeRisorsa(),resource.addRisorsa(Risorsa.R2.getLivello(),Risorsa.R2.getTipo()));
+            nome_idRisorsa.put(Risorsa.R3.getNomeRisorsa(),resource.addRisorsa(Risorsa.R3.getLivello(),Risorsa.R3.getTipo()));
 
             token = GestoreToken.getInstance();
             nome_token = new HashMap<>();
             //Tokens di esempio -> Verificato
-            nome_token.put(Utente.LUIGI.getNome(),token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), Risorsa.R3.getIdRisorsa()));
-            nome_token.put(Utente.PIPPO.getNome(),token.creaToken(nome_chiave.get(Utente.PIPPO.getNome()), Risorsa.R1.getIdRisorsa()));
+            nome_token.put(Utente.LUIGI.getNome(),token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), nome_idRisorsa.get(Risorsa.R3.getNomeRisorsa())));
+            nome_token.put(Utente.PIPPO.getNome(),token.creaToken(nome_chiave.get(Utente.PIPPO.getNome()), nome_idRisorsa.get(Risorsa.R1.getNomeRisorsa())));
 
         }catch(AuthorizationException e){
             fail("Utenti di test replicati");
         }catch(TokenException e){
             fail(e.getMessage());
         }catch(ResourceException r){
-            fail("ID risorsa già esistente");
+            fail(r.getMessage());
         }
     }
-
 }
