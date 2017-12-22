@@ -50,11 +50,14 @@ public class GestoreRisorse {
     }
 
     // modifica il livello di una risorsa. lancia eccezione se non esiste una risorsa con quell'ID
-    public void modificaLivRisorsa(int idRisorsa, int livello) throws ResourceException {
+    //restituisce il livello precedente
+    public int modificaLivRisorsa(int idRisorsa, int livello) throws ResourceException {
         if (!contieneRisorsa(idRisorsa)) {throw new ResourceException("Risorsa inesistente");}
 
         Risorsa r = dataBaseRisorse.get(idRisorsa);
+        int oldLiv = r.getLivello();
         r.setLivello(livello);
+        return oldLiv;
     }
 
     // modifica l'id di una risorsa. lancia eccezione se non esiste una risorsa con il vecchio ID

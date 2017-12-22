@@ -71,7 +71,7 @@ public class MainClass {
     private static void createAuth() throws AuthorizerException {
         System.out.println("Creazione autorizzazione");
         String name = getInput("Nome utente", USERNAME);
-        int level = Integer.parseInt(getInput("Livello", LEVEL));
+        int level = Integer.parseInt(getInput("Livello [1-9]", LEVEL));
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
         Calendar start = Calendar.getInstance();

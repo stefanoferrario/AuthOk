@@ -180,7 +180,8 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
     }
 
     @Override
-    public void modificaLivRisorsa(int id, int livello) throws AuthorizerException {
+    //restituisce vecchio livello
+    public int modificaLivRisorsa(int id, int livello) throws AuthorizerException {
         members.clear();
         members.add(new Member(id));
         members.add(new Member(livello));
@@ -188,7 +189,9 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 
         try {
             Response rep = clientUtente.sendRequest(req);
-            if (rep.hasError()) {
+            if (!rep.hasError()) {
+                return rep.getResult().getInt();
+            } else {
                 throw new AuthorizerException(rep.getError());
             }
         } catch (JSONRPCException e) {
