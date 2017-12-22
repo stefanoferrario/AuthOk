@@ -25,10 +25,8 @@ public class GestoreRisorse {
         return dataBaseRisorse.containsKey(idRisorsa);
     }
 
-    // crea una nuova risorsa e la aggiunga alla mappa. lancia eccezione se è già presente una risorsa con lo stesso ID
-    public void addRisorsa(int idRisorsa, int livello, ResourceTypes type) throws ResourceException {
-        if (contieneRisorsa(idRisorsa)) {throw new ResourceException("ID risorsa già esistente");}
-
+    // crea una nuova risorsa e la aggiunga alla mappa. restituisce id assegnato alla risorsa
+    public int addRisorsa(int livello, ResourceTypes type) throws ResourceException {
         FactoryRisorsa fact;
         switch (type) {
             case DICE:
@@ -40,9 +38,15 @@ public class GestoreRisorse {
             case LINK:
                 fact = new FactoryLink();
                 break;
-            default: return;
+            default: throw new ResourceException("Invalid resource type");
         }
-        dataBaseRisorse.put(idRisorsa, fact.creaRisorsa(idRisorsa, livello));
+        int id = 0;
+        while (dataBaseRisorse.containsKey(id)) {
+            id++;
+        }
+
+        dataBaseRisorse.put(id, fact.creaRisorsa(livello));
+        return id;
     }
 
     // modifica il livello di una risorsa. lancia eccezione se non esiste una risorsa con quell'ID
@@ -55,11 +59,10 @@ public class GestoreRisorse {
 
     // modifica l'id di una risorsa. lancia eccezione se non esiste una risorsa con il vecchio ID
     public void modificaIDRisorsa(int oldID, int newID) throws ResourceException {
-        if (!contieneRisorsa(oldID)) {throw new ResourceException("Risorsa inesistente");}
-
+        if (!contieneRisorsa(oldID)) {throw new ResourceException("Risorsa " + String.valueOf(oldID) + " inesistente");}
+        if (contieneRisorsa(newID)) {throw new ResourceException("ID " + String.valueOf(newID) + " già esistente");}
         Risorsa r = dataBaseRisorse.get(oldID);
         cancellaRisorsa(oldID);
-        r.setId(newID);
         dataBaseRisorse.put(newID, r);
     }
 
@@ -75,30 +78,15 @@ public class GestoreRisorse {
 
     public Member getState() {
         ArrayList<Member> resources = new ArrayList<>();
-        for (Risorsa r : dataBaseRisorse.values()) {
+        for (HashMap.Entry<Integer, Risorsa> entry : dataBaseRisorse.entrySet()) {
             HashMap<String, Member> resValues = new HashMap<>();
-            resValues.put("ID", new Member(r.getId()));
-            resValues.put("Livello", new Member(r.getLivello()));
+            resValues.put("ID", new Member(entry.getKey()));
+            resValues.put("Livello", new Member(entry.getValue().getLivello()));
             resources.add(new Member(new StructuredMember(resValues)));
         }
         if (resources.size()==0)
             return new Member();
         else
             return new Member(new StructuredMember(resources));
-    }
-
-    public static void main(String[] args) {
-        FactoryRisorsa factFibo = new FactoryFibonacci();
-        FactoryRisorsa factDado = new FactoryLanciaDado();
-        Risorsa rDado = factDado.creaRisorsa(0, 5);
-        Risorsa rFibo = factFibo.creaRisorsa(1, 7);
-        System.out.println("ID RISORSA: " + rDado.getId() + ", LIVELLO RISORSA: " + rDado.getLivello());
-        System.out.println("ID RISORSA: " + rFibo.getId() + ", LIVELLO RISORSA: " + rFibo.getLivello());
-        RisorsaFibonacci rF = (RisorsaFibonacci) rFibo;
-        System.out.println("I primi 10 termini della serie di Fibonacci sono: " + rF.serieDiFibonacci(10).toString());
-        RisorsaLanciaDado rD = (RisorsaLanciaDado) rDado;
-        System.out.println("La faccia del dado vale: " + rD.getFacciaDado());
-        rD.lanciaDado();
-        System.out.println("Lancio il dado...la nuova faccia �: " + rD.getFacciaDado());
     }
 }

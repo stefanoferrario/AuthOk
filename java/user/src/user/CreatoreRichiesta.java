@@ -161,16 +161,17 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 
 
     @Override
-    public void creaRisorsa(int id, int livello, ResourceTypes type) throws AuthorizerException {
+    public int creaRisorsa(int livello, ResourceTypes type) throws AuthorizerException {
         members.clear();
-        members.add(new Member(id));
         members.add(new Member(livello));
         members.add(new Member(type.getName()));
         Request req = new Request(Methods.CREA_RISORSA.getName(), new StructuredMember(members), new Id(getId()));
 
         try {
             Response rep = clientUtente.sendRequest(req);
-            if (rep.hasError()) {
+            if (!rep.hasError()) {
+                return rep.getResult().getInt();
+            } else {
                 throw new AuthorizerException(rep.getError());
             }
         } catch (JSONRPCException e) {

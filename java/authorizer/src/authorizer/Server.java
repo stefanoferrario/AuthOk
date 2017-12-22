@@ -42,10 +42,10 @@ public class Server {
             System.out.println("Impostazioni di test abilitate");
             System.out.println("Impostata durata token di 3 minuti");
             try {
-                resourceManager.addRisorsa(1, 4, ResourceTypes.LINK);
-                resourceManager.addRisorsa(2, 6, ResourceTypes.LINK);
-                resourceManager.addRisorsa(3, 1, ResourceTypes.FIBO);
-                resourceManager.addRisorsa(4, 3, ResourceTypes.DICE);
+                resourceManager.addRisorsa(4, ResourceTypes.LINK);
+                resourceManager.addRisorsa(6, ResourceTypes.LINK);
+                resourceManager.addRisorsa(1, ResourceTypes.FIBO);
+                resourceManager.addRisorsa(3, ResourceTypes.DICE);
                 System.out.println("Caricate risorse di prova");
             } catch (ResourceException e) {
                 e.printStackTrace();
@@ -132,8 +132,7 @@ public class Server {
                 case REVOCA_AUTORIZZAZIONE:
                     return new Member(authManager.revocaAutorizzazione(p.get(0).getString()));
                 case CREA_RISORSA:
-                    resourceManager.addRisorsa(p.get(0).getInt(), p.get(1).getInt(), ResourceTypes.valueOf(p.get(2).getString()));
-                    return new Member(true); //risultato a buon fine
+                    return new Member(resourceManager.addRisorsa(p.get(0).getInt(), ResourceTypes.valueOf(p.get(1).getString())));
                 case MODIFICA_ID_RISORSA:
                     resourceManager.modificaIDRisorsa(p.get(0).getInt(), p.get(1).getInt());
                     return new Member(true);

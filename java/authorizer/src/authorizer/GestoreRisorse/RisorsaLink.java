@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 public class RisorsaLink extends Risorsa {
     private static final String URL = "(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)";
     private String link;
-    public RisorsaLink(int id, int livello) {
-        super(id, livello);
+    public RisorsaLink(int livello) {
+        super(livello);
     }
 
     void setLink(String link) {

@@ -102,9 +102,9 @@ public class PreTest {
 
             resource = GestoreRisorse.getInstance();
             //Risorse di esempio
-            resource.addRisorsa(Risorsa.R1.getIdRisorsa(),Risorsa.R1.getLivello(),Risorsa.R1.getTipo());
-            resource.addRisorsa(Risorsa.R2.getIdRisorsa(),Risorsa.R2.getLivello(),Risorsa.R2.getTipo());
-            resource.addRisorsa(Risorsa.R3.getIdRisorsa(),Risorsa.R3.getLivello(),Risorsa.R3.getTipo());
+            resource.addRisorsa(Risorsa.R1.getLivello(),Risorsa.R1.getTipo());
+            resource.addRisorsa(Risorsa.R2.getLivello(),Risorsa.R2.getTipo());
+            resource.addRisorsa(Risorsa.R3.getLivello(),Risorsa.R3.getTipo());
 
             token = GestoreToken.getInstance();
             nome_token = new HashMap<>();

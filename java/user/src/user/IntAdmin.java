@@ -5,7 +5,7 @@ import authorizer.GestoreRisorse.ResourceTypes;
 import java.util.Date;
 
 public interface IntAdmin {
-	void creaRisorsa(int id, int livello, ResourceTypes type) throws AuthorizerException;
+	int creaRisorsa(int livello, ResourceTypes type) throws AuthorizerException;
 
 	void modificaLivRisorsa(int id, int livello) throws AuthorizerException;
 

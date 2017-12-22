@@ -9,8 +9,8 @@ public class RisorsaFibonacci extends Risorsa {
 
 	private static ArrayList<Integer> fibonacci = new ArrayList<>(0);
 
-	public RisorsaFibonacci(int _id, int _livello) {
-		super(_id, _livello);
+	public RisorsaFibonacci(int _livello) {
+		super(_livello);
 	}
 	
 	//serve come supporto alla classe serieDiFibonacci
@@ -39,14 +39,5 @@ public class RisorsaFibonacci extends Risorsa {
 	private long verificaToken(Token token) {
 		long d = GestoreToken.getInstance().verificaToken(token.getChiave(), token.getIdRisorsa());
 		return d;
-	}
-
-	public static void main(String[] a) {
-		ArrayList<Integer> f = new RisorsaFibonacci(1,5).serieDiFibonacci(10);
-		if (f == null) {
-			System.out.println("Input non valido!!!");
-		} else {
-			System.out.println(f.toString());
-		}
 	}
 }
