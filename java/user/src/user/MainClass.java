@@ -1,8 +1,7 @@
 package user;
 
+import authorizer.Server;
 import jsonrpc.JSONRPCException;
-
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -20,13 +19,16 @@ public class MainClass {
     //obbligare 4 cifre per l'anno
 
     private static final String KEY = "^[^\\s]+$";
-    private static IntUtente  cr = new CreatoreRichiesta();
+    private static IntUtente  cr;
     private static Utente u;
 
     public static void main(String[] args) throws JSONRPCException {
-        String name = getInput("Nome utente", USERNAME);
+        System.out.println("Collegamento al server");
+        cr = new CreatoreRichiesta(Server.getPort());
+
+        String name = getInput("Inserire nome utente", USERNAME);
         u = new Utente(name);
-        System.out.println("Utente creato");
+        System.out.println("Utente abilitato");
 
         StringBuilder b = new StringBuilder();
         b.append(System.lineSeparator());
@@ -73,7 +75,7 @@ public class MainClass {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
         Calendar start = Calendar.getInstance();
-        start.set(2000,1,1,0,0,0);
+        start.set(2000, Calendar.JANUARY,1,0,0,0);
         dateFormat.set2DigitYearStart(start.getTime());
 
         //crea un'autorizzazione valida fino alle 00:00 della data specificata
@@ -90,7 +92,7 @@ public class MainClass {
 
         String existingKey = cr.verificaEsistenzaAutorizzazione(name);
         if (existingKey != null) {
-            String ris = getInput("Autorizzazione già esistente: sovrascrivere l' autorizzazione attuale? (s/n)", YES_NO);
+            String ris = getInput("Autorizzazione già esistente: sovrascrivere l' autorizzazione attuale? [s/n]", YES_NO);
 
             if (ris.equals("s")) {
                 cr.revocaAutorizzazione(existingKey);

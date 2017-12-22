@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import static authorizer.GestoreAutorizzazioni.GestoreAutorizzazioni.Validity.VALID;
 
 public class GestoreToken {
     private static final long TOKEN_DURATION = 24*60*60*1000; //24 ore in millisecs
@@ -58,6 +59,20 @@ public class GestoreToken {
     public long verificaToken(String aString, int idRisorsa) {
         Token temp= tokens.get(aString);
         if (temp != null) {
+            if (temp.getIdRisorsa() != idRisorsa) {
+                if (Server.isTest()) {
+                    System.out.println("Token " + aString + " relativo alla risorsa errata(" + idRisorsa + ")");
+                }
+                return 0;
+            }
+
+            if (GestoreAutorizzazioni.getInstance().verificaValiditaAutorizzazione(temp.getChiave(), temp.getIdRisorsa()) != VALID) {
+                if (Server.isTest()) {
+                    System.out.println("Token errato");
+                }
+                return 0;
+            }
+
             long tokenDuration = Server.isTest() ? TEST_TOKEN_DURATION : TOKEN_DURATION;
             long tempoRestante = tokenDuration - (System.currentTimeMillis() - temp.getData().getTime());
             if (tempoRestante < 0) {
@@ -75,6 +90,9 @@ public class GestoreToken {
                 return tempoRestante;
             }
         }
+        if (Server.isTest()) {
+            System.out.println("Token inesistente");
+        }
         return 0; //token inesistente
     }
 
@@ -86,8 +104,10 @@ public class GestoreToken {
                 iterator.remove();
             }
         }*/
-        tokens.entrySet().removeIf((HashMap.Entry<String, Token> p) -> System.currentTimeMillis() - p.getValue().getData().getTime() > TOKEN_DURATION);
-
+        boolean r =tokens.entrySet().removeIf((HashMap.Entry<String, Token> p) -> System.currentTimeMillis() - p.getValue().getData().getTime() > TOKEN_DURATION);
+        if (Server.isTest()) {
+            System.out.println( r ? "Rimossi token scaduti" : "Nessun token scaduto rimosso");
+        }
     }
     public void cancellaTokenChiave(String chiave){
         /*Iterator<HashMap.Entry<String, Token>> iterator = tokens.entrySet().iterator();
@@ -97,7 +117,10 @@ public class GestoreToken {
                 iterator.remove();
             }
         }*/
-        tokens.entrySet().removeIf((HashMap.Entry<String, Token> p) -> p.getValue().getChiave().equals(chiave));
+        boolean r = tokens.entrySet().removeIf((HashMap.Entry<String, Token> p) -> p.getValue().getChiave().equals(chiave));
+        if (Server.isTest()) {
+            System.out.println( r ? "Rimossi token relativi alla chiave " + chiave : "Nessun token relativo alla chiave " + chiave + " rimosso");
+        }
     }
 
 

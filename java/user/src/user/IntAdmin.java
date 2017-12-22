@@ -1,13 +1,17 @@
 package user;
 
+import authorizer.GestoreRisorse.ResourceTypes;
+
 import java.util.Date;
 
 public interface IntAdmin {
-	void creaRisorsa();
+	void creaRisorsa(int id, int livello, ResourceTypes type) throws AuthorizerException;
 
-	void modificaRisorsa();
+	void modificaLivRisorsa(int id, int livello) throws AuthorizerException;
 
-	void cancellaRisorsa();
+	void modificaIdRisorsa(int currID, int newID) throws AuthorizerException;
+
+	boolean cancellaRisorsa(int id) throws AuthorizerException;
 
 	String creaAutorizzazione(String nomeUtente, int livello, Date scadenza) throws AuthorizerException;
 	

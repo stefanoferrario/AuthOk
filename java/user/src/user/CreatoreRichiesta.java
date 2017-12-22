@@ -1,7 +1,7 @@
 package user;
 
+import authorizer.GestoreRisorse.ResourceTypes;
 import authorizer.Methods;
-import authorizer.Server;
 import jsonrpc.*;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -12,24 +12,14 @@ import java.util.HashMap;
 
 public class CreatoreRichiesta implements IntUtente, IntAdmin {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
-    private static IClient clientUtente = new Client(Server.PORT);
+    private static IClient clientUtente;
     private ArrayList<Member> members = new ArrayList<>();
     private static int contatoreID = 0;
-
-    public void creaRisorsa() {
-        System.out.println("la risorsa � stata creata");
-    }
-
-    public void modificaRisorsa() {
-        System.out.println("la risorsa � stata modificata");
-    }
-
-    public void cancellaRisorsa() {
-        System.out.println("la risorsa � stata cancellata");
-    }
-
     private static int getId() {return contatoreID++;}
 
+    CreatoreRichiesta(int port) {
+        clientUtente = new Client(port);
+    }
     // ritorna la stringa di autorizzazione
     public String creaAutorizzazione(String idUtente, int livello, Date scadenza) throws AuthorizerException {
         members.clear();
@@ -166,6 +156,77 @@ public class CreatoreRichiesta implements IntUtente, IntAdmin {
 
         } catch (JSONRPCException e) {
             return e.getMessage();
+        }
+    }
+
+
+    @Override
+    public void creaRisorsa(int id, int livello, ResourceTypes type) throws AuthorizerException {
+        members.clear();
+        members.add(new Member(id));
+        members.add(new Member(livello));
+        members.add(new Member(type.getName()));
+        Request req = new Request(Methods.CREA_RISORSA.getName(), new StructuredMember(members), new Id(getId()));
+
+        try {
+            Response rep = clientUtente.sendRequest(req);
+            if (rep.hasError()) {
+                throw new AuthorizerException(rep.getError());
+            }
+        } catch (JSONRPCException e) {
+            throw new AuthorizerException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void modificaLivRisorsa(int id, int livello) throws AuthorizerException {
+        members.clear();
+        members.add(new Member(id));
+        members.add(new Member(livello));
+        Request req = new Request(Methods.MODIFICA_LIV_RISORSA.getName(), new StructuredMember(members), new Id(getId()));
+
+        try {
+            Response rep = clientUtente.sendRequest(req);
+            if (rep.hasError()) {
+                throw new AuthorizerException(rep.getError());
+            }
+        } catch (JSONRPCException e) {
+            throw new AuthorizerException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void modificaIdRisorsa(int currID, int newID) throws AuthorizerException {
+        members.clear();
+        members.add(new Member(currID));
+        members.add(new Member(newID));
+        Request req = new Request(Methods.MODIFICA_ID_RISORSA.getName(), new StructuredMember(members), new Id(getId()));
+
+        try {
+            Response rep = clientUtente.sendRequest(req);
+            if (rep.hasError()) {
+                throw new AuthorizerException(rep.getError());
+            }
+        } catch (JSONRPCException e) {
+            throw new AuthorizerException(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean cancellaRisorsa(int id) throws AuthorizerException {
+        members.clear();
+        members.add(new Member(id));
+        Request req = new Request(Methods.CANCELLA_RISORSA.getName(), new StructuredMember(members), new Id(getId()));
+
+        try {
+            Response rep = clientUtente.sendRequest(req);
+            if (!rep.hasError()) {
+                return rep.getResult().getBool();
+            } else {
+                throw new AuthorizerException(rep.getError());
+            }
+        } catch (JSONRPCException e) {
+            throw new AuthorizerException(e.getMessage());
         }
     }
 

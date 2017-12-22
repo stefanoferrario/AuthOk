@@ -14,9 +14,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Server {
     private static Server instance = null;
@@ -24,17 +27,17 @@ public class Server {
     private GestoreRisorse resourceManager;
     private GestoreAutorizzazioni authManager;
     private IServer serverJsonRpc;
-    private static boolean testEnabled = false;
+    private static boolean testEnabled;
     private static ReentrantLock lock = new ReentrantLock();
-    public static final short PORT = 5001;
     public static final DateFormat DATE = new SimpleDateFormat("dd/MM/yyyy");
 
-    private Server() {
+    private Server(int port, boolean isTest) {
         tokenManager = GestoreToken.getInstance();
         resourceManager = GestoreRisorse.getInstance();
         authManager = GestoreAutorizzazioni.getInstance();
-        serverJsonRpc = new jsonrpc.Server(PORT);
+        serverJsonRpc = new jsonrpc.Server(port);
 
+        testEnabled = isTest;
         if (testEnabled) {
             System.out.println("Impostazioni di test abilitate");
             System.out.println("Impostata durata token di 3 minuti");
@@ -50,14 +53,6 @@ public class Server {
         }
     }
 
-    public static Server getInstance() {
-        if (instance == null) {
-            instance = new Server();
-        }
-        return instance;
-    }
-
-    private static void setTest(boolean isTest) {testEnabled = isTest;}
     public static boolean isTest() {return testEnabled;}
 
     private void receive() {
@@ -123,7 +118,7 @@ public class Server {
                     long time = tokenManager.verificaToken(p.get(0).getString(), p.get(1).getInt());
                     return new Member(time);
                 case CREA_AUTORIZZAZIONE:
-                    return new Member(authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), p.get(2).getString()));
+                    return new Member(authManager.creaAutorizzazione(p.get(0).getString(), p.get(1).getInt(), DATE.parse(p.get(2).getString())));
                 case VERIFICA_ESISTENZA_AUTORIZZAZIONE:
                     String key = authManager.verificaEsistenzaAutorizzazione(p.get(0).getString());
                     ArrayList<Member> result = new ArrayList<>();
@@ -172,23 +167,26 @@ public class Server {
 
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String args[]) {
+        boolean isTest = false;
         if (args.length > 0) {
             if (args.length > 1 || !args[0].equals("test")) {
                 System.out.println("Invalid arguments");
                 return;
             } else {
-                setTest(true);
+                isTest = true;
             }
         }
 
+
         Server s;
         try {
-            s = Server.getInstance();
+            s = new Server(getPort(), isTest);
         } catch (UnsupportedOperationException e) {
             //porta occupata
             System.out.println(e.getMessage());
             return;
         }
+
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
@@ -211,5 +209,22 @@ public class Server {
                 System.out.println("In ascolto...");
             }
         }
+    }
+
+    public static int getPort() {
+        final String RANGE = "^0*([1-9]|[1-8][0-9]|9[0-9]|[1-8][0-9]{2}|9[0-8][0-9]|99[0-9]|[1-8][0-9]{3}|9[0-8][0-9]{2}|99[0-8][0-9]|999[0-9]|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$";
+        String input = "";
+        Pattern pattern = Pattern.compile(RANGE);
+        Matcher matcher = pattern.matcher(input);
+        Scanner scanner = new Scanner(System.in);
+        while (!matcher.matches()) {
+            System.out.println("Inserire porta [1-65535]");
+            input = scanner.nextLine();
+            matcher = pattern.matcher(input);
+            if (!matcher.matches()) {
+                System.out.println("Input non valido");
+            }
+        }
+        return Integer.parseInt(input);
     }
 }

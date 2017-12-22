@@ -7,7 +7,6 @@ import authorizer.Server;
 import jsonrpc.Member;
 import jsonrpc.StructuredMember;
 import java.security.InvalidParameterException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,22 +18,18 @@ public class GestoreAutorizzazioni {
     private static HashMap<String,Autorizzazione> autorizzazioni = new HashMap<>();
 
     //Singleton Design pattern
-    private GestoreAutorizzazioni(){
-    }
+    private GestoreAutorizzazioni(){}
 
     public static GestoreAutorizzazioni getInstance(){
         return (instance==null) ? new GestoreAutorizzazioni() : instance;
     }
 
     private String genera_chiave_unica(){
-
         return UUID.randomUUID().toString().replace("-", "");
-        
     }
 
-    public String creaAutorizzazione(String nomeUtente,int livello, String scadenza) throws ParseException, AuthorizationException {
-        Date date = Server.DATE.parse(scadenza);
-        if (date.before(new Date())) {
+    public String creaAutorizzazione(String nomeUtente,int livello, Date scadenza) throws AuthorizationException {
+        if (scadenza.before(new Date())) {
             throw new InvalidParameterException("Data scadenza già passata");
         }
 
@@ -43,28 +38,51 @@ public class GestoreAutorizzazioni {
         }
 
         String key = genera_chiave_unica();
-
-        Autorizzazione auth = new Autorizzazione(nomeUtente,livello,date);
+        Autorizzazione auth = new Autorizzazione(nomeUtente,livello,scadenza);
         autorizzazioni.put(key,auth);
 
+        if (Server.isTest()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Generata autorizzazione").append(System.lineSeparator());
+            sb.append("Key: ").append(key);
+            sb.append(" - Utente: ").append(nomeUtente);
+            sb.append(" - Liv: ").append(livello);
+            sb.append(" - Scadenza: ").append(Server.DATE.format(scadenza));
+            System.out.println(sb.toString());
+        }
+
         return key;
-
-
     }
 
     //restituisce se era presente un'autorizzazione con quella chiave
     public boolean revocaAutorizzazione(String chiave){
-        GestoreToken.getInstance().cancellaTokenChiave(chiave);
-        return autorizzazioni.remove(chiave) != null;
+        boolean removed = autorizzazioni.remove(chiave) != null;
+        if (removed) {
+            //se è stata revocata un'autorizzazione vengono rimossi anche tutti i token relativi
+            GestoreToken.getInstance().cancellaTokenChiave(chiave);
+        }
+        if (Server.isTest()) {
+            if (removed) {
+                System.out.println("Autorizzazione " + chiave + " revocata");
+            } else {
+                System.out.println(chiave + " inesistente");
+            }
+        }
+        return removed;
     }
 
     public String verificaEsistenzaAutorizzazione(String nomeUtente){
-
         for (HashMap.Entry<String, Autorizzazione> entry : autorizzazioni.entrySet()) {
-
             if(entry.getValue().getUtente().equals(nomeUtente)){
+                if (Server.isTest()) {
+                    System.out.println("Autorizzazione per l'utente " + nomeUtente + ": " + entry.getKey());
+                }
                 return entry.getKey();
             }
+        }
+
+        if (Server.isTest()) {
+            System.out.println("Nessuna autorizzazione per l'utente " + nomeUtente);
         }
         return null;
     }
@@ -75,28 +93,37 @@ public class GestoreAutorizzazioni {
         Autorizzazione value = autorizzazioni.get(chiave);
 
         if (value == null){ //Se non è presente nessuna autorizzazione corrispondente la chiave non è valida
+            if (Server.isTest()) {
+                System.out.println(chiave + " non esistente");
+            }
             return Validity.KEY_NON_EXISTENT;
         }else{
             try {
-                int level = GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa);
                 Date today = new Date();
-                if (today.after(value.getScadenza()))
+                if (today.after(value.getScadenza())) {
+                    if (Server.isTest()) {
+                        System.out.println(chiave + " scaduta");
+                    }
                     return Validity.EXPIRED;
-                if (level <= value.getLivello())
+                } else if (GestoreRisorse.getInstance().getLivelloRisorsa(idRisorsa) <= value.getLivello()) {
+                    if (Server.isTest()) {
+                        System.out.println(chiave + " valida per risorsa " + idRisorsa);
+                    }
                     return Validity.VALID;
-                else
+                } else {
+                    if (Server.isTest()) {
+                        System.out.println("Livello autorizzazione non sufficiente per risorsa " + idRisorsa);
+                    }
                     return Validity.INSUFFICIENT_LEVEL;
-
+                }
             } catch (ResourceException e) {
                 //idRisorsa non esistente: autorizzazione non valida
+                if (Server.isTest()) {
+                    System.out.println("Risorsa " + idRisorsa + " non esistente");
+                }
                 return Validity.RESOURCE_NON_EXISTENT;
             }
         }
-    }
-
-    //Necessario al gestore token per poter verificare il livello a cui è possibile accedere.
-    public int getLivelloAutorizzazione(String chiave){
-        return autorizzazioni.get(chiave).getLivello();
     }
 
     public Member getState() {
