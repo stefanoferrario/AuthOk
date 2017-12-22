@@ -111,7 +111,8 @@ public class PreTest {
 
             token = GestoreToken.getInstance();
             nome_token = new HashMap<>();
-            //Tokens di esempio -> Verificato
+
+            //Tokens di esempio
             nome_token.put(Utente.LUIGI.getNome(),token.creaToken(nome_chiave.get(Utente.LUIGI.getNome()), nome_idRisorsa.get(Risorsa.R3.getNomeRisorsa())));
             nome_token.put(Utente.PIPPO.getNome(),token.creaToken(nome_chiave.get(Utente.PIPPO.getNome()), nome_idRisorsa.get(Risorsa.R1.getNomeRisorsa())));
 

@@ -67,26 +67,26 @@ public class GestoreTokenTest extends PreTest {
         }
     }
 
-   /*@Test //Da rivedere
+   @Test
     public void testVerificaToken(){
         //Token validi
-        long durata = token.verificaToken(nome_token.get(Utente.LUIGI.getNome()), Risorsa.R3.getIdRisorsa());
+        long durata = token.verificaToken(nome_token.get(Utente.LUIGI.getNome()), nome_idRisorsa.get(Risorsa.R3.getNomeRisorsa()));
         assertFalse(durata == 0);
 
-        durata = token.verificaToken(nome_token.get(Utente.PIPPO.getNome()), Risorsa.R1.getIdRisorsa());
+        durata = token.verificaToken(nome_token.get(Utente.PIPPO.getNome()), nome_idRisorsa.get(Risorsa.R1.getNomeRisorsa()));
         assertFalse(durata == 0);
 
         //Token non esiste
-        durata = token.verificaToken("",Risorsa.R1.getIdRisorsa());
+        durata = token.verificaToken("",nome_idRisorsa.get(Risorsa.R1.getNomeRisorsa()));
         assertTrue(durata == 0);
     }
 
-  /*  @Test //Da rivedere
-    public void testCancellaTokenChiave(){
+    /*@Test
+    public void testVerificaCancellaTokenChiave(){
 
         token.cancellaTokenChiave(nome_token.get(Utente.LUIGI.getNome()));
 
-        long exist = token.verificaToken(nome_token.get(Utente.LUIGI.getNome()), Risorsa.R3.getIdRisorsa());
+        long exist = token.verificaToken(nome_token.get(Utente.LUIGI.getNome()), nome_idRisorsa.get(Risorsa.R3.getNomeRisorsa()));
         assertTrue(exist == 0);
     }*/
 }
